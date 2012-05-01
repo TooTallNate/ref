@@ -8,17 +8,7 @@ using namespace node;
 namespace {
 
 
-
-
-/*
- * Sets the given "source" Buffer that has the given buffer as it's argument
- */
-
-Handle<Value> Ref(const Arguments& args) {
-  HandleScope scope;
-
-  return Undefined();
-}
+static Persistent<Object> null_pointer_buffer;
 
 /*
  * Returns the pointer address as a Number of the given Buffer instance
@@ -64,16 +54,75 @@ Handle<Value> IsNull(const Arguments& args) {
   return scope.Close(ret);
 }
 
+/*
+ * A callback that should never be invoked since the NULL pointer
+ * wrapper Buffer should never be collected
+ */
+
 void unref_null_cb(char *data, void *hint) {
   assert(0 && "NULL Buffer should never be garbage collected");
+  fprintf(stderr, "FATAL: NULL Buffer should never be garbage collected");
 }
 
+/*
+ * Creates the "null_pointer_buffer" Buffer instance that points to NULL.
+ * It has a length of 0 so that you don't accidentally try to deref the NULL
+ * pointer in JS-land by doing something like: `ref.NULL[0]`.
+ */
+
 Persistent<Object> WrapNullPointer () {
-  size_t bufSize = 0;
-  Buffer *buf = Buffer::New((char *)NULL, bufSize, unref_null_cb, NULL);
-  Persistent<Object> bufObj = Persistent<Object>::New(buf->handle_);
-  return bufObj;
+  size_t buf_size = 0;
+  char *ptr = (char *)NULL;
+  void *user_data = NULL;
+  Buffer *buf = Buffer::New(ptr, buf_size, unref_null_cb, user_data);
+  null_pointer_buffer = Persistent<Object>::New(buf->handle_);
+  return null_pointer_buffer;
 }
+
+/*
+ * Retreives a JS Object instance that was previously stored in
+ * the given Buffer instance at the given offset.
+ */
+
+Handle<Value> ReadObject(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("address: Buffer instance expected")));
+  }
+
+  size_t offset = args[1]->Uint32Value();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+  Persistent<Value> rtn = *reinterpret_cast<Persistent<Value>*>(ptr);
+
+  return scope.Close(rtn);
+}
+
+/*
+ * Writes a Persistent reference to given Object to the given Buffer
+ * instance and offset.
+ */
+
+Handle<Value> WriteObject(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("address: Buffer instance expected")));
+  }
+
+  size_t offset = args[1]->Uint32Value();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+
+  Local<Value> obj = args[2];
+  *reinterpret_cast<Persistent<Value>*>(ptr) = Persistent<Value>::New(obj);
+
+  return Undefined();
+}
+
 
 
 } // anonymous namespace
@@ -109,12 +158,14 @@ void init (Handle<Object> target) {
   smap->Set(String::NewSymbol("size_t"),    Integer::New(sizeof(size_t)));
   // size of a Persistent handle to a JS object
   smap->Set(String::NewSymbol("Object"),    Integer::New(sizeof(Persistent<Object>)));
+
+
+  // exports
   target->Set(String::NewSymbol("sizeof"), smap);
-
   target->Set(String::NewSymbol("NULL"), WrapNullPointer());
-
   NODE_SET_METHOD(target, "address", Address);
   NODE_SET_METHOD(target, "isNull", IsNull);
-  NODE_SET_METHOD(target, "ref", Ref);
+  NODE_SET_METHOD(target, "readObject", ReadObject);
+  NODE_SET_METHOD(target, "writeObject", WriteObject);
 }
 NODE_MODULE(binding, init);
