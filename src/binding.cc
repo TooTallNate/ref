@@ -61,7 +61,7 @@ Handle<Value> IsNull(const Arguments& args) {
 
 void unref_null_cb(char *data, void *hint) {
   assert(0 && "NULL Buffer should never be garbage collected");
-  fprintf(stderr, "FATAL: NULL Buffer should never be garbage collected");
+  fprintf(stderr, "FATAL: NULL Buffer should never be garbage collected\n");
 }
 
 /*
@@ -82,6 +82,9 @@ Persistent<Object> WrapNullPointer () {
 /*
  * Retreives a JS Object instance that was previously stored in
  * the given Buffer instance at the given offset.
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to read from
+ * args[1] - Number - the offset from the "buf" buffer's address to read from
  */
 
 Handle<Value> ReadObject(const Arguments& args) {
@@ -90,7 +93,7 @@ Handle<Value> ReadObject(const Arguments& args) {
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
     return ThrowException(Exception::TypeError(
-          String::New("address: Buffer instance expected")));
+          String::New("readObject: Buffer instance expected")));
   }
 
   size_t offset = args[1]->Uint32Value();
@@ -103,6 +106,11 @@ Handle<Value> ReadObject(const Arguments& args) {
 /*
  * Writes a Persistent reference to given Object to the given Buffer
  * instance and offset.
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to write to
+ * args[1] - Number - the offset from the "buf" buffer's address to write to
+ * args[2] - Object - the "obj" Object which will have a new Persistent reference
+ *                    created for the obj, who'se memory address will be written
  */
 
 Handle<Value> WriteObject(const Arguments& args) {
@@ -111,7 +119,7 @@ Handle<Value> WriteObject(const Arguments& args) {
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
     return ThrowException(Exception::TypeError(
-          String::New("address: Buffer instance expected")));
+          String::New("writeObject: Buffer instance expected")));
   }
 
   size_t offset = args[1]->Uint32Value();
@@ -123,6 +131,83 @@ Handle<Value> WriteObject(const Arguments& args) {
   return Undefined();
 }
 
+/*
+ * Callback function for when the SlowBuffer created from ReadPointer gets
+ * garbage collected.
+ * TODO: Figure out what to do with memory here...
+ */
+
+void read_pointer_cb(char *data, void *hint) {
+  fprintf(stderr, "read_pointer_cb\n");
+}
+
+/*
+ * Reads the memory address of the given "buf" pointer Buffer at the specified
+ * offset, and returns a new SlowBuffer instance from the memory address stored.
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to read from
+ * args[1] - Number - the offset from the "buf" buffer's address to read from
+ */
+
+Handle<Value> ReadPointer(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("readPointer: Buffer instance expected as first argument")));
+  }
+
+  size_t offset = args[1]->Uint32Value();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+
+  //char *val = *((char **)ptr);
+  char *val = *reinterpret_cast<char **>(ptr);
+  Buffer *rtn = Buffer::New(val, 0, read_pointer_cb, NULL);
+
+  return scope.Close(rtn->handle_);
+}
+
+/*
+ * Writes the memory address of the "input" buffer (and optional offset) to the
+ * specified "buf" buffer and offset. Essentially making "buf" hold a reference
+ * to the "input" Buffer.
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to write to
+ * args[1] - Number - the offset from the "buf" buffer's address to write to
+ * args[2] - Buffer - the "input" Buffer whose memory address will be written
+ * args[3] - Number - the offset from the "input" buffer's address to write
+ */
+
+Handle<Value> WritePointer(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  Local<Value> input = args[2];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("writePointer: Buffer instance expected as first argument")));
+  }
+  if (!input->IsNull() || !Buffer::HasInstance(input)) {
+    return ThrowException(Exception::TypeError(
+          String::New("writePointer: Buffer instance expected as third argument")));
+  }
+
+  size_t offset = args[1]->Uint32Value();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+
+  if (input->IsNull()) {
+    *reinterpret_cast<char **>(ptr) = NULL;
+    //*((char **)ptr) = NULL;
+  } else {
+    size_t input_offset = args[3]->Uint32Value();
+    char *input_ptr = Buffer::Data(input.As<Object>()) + input_offset;
+    *reinterpret_cast<char **>(ptr) = input_ptr;
+    //*((char **)ptr) = input_ptr;
+  }
+
+  return Undefined();
+}
 
 
 } // anonymous namespace
@@ -167,5 +252,7 @@ void init (Handle<Object> target) {
   NODE_SET_METHOD(target, "isNull", IsNull);
   NODE_SET_METHOD(target, "readObject", ReadObject);
   NODE_SET_METHOD(target, "writeObject", WriteObject);
+  NODE_SET_METHOD(target, "readPointer", ReadPointer);
+  NODE_SET_METHOD(target, "writePointer", WritePointer);
 }
 NODE_MODULE(binding, init);
