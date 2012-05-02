@@ -167,7 +167,6 @@ Handle<Value> ReadPointer(const Arguments& args) {
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   size_t size = args[2]->Uint32Value();
-  //char *val = *((char **)ptr);
   char *val = *reinterpret_cast<char **>(ptr);
   Buffer *rtn = Buffer::New(val, size, read_pointer_cb, NULL);
 
@@ -204,12 +203,10 @@ Handle<Value> WritePointer(const Arguments& args) {
 
   if (input->IsNull()) {
     *reinterpret_cast<char **>(ptr) = NULL;
-    //*((char **)ptr) = NULL;
   } else {
     size_t input_offset = args[3]->Uint32Value();
     char *input_ptr = Buffer::Data(input.As<Object>()) + input_offset;
     *reinterpret_cast<char **>(ptr) = input_ptr;
-    //*((char **)ptr) = input_ptr;
   }
 
   return Undefined();
