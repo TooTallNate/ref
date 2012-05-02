@@ -4,6 +4,36 @@ var debug = require('debug')('ref')
 exports = module.exports = require('./build/Release/binding.node')
 
 /**
+ * Returns the "type" property of the given Buffer.
+ * Creates a default type for the buffer when none exists.
+ */
+
+exports.getType = function getType (buffer) {
+  if (!buffer.type) {
+    debug('WARN: no "type" found on buffer, setting default "type"', buffer)
+    buffer.type = {}
+    buffer.type.size = buffer.length
+    buffer.type.deref = function deref () {
+      throw new Error('unknown "type"')
+    }
+  }
+  return buffer.type
+}
+
+/**
+ * Returns the level of indirection of the given buffer.
+ * Sets it to the default level of 1 when none is set.
+ */
+
+exports.getIndirection = function getIndirection (buffer) {
+  if (typeof buffer._indirection === 'undefined') {
+    debug('WARN: no "_indirection" found on buffer, setting to 1', buffer)
+    buffer._indirection = 1
+  }
+  return buffer._indirection | 0
+}
+
+/**
  * `ref()` acceps a Buffer instance and returns a new Buffer
  * instance that is "pointer" sized and has it's data pointing to the given
  * Buffer instance. Essentially the created Buffer is a "reference" to the
@@ -18,20 +48,8 @@ exports = module.exports = require('./build/Release/binding.node')
 exports.ref = function ref (buffer) {
   var reference = new Buffer(exports.sizeof.pointer)
   exports.writePointer(reference, 0, buffer)
-  if (!buffer.type) {
-    debug('WARN: no "type" found on buffer, setting default "type"', buffer)
-    buffer.type = {}
-    buffer.type.size = buffer.length
-    buffer.type.deref = function deref () {
-      throw new Error('unknown "type"')
-    }
-  }
-  if (typeof buffer._indirection === 'undefined') {
-    debug('WARN: no "_indirection" found on buffer, setting to 1', buffer)
-    buffer._indirection = 1
-  }
-  reference.type = buffer.type
-  reference._indirection = buffer._indirection + 1
+  reference.type = exports.getType(buffer)
+  reference._indirection = exports.getIndirection(buffer) + 1
   return reference
 }
 
@@ -44,24 +62,13 @@ exports.ref = function ref (buffer) {
  */
 
 exports.deref = function deref (buffer) {
-  if (!buffer.type) {
-    debug('WARN: no "type" found on buffer, setting default "type"', buffer)
-    buffer.type = {}
-    buffer.type.size = buffer.length
-    buffer.type.deref = function deref () {
-      throw new Error('unknown "type"')
-    }
-  }
-  if (typeof buffer._indirection === 'undefined') {
-    debug('WARN: no "_indirection" found on buffer, setting to 1', buffer)
-    buffer._indirection = 1
-  }
-  var indirection = buffer._indirection | 0
+  var type = exports.getType(buffer)
+  var indirection = exports.getIndirection(buffer)
   if (indirection > 1) {
     // need to create a deref'd Buffer
-    var size = indirection === 2 ? buffer.type.size : exports.sizeof.pointer
+    var size = indirection === 2 ? type.size : exports.sizeof.pointer
     var reference = exports.readPointer(buffer, 0, size)
-    reference.type = buffer.type
+    reference.type = type
     reference._indirection = indirection - 1
     return reference
   } else {
