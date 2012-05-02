@@ -65,7 +65,7 @@ Handle<Value> IsNull(const Arguments& args) {
 Handle<Value> CheckEndianness() {
   Handle<Value> rtn;
   int i = 1;
-  bool is_bigendian = (*(char *)&i) == NULL;
+  bool is_bigendian = (*(char *)&i) == 0;
   if (is_bigendian) {
     rtn = String::New("BE");
   } else {
