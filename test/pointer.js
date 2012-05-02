@@ -45,14 +45,4 @@ describe('pointer', function () {
     assert(child_gc, '"child" has not been garbage collected')
   })
 
-  it('should work 2 levels deep', function () {
-    var one = ref.ref(test)
-    var two = ref.ref(one)
-    var _one = ref.readPointer(two, 0, ref.sizeof.pointer)
-    var _test = ref.readPointer(_one, 0, test.length)
-    assert.equal(ref.address(one), ref.address(_one))
-    assert.equal(ref.address(test), ref.address(_test))
-    assert.equal(test.toString(), _test.toString())
-  })
-
 })
