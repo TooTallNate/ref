@@ -21,7 +21,7 @@ exports.ref = function ref (buffer) {
  * when writing the Object, so attaching afterwards in necessary. See below...
  */
 
-exports.attach = function attach (buf, obj) {
+exports._attach = function _attach (buf, obj) {
   if (!buf._refs) {
     buf._refs = []
   }
@@ -36,7 +36,7 @@ exports.attach = function attach (buf, obj) {
 exports._writeObject = exports.writeObject
 exports.writeObject = function writeObject (buf, offset, obj) {
   exports._writeObject(buf, offset, obj)
-  exports.attach(buf, obj)
+  exports._attach(buf, obj)
 }
 
 /**
@@ -47,7 +47,7 @@ exports.writeObject = function writeObject (buf, offset, obj) {
 exports._writePointer = exports.writePointer
 exports.writePointer = function writePointer (buf, offset, ptr) {
   exports._writePointer(buf, offset, ptr)
-  exports.attach(buf, ptr)
+  exports._attach(buf, ptr)
 }
 
 /**
