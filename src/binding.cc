@@ -149,12 +149,11 @@ Handle<Value> WriteObject(const Arguments& args) {
 
 /*
  * Callback function for when the SlowBuffer created from ReadPointer gets
- * garbage collected.
- * TODO: Figure out what to do with memory here...
+ * garbage collected. We don't have to do anything; Node frees the Buffer for us.
  */
 
 void read_pointer_cb(char *data, void *hint) {
-  fprintf(stderr, "read_pointer_cb\n");
+  //fprintf(stderr, "read_pointer_cb\n");
 }
 
 /*
