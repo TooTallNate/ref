@@ -6,11 +6,11 @@
 , "repository": { "type": "git", "url": "git://github.com/TooTallNate/ref.git" }
 , "main": "./index.js"
 , "scripts": {
-      "test": "mocha --reporter spec"
+      "test": "mocha -gc --reporter spec"
   }
 , "devDependencies": {
       "mocha": "*"
-    , "canvas": "*"
+    , "weak": "*"
   }
 , "engines": { "node": "*" }
 }
