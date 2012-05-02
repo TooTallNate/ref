@@ -108,6 +108,17 @@ Handle<Value> ReadObject(const Arguments& args) {
 }
 
 /*
+ * Callback function for when the weak persistent object from WriteObject
+ * gets garbage collected. We just have to dispose of our weak reference now.
+ */
+
+void write_object_cb (Persistent<Value> target, void* arg) {
+  //fprintf(stderr, "write_object_cb\n");
+  target.Dispose();
+  target.Clear();
+}
+
+/*
  * Writes a Persistent reference to given Object to the given Buffer
  * instance and offset.
  *
@@ -129,8 +140,9 @@ Handle<Value> WriteObject(const Arguments& args) {
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  Local<Value> obj = args[2];
-  *reinterpret_cast<Persistent<Value>*>(ptr) = Persistent<Value>::New(obj);
+  Persistent<Value> obj = Persistent<Value>::New(args[2]);
+  obj.MakeWeak(NULL, write_object_cb);
+  *reinterpret_cast<Persistent<Value>*>(ptr) = obj;
 
   return Undefined();
 }
