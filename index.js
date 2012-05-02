@@ -1,17 +1,72 @@
 
+var debug = require('debug')('ref')
+
 exports = module.exports = require('./build/Release/binding.node')
 
 /**
- * The `ref()` function acceps a Buffer instance and returns a new Buffer
+ * `ref()` acceps a Buffer instance and returns a new Buffer
  * instance that is "pointer" sized and has it's data pointing to the given
  * Buffer instance. Essentially the created Buffer is a "reference" to the
- * original pointer.
+ * original pointer, equivalent to the following C code:
+ *
+ * ``` c
+ * char *buf = buffer;
+ * char **ref = &buf;
+ * ```
  */
 
 exports.ref = function ref (buffer) {
   var reference = new Buffer(exports.sizeof.pointer)
   exports.writePointer(reference, 0, buffer)
+  if (!buffer.type) {
+    debug('WARN: no "type" found on buffer, setting default "type"', buffer)
+    buffer.type = {}
+    buffer.type.size = buffer.length
+    buffer.type.deref = function deref () {
+      throw new Error('unknown "type"')
+    }
+  }
+  if (typeof buffer._indirection === 'undefined') {
+    debug('WARN: no "_indirection" found on buffer, setting to 1', buffer)
+    buffer._indirection = 1
+  }
+  reference.type = buffer.type
+  reference._indirection = buffer._indirection + 1
   return reference
+}
+
+/**
+ * `deref()` acceps a Buffer instance and attempts to "dereference" it.
+ * That is, first it checks the "_indirection" count, and if it's greater than
+ * 0 then it merely returns another Buffer, but with one level less indirection.
+ * When the buffer is at indirection 0, or undefined, then it checks for "type"
+ * which should be an Object with it's own "deref()" function.
+ */
+
+exports.deref = function deref (buffer) {
+  if (!buffer.type) {
+    debug('WARN: no "type" found on buffer, setting default "type"', buffer)
+    buffer.type = {}
+    buffer.type.size = buffer.length
+    buffer.type.deref = function deref () {
+      throw new Error('unknown "type"')
+    }
+  }
+  if (typeof buffer._indirection === 'undefined') {
+    debug('WARN: no "_indirection" found on buffer, setting to 1', buffer)
+    buffer._indirection = 1
+  }
+  var indirection = buffer._indirection | 0
+  if (indirection > 1) {
+    var size = indirection === 2 ? buffer.type.size : exports.sizeof.pointer
+    var reference = exports.readPointer(buffer, 0, size)
+    reference.type = buffer.type
+    reference._indirection = indirection - 1
+    return reference
+  } else {
+    // need to check "type"
+    throw new Error('implement me!')
+  }
 }
 
 /**
