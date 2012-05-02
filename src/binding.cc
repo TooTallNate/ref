@@ -26,7 +26,7 @@ Handle<Value> Address(const Arguments& args) {
           String::New("address: Buffer instance expected")));
   }
 
-  size_t offset = args[1]->Uint32Value();
+  int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   Local<Number> ret = Number::New((size_t)ptr);
 
@@ -49,7 +49,7 @@ Handle<Value> IsNull(const Arguments& args) {
           String::New("isNull: Buffer instance expected")));
   }
 
-  size_t offset = args[1]->Uint32Value();
+  int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   Handle<Value> ret = Boolean::New(ptr == NULL);
 
@@ -98,7 +98,7 @@ Handle<Value> ReadObject(const Arguments& args) {
           String::New("readObject: Buffer instance expected")));
   }
 
-  size_t offset = args[1]->Uint32Value();
+  int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   Persistent<Value> rtn = *reinterpret_cast<Persistent<Value>*>(ptr);
 
@@ -124,7 +124,7 @@ Handle<Value> WriteObject(const Arguments& args) {
           String::New("writeObject: Buffer instance expected")));
   }
 
-  size_t offset = args[1]->Uint32Value();
+  int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   Local<Value> obj = args[2];
@@ -161,7 +161,7 @@ Handle<Value> ReadPointer(const Arguments& args) {
           String::New("readPointer: Buffer instance expected as first argument")));
   }
 
-  size_t offset = args[1]->Uint32Value();
+  int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   size_t size = args[2]->Uint32Value();
@@ -197,7 +197,7 @@ Handle<Value> WritePointer(const Arguments& args) {
           String::New("writePointer: Buffer instance expected as third argument")));
   }
 
-  size_t offset = args[1]->Uint32Value();
+  int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (input->IsNull()) {
