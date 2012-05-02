@@ -42,7 +42,6 @@ describe('Object', function () {
     gc()
     assert(buf_gc, '"buf" has not been garbage collected')
     assert(o_gc, '"o" has not been garbage collected')
-
   })
 
 })
