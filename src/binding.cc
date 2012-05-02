@@ -181,7 +181,6 @@ Handle<Value> ReadPointer(const Arguments& args) {
  * args[0] - Buffer - the "buf" Buffer instance to write to
  * args[1] - Number - the offset from the "buf" buffer's address to write to
  * args[2] - Buffer - the "input" Buffer whose memory address will be written
- * args[3] - Number - the offset from the "input" buffer's address to write
  */
 
 Handle<Value> WritePointer(const Arguments& args) {
@@ -204,8 +203,7 @@ Handle<Value> WritePointer(const Arguments& args) {
   if (input->IsNull()) {
     *reinterpret_cast<char **>(ptr) = NULL;
   } else {
-    size_t input_offset = args[3]->Uint32Value();
-    char *input_ptr = Buffer::Data(input.As<Object>()) + input_offset;
+    char *input_ptr = Buffer::Data(input.As<Object>());
     *reinterpret_cast<char **>(ptr) = input_ptr;
   }
 
