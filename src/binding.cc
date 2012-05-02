@@ -8,7 +8,9 @@ using namespace node;
 namespace {
 
 
+// hold the persistent reference to the NULL pointer Buffer
 static Persistent<Object> null_pointer_buffer;
+
 
 /*
  * Returns the pointer address as a Number of the given Buffer instance
@@ -74,7 +76,7 @@ void unref_null_cb(char *data, void *hint) {
 
 Persistent<Object> WrapNullPointer () {
   size_t buf_size = 0;
-  char *ptr = (char *)NULL;
+  char *ptr = reinterpret_cast<char *>(NULL);
   void *user_data = NULL;
   Buffer *buf = Buffer::New(ptr, buf_size, unref_null_cb, user_data);
   null_pointer_buffer = Persistent<Object>::New(buf->handle_);
@@ -243,7 +245,6 @@ void init (Handle<Object> target) {
   smap->Set(String::NewSymbol("float"),     Integer::New(sizeof(float)));
   smap->Set(String::NewSymbol("double"),    Integer::New(sizeof(double)));
   smap->Set(String::NewSymbol("pointer"),   Integer::New(sizeof(unsigned char *)));
-  //smap->Set(String::NewSymbol("string"),    Integer::New(sizeof(char *)));
   smap->Set(String::NewSymbol("size_t"),    Integer::New(sizeof(size_t)));
   // size of a Persistent handle to a JS object
   smap->Set(String::NewSymbol("Object"),    Integer::New(sizeof(Persistent<Object>)));
