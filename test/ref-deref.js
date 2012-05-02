@@ -28,12 +28,28 @@ describe('ref(), deref()', function () {
   })
 
   it('should throw when derefing a Buffer with no "type"', function () {
-    var test = new Buffer('two layers deep')
+    var test = new Buffer('???')
+    assert.throws(function () {
+      ref.deref(test)
+    }, 'unknown "type"')
+  })
+
+  it('should throw when derefing a Buffer with no "type" 2', function () {
+    var test = new Buffer('???')
     var r = ref.ref(test)
     var _test = ref.deref(r)
     assert.throws(function () {
       ref.deref(_test)
     }, 'unknown "type"')
+  })
+
+  it('should deref() a "char" type properly', function () {
+    var test = new Buffer(ref.sizeof.char)
+    test.type = ref.types.char
+    test[0] = 50
+    assert.equal(50, ref.deref(test))
+    test[0] = 255
+    assert.equal(255, ref.deref(test))
   })
 
 })
