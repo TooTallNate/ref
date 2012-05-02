@@ -1,3 +1,5 @@
+#include <errno.h>
+
 #include <v8.h>
 #include <node.h>
 #include <node_buffer.h>
@@ -10,6 +12,12 @@ namespace {
 
 // hold the persistent reference to the NULL pointer Buffer
 static Persistent<Object> null_pointer_buffer;
+
+// used by the Int64 functions to determine whether to return a Number
+// or String based on whether or not a Number will loose precision.
+// http://stackoverflow.com/q/307179/376773
+#define JS_MAX_INT +9007199254740992
+#define JS_MIN_INT -9007199254740992
 
 
 /*
@@ -237,6 +245,82 @@ Handle<Value> WritePointer(const Arguments& args) {
   return Undefined();
 }
 
+/*
+ * Reads a machine-endian int64_t from the given Buffer at the given offset.
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to read from
+ * args[1] - Number - the offset from the "buf" buffer's address to read from
+ */
+
+Handle<Value> ReadInt64(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("readInt64: Buffer instance expected")));
+  }
+
+  int64_t offset = args[1]->IntegerValue();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+
+  int64_t val = *reinterpret_cast<int64_t *>(ptr);
+
+  Handle<Value> rtn;
+  if (val < JS_MIN_INT || val > JS_MAX_INT) {
+    // return a String
+    char strbuf[128];
+    snprintf(strbuf, 128, "%lld", val);
+    rtn = String::New(strbuf);
+  } else {
+    // return a Number
+    rtn = Number::New(val);
+  }
+
+  return rtn;
+}
+
+/*
+ * Writes the input Number/String int64 value as a machine-endian int64_t to
+ * the given Buffer at the given offset.
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to write to
+ * args[1] - Number - the offset from the "buf" buffer's address to write to
+ * args[2] - String/Number - the "input" String or Number which will be written
+ */
+
+Handle<Value> WriteInt64(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("writeInt64: Buffer instance expected")));
+  }
+
+  int64_t offset = args[1]->IntegerValue();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+
+  Local<Value> in = args[2];
+  int64_t val;
+  if (in->IsNumber()) {
+    val = in->IntegerValue();
+  } else if (in->IsString()) {
+    // Have to do this because strtoll doesn't set errno to 0 on success :(
+    errno = 0;
+    String::Utf8Value str(in);
+    val = strtoll(*str, NULL, 10);
+    // TODO: better error handling; check errno
+  } else {
+    return ThrowException(Exception::TypeError(
+          String::New("writeInt64: Number/String 64-bit value required")));
+  }
+
+  *reinterpret_cast<int64_t *>(ptr) = val;
+
+  return Undefined();
+}
+
 
 } // anonymous namespace
 
@@ -282,5 +366,7 @@ void init (Handle<Object> target) {
   NODE_SET_METHOD(target, "writeObject", WriteObject);
   NODE_SET_METHOD(target, "readPointer", ReadPointer);
   NODE_SET_METHOD(target, "writePointer", WritePointer);
+  NODE_SET_METHOD(target, "readInt64", ReadInt64);
+  NODE_SET_METHOD(target, "writeInt64", WriteInt64);
 }
 NODE_MODULE(binding, init);
