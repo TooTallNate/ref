@@ -11,6 +11,8 @@ describe('Object', function () {
     , now: new Date()
   }
 
+  beforeEach(gc)
+
   it('should write and read back an Object in a Buffer', function () {
     var buf = new Buffer(ref.sizeof.Object)
     ref.writeObject(buf, 0, obj)

@@ -7,6 +7,8 @@ describe('pointer', function () {
 
   var test = new Buffer('hello world')
 
+  beforeEach(gc)
+
   it('should write and read back a pointer (Buffer) in a Buffer', function () {
     var buf = new Buffer(ref.sizeof.pointer)
     ref.writePointer(buf, 0, test)
