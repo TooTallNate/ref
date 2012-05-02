@@ -31,7 +31,7 @@ describe('Object', function () {
     assert(!o_gc, '"o" has been garbage collected too soon')
     assert(!buf_gc, '"buf" has been garbage collected too soon')
 
-    // GC `o`
+    // try to GC `o`
     o = null
     gc()
     assert(!o_gc, '"o" has been garbage collected too soon')

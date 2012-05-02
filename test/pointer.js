@@ -18,4 +18,29 @@ describe('pointer', function () {
     assert.strictEqual(ref.address(out), ref.address(test))
   })
 
+  it('should retain references to a written pointer in a Buffer', function () {
+    var child_gc = false
+    var parent_gc = false
+    var child = new Buffer('a pointer holding some data...')
+    var parent = new Buffer(ref.sizeof.pointer)
+
+    weak(child, function () { child_gc = true })
+    weak(parent, function () { parent_gc = true })
+    ref.writePointer(parent, 0, child)
+    assert(!child_gc, '"child" has been garbage collected too soon')
+    assert(!parent_gc, '"parent" has been garbage collected too soon')
+
+    // try to GC `child`
+    child = null
+    gc()
+    assert(!child_gc, '"child" has been garbage collected too soon')
+    assert(!parent_gc, '"parent" has been garbage collected too soon')
+
+    // now GC `parent`
+    parent = null
+    gc()
+    assert(parent_gc, '"parent" has not been garbage collected')
+    assert(child_gc, '"child" has not been garbage collected')
+  })
+
 })
