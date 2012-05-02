@@ -58,6 +58,7 @@ exports.deref = function deref (buffer) {
   }
   var indirection = buffer._indirection | 0
   if (indirection > 1) {
+    // need to create a deref'd Buffer
     var size = indirection === 2 ? buffer.type.size : exports.sizeof.pointer
     var reference = exports.readPointer(buffer, 0, size)
     reference.type = buffer.type
@@ -65,7 +66,7 @@ exports.deref = function deref (buffer) {
     return reference
   } else {
     // need to check "type"
-    throw new Error('implement me!')
+    return buffer.type.deref(buffer)
   }
 }
 
