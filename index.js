@@ -15,6 +15,42 @@ exports.ref = function ref (buffer) {
 }
 
 /**
+ * "attach()" is meant for retaining references to Objects/Buffers in JS-land
+ * from calls to "writeObject()" and "writePointer()". C-land doesn't retain the
+ * source Buffer in "writePointer()", and "writeObject()", uses a weak reference
+ * when writing the Object, so attaching afterwards in necessary. See below...
+ */
+
+exports.attach = function attach (buf, obj) {
+  if (!buf._refs) {
+    buf._refs = []
+  }
+  buf._refs.push(obj)
+}
+
+/**
+ * Overwrite the native "writeObject" function so that it keeps a ref to the
+ * passed in Object in JS-land by adding it to the Bufer's _refs array.
+ */
+
+exports._writeObject = exports.writeObject
+exports.writeObject = function writeObject (buf, offset, obj) {
+  exports._writeObject(buf, offset, obj)
+  exports.attach(buf, obj)
+}
+
+/**
+ * Overwrite the native "writePointer" function so that it keeps a ref to the
+ * passed in Buffer in JS-land by adding it to the Bufer's _refs array.
+ */
+
+exports._writePointer = exports.writePointer
+exports.writePointer = function writePointer (buf, offset, ptr) {
+  exports._writePointer(buf, offset, ptr)
+  exports.attach(buf, ptr)
+}
+
+/**
  * NULL_POINTER is essentially:
  *
  * ``` c
