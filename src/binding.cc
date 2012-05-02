@@ -58,6 +58,22 @@ Handle<Value> IsNull(const Arguments& args) {
   return scope.Close(ret);
 }
 
+/**
+ * Returns the machine endianness as a V8 String
+ */
+
+Handle<Value> CheckEndianness() {
+  Handle<Value> rtn;
+  int i = 1;
+  bool is_bigendian = (*(char *)&i) == NULL;
+  if (is_bigendian) {
+    rtn = String::New("BE");
+  } else {
+    rtn = String::New("LE");
+  }
+  return rtn;
+}
+
 /*
  * A callback that should never be invoked since the NULL pointer
  * wrapper Buffer should never be collected
@@ -74,7 +90,7 @@ void unref_null_cb(char *data, void *hint) {
  * pointer in JS-land by doing something like: `ref.NULL[0]`.
  */
 
-Persistent<Object> WrapNullPointer () {
+Persistent<Object> WrapNullPointer() {
   size_t buf_size = 0;
   char *ptr = reinterpret_cast<char *>(NULL);
   void *user_data = NULL;
@@ -258,6 +274,7 @@ void init (Handle<Object> target) {
 
   // exports
   target->Set(String::NewSymbol("sizeof"), smap);
+  target->Set(String::NewSymbol("endianness"), CheckEndianness());
   target->Set(String::NewSymbol("NULL"), WrapNullPointer());
   NODE_SET_METHOD(target, "address", Address);
   NODE_SET_METHOD(target, "isNull", IsNull);
