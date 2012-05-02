@@ -40,7 +40,7 @@ exports.ref = function ref (buffer) {
  * That is, first it checks the "_indirection" count, and if it's greater than
  * 0 then it merely returns another Buffer, but with one level less indirection.
  * When the buffer is at indirection 0, or undefined, then it checks for "type"
- * which should be an Object with it's own "deref()" function.
+ * which should be an Object with it's own "get()" function.
  */
 
 exports.deref = function deref (buffer) {
@@ -66,7 +66,7 @@ exports.deref = function deref (buffer) {
     return reference
   } else {
     // need to check "type"
-    return buffer.type.deref(buffer)
+    return buffer.type.get(buffer)
   }
 }
 
@@ -116,3 +116,11 @@ exports.writePointer = function writePointer (buf, offset, ptr) {
  */
 
 exports.NULL_POINTER = exports.ref(exports.NULL)
+
+exports.types = {}
+exports.types.char = {
+    size: 1
+  , get: function get (buf, offset) {
+        return buf.readUInt8(offset || 0)
+    }
+}
