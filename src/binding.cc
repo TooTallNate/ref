@@ -26,8 +26,9 @@ Handle<Value> Address(const Arguments& args) {
           String::New("address: Buffer instance expected")));
   }
 
-  size_t address = (size_t)Buffer::Data(buf.As<Object>());
-  Local<Number> ret = Number::New(address);
+  size_t offset = args[1]->Uint32Value();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+  Local<Number> ret = Number::New((size_t)ptr);
 
   return scope.Close(ret);
 }
@@ -48,8 +49,9 @@ Handle<Value> IsNull(const Arguments& args) {
           String::New("isNull: Buffer instance expected")));
   }
 
-  bool isNull = Buffer::Data(buf.As<Object>()) == NULL;
-  Handle<Value> ret = Boolean::New(isNull);
+  size_t offset = args[1]->Uint32Value();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+  Handle<Value> ret = Boolean::New(ptr == NULL);
 
   return scope.Close(ret);
 }
@@ -147,6 +149,7 @@ void read_pointer_cb(char *data, void *hint) {
  *
  * args[0] - Buffer - the "buf" Buffer instance to read from
  * args[1] - Number - the offset from the "buf" buffer's address to read from
+ * args[2] - Number - the length in bytes of the returned SlowBuffer instance
  */
 
 Handle<Value> ReadPointer(const Arguments& args) {
@@ -161,9 +164,10 @@ Handle<Value> ReadPointer(const Arguments& args) {
   size_t offset = args[1]->Uint32Value();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
+  size_t size = args[2]->Uint32Value();
   //char *val = *((char **)ptr);
   char *val = *reinterpret_cast<char **>(ptr);
-  Buffer *rtn = Buffer::New(val, 0, read_pointer_cb, NULL);
+  Buffer *rtn = Buffer::New(val, size, read_pointer_cb, NULL);
 
   return scope.Close(rtn->handle_);
 }
@@ -188,7 +192,7 @@ Handle<Value> WritePointer(const Arguments& args) {
     return ThrowException(Exception::TypeError(
           String::New("writePointer: Buffer instance expected as first argument")));
   }
-  if (!input->IsNull() || !Buffer::HasInstance(input)) {
+  if (!Buffer::HasInstance(input)) {
     return ThrowException(Exception::TypeError(
           String::New("writePointer: Buffer instance expected as third argument")));
   }
