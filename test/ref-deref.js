@@ -38,6 +38,7 @@ describe('ref(), deref()', function () {
     var test = new Buffer('???')
     var r = ref.ref(test)
     var _test = ref.deref(r)
+    assert.equal(ref.address(test), ref.address(_test))
     assert.throws(function () {
       ref.deref(_test)
     }, 'unknown "type"')
