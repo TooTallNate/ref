@@ -36,4 +36,9 @@ describe('address', function () {
     assert.equal(address - 4, ref.address(buf, -4))
     assert.equal(address - 5, ref.address(buf, -5))
   })
+
+  it('should have an offset of zero when none is given', function () {
+    assert.equal(ref.address(buf), ref.address(buf, 0))
+  })
+
 })
