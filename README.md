@@ -54,7 +54,7 @@ console.log(buf.deref())  // <- 12345
 // this buffer could be thought of as an "int **"
 var one = buf.ref()
 
-// and you can dereference all the way down
+// and you can dereference all the way back down to an int
 console.log(one.deref().deref())  // <- 12345
 ```
 
