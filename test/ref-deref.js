@@ -49,8 +49,8 @@ describe('ref(), deref()', function () {
     test.type = ref.types.char
     test[0] = 50
     assert.equal(50, ref.deref(test))
-    test[0] = 255
-    assert.equal(255, ref.deref(test))
+    test[0] = 127
+    assert.equal(127, ref.deref(test))
   })
 
 })
