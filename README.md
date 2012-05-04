@@ -5,11 +5,19 @@ ref
 
 This module is inspired by the old `Pointer` class from node-ffi, but with the
 intent of using Node's fast `Buffer` instances instead of a slow C++ `Pointer`
-class. These two concepts were previously very similar, but now they're identical.
+class. These two concepts were previously very similar, but now this module
+brings over the functionality that Pointers had and Buffers are missing, so
+now Buffers are a lot more powerful.
 
 #### Features:
 
- * asf
+ * Get the memory address of any `Buffer` instance
+ * Read/write JavaScript Objects to `Buffer` instances
+ * Read/write `Buffer` instances' memory addresses to other `Buffer` instances
+ * Read/write `int64_t` and `uint64_t` data values (Numbers or Strings)
+ * A "classification" convention, so that you can specify a buffer as a `int *`,
+   and reference/dereference at will.
+ * Offers a buffer instance representing the `NULL` pointer
 
 Installation
 ------------
@@ -27,7 +35,27 @@ Example
 ``` js
 var ref = require('ref')
 
-var 
+// so we can all agree that a buffer with the int value written
+// to it could be represented as an "int *"
+var buf = new Buffer(4)
+buf.writeInt32LE(12345)
+
+// first, what is the memory address of the buffer?
+console.log(buf.address())
+
+// using `ref`, you can do that, and gain magic abilities!
+buf.type = ref.types.int32
+
+// now we can dereference to use the value, and get the "meaningful" value
+console.log(buf.deref())  // <- 12345
+
+
+// you can also get references to the original buffer if you need it.
+// this buffer could be thought of as an "int **"
+var one = buf.ref()
+
+// and you can dereference all the way down
+console.log(one.deref().deref())  // <- 12345
 ```
 
 
