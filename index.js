@@ -46,6 +46,7 @@ exports.getIndirection = function getIndirection (buffer) {
  */
 
 exports.ref = function ref (buffer) {
+  debug('creating a reference to buffer', buffer)
   var reference = new Buffer(exports.sizeof.pointer)
   exports.writePointer(reference, 0, buffer)
   reference.type = exports.getType(buffer)
@@ -64,6 +65,7 @@ exports.ref = function ref (buffer) {
 exports.deref = function deref (buffer) {
   var type = exports.getType(buffer)
   var indirection = exports.getIndirection(buffer)
+  debug('dereferencing buffer', buffer, type, indirection)
   if (indirection > 1) {
     // need to create a deref'd Buffer
     var size = indirection === 2 ? type.size : exports.sizeof.pointer
@@ -98,6 +100,7 @@ exports._attach = function _attach (buf, obj) {
 
 exports._writeObject = exports.writeObject
 exports.writeObject = function writeObject (buf, offset, obj) {
+  debug('writing Object to buffer', buf, offset, obj)
   exports._writeObject(buf, offset, obj)
   exports._attach(buf, obj)
 }
@@ -109,6 +112,7 @@ exports.writeObject = function writeObject (buf, offset, obj) {
 
 exports._writePointer = exports.writePointer
 exports.writePointer = function writePointer (buf, offset, ptr) {
+  debug('writing pointer to buffer', buf, offset, ptr)
   exports._writePointer(buf, offset, ptr)
   exports._attach(buf, ptr)
 }
