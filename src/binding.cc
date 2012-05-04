@@ -74,7 +74,7 @@ Handle<Value> IsNull(const Arguments& args) {
 }
 
 /**
- * Returns the machine endianness as a V8 String
+ * Returns the machine endianness as a V8 String; either "BE" or "LE".
  */
 
 Handle<Value> CheckEndianness() {
@@ -336,7 +336,7 @@ void init (Handle<Object> target) {
 
   // "sizeof" map
   Local<Object> smap = Object::New();
-  smap->Set(String::NewSymbol("byte"),      Integer::New(sizeof(unsigned char)));
+  // fixed sizes
   smap->Set(String::NewSymbol("int8"),      Integer::New(sizeof(int8_t)));
   smap->Set(String::NewSymbol("uint8"),     Integer::New(sizeof(uint8_t)));
   smap->Set(String::NewSymbol("int16"),     Integer::New(sizeof(int16_t)));
@@ -345,6 +345,8 @@ void init (Handle<Object> target) {
   smap->Set(String::NewSymbol("uint32"),    Integer::New(sizeof(uint32_t)));
   smap->Set(String::NewSymbol("int64"),     Integer::New(sizeof(int64_t)));
   smap->Set(String::NewSymbol("uint64"),    Integer::New(sizeof(uint64_t)));
+  // (potentially) variable sizes
+  smap->Set(String::NewSymbol("byte"),      Integer::New(sizeof(unsigned char)));
   smap->Set(String::NewSymbol("char"),      Integer::New(sizeof(char)));
   smap->Set(String::NewSymbol("uchar"),     Integer::New(sizeof(unsigned char)));
   smap->Set(String::NewSymbol("short"),     Integer::New(sizeof(short)));
