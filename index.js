@@ -82,7 +82,7 @@ exports.deref = function deref (buffer) {
 /**
  * "attach()" is meant for retaining references to Objects/Buffers in JS-land
  * from calls to "writeObject()" and "writePointer()". C-land doesn't retain the
- * source Buffer in "writePointer()", and "writeObject()", uses a weak reference
+ * source Buffer in "writePointer()", and "writeObject()" uses a weak reference
  * when writing the Object, so attaching afterwards in necessary. See below...
  */
 
