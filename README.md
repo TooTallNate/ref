@@ -15,7 +15,7 @@ now Buffers are a lot more powerful.
  * Read/write JavaScript Objects to `Buffer` instances
  * Read/write `Buffer` instances' memory addresses to other `Buffer` instances
  * Read/write `int64_t` and `uint64_t` data values (Numbers or Strings)
- * A "classification" convention, so that you can specify a buffer as a `int *`,
+ * A "type" convention, so that you can specify a buffer as an `int *`,
    and reference/dereference at will.
  * Offers a buffer instance representing the `NULL` pointer
 
