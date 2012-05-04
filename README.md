@@ -41,13 +41,13 @@ var buf = new Buffer(4)
 buf.writeInt32LE(12345, 0)
 
 // first, what is the memory address of the buffer?
-console.log(buf.address())
+console.log(buf.address())  // ← 140362165284824
 
 // using `ref`, you can do that, and gain magic abilities!
 buf.type = ref.types.int32
 
 // now we can dereference to use the value, and get the "meaningful" value
-console.log(buf.deref())  // <- 12345
+console.log(buf.deref())  // ← 12345
 
 
 // you can also get references to the original buffer if you need it.
@@ -55,7 +55,7 @@ console.log(buf.deref())  // <- 12345
 var one = buf.ref()
 
 // and you can dereference all the way back down to an int
-console.log(one.deref().deref())  // <- 12345
+console.log(one.deref().deref())  // ← 12345
 ```
 
 
