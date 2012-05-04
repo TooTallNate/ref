@@ -38,7 +38,7 @@ var ref = require('ref')
 // so we can all agree that a buffer with the int value written
 // to it could be represented as an "int *"
 var buf = new Buffer(4)
-buf.writeInt32LE(12345)
+buf.writeInt32LE(12345, 0)
 
 // first, what is the memory address of the buffer?
 console.log(buf.address())
