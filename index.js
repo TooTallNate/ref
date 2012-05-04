@@ -3,6 +3,15 @@ var debug = require('debug')('ref')
 
 exports = module.exports = require('./build/Release/binding.node')
 
+exports.cloneType = function cloneType (type) {
+  return {
+      size: type.size
+    , indirection: type.indirection
+    , get: type.get
+    , set: type.set
+  }
+}
+
 /**
  * Returns the "type" property of the given Buffer.
  * Creates a default type for the buffer when none exists.
@@ -13,24 +22,12 @@ exports.getType = function getType (buffer) {
     debug('WARN: no "type" found on buffer, setting default "type"', buffer)
     buffer.type = {}
     buffer.type.size = buffer.length
-    buffer.type.deref = function deref () {
+    buffer.type.indirection = 1
+    buffer.type.get = function get () {
       throw new Error('unknown "type"')
     }
   }
   return buffer.type
-}
-
-/**
- * Returns the level of indirection of the given buffer.
- * Sets it to the default level of 1 when none is set.
- */
-
-exports.getIndirection = function getIndirection (buffer) {
-  if (typeof buffer._indirection === 'undefined') {
-    debug('WARN: no "_indirection" found on buffer, setting to 1', buffer)
-    buffer._indirection = 1
-  }
-  return buffer._indirection | 0
 }
 
 /**
@@ -49,8 +46,9 @@ exports.ref = function ref (buffer) {
   debug('creating a reference to buffer', buffer)
   var reference = new Buffer(exports.sizeof.pointer)
   exports.writePointer(reference, 0, buffer)
-  reference.type = exports.getType(buffer)
-  reference._indirection = exports.getIndirection(buffer) + 1
+  var type = exports.getType(buffer)
+  reference.type = exports.cloneType(type)
+  reference.type.indirection++
   return reference
 }
 
@@ -64,18 +62,18 @@ exports.ref = function ref (buffer) {
 
 exports.deref = function deref (buffer) {
   var type = exports.getType(buffer)
-  var indirection = exports.getIndirection(buffer)
+  var indirection = type.indirection
   debug('dereferencing buffer', buffer, type, indirection)
   if (indirection > 1) {
     // need to create a deref'd Buffer
     var size = indirection === 2 ? type.size : exports.sizeof.pointer
     var reference = exports.readPointer(buffer, 0, size)
-    reference.type = type
-    reference._indirection = indirection - 1
+    reference.type = exports.cloneType(type)
+    reference.type.indirection--
     return reference
   } else {
     // need to check "type"
-    return buffer.type.get(buffer)
+    return type.get(buffer)
   }
 }
 
