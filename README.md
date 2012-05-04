@@ -29,8 +29,10 @@ $ npm install ref
 ```
 
 
-Example
--------
+Examples
+--------
+
+#### references and derefencing
 
 ``` js
 var ref = require('ref')
@@ -43,10 +45,10 @@ buf.writeInt32LE(12345, 0)
 // first, what is the memory address of the buffer?
 console.log(buf.address())  // ← 140362165284824
 
-// using `ref`, you can do that, and gain magic abilities!
+// using `ref`, you can set the "type", and gain magic abilities!
 buf.type = ref.types.int32
 
-// now we can dereference to use the value, and get the "meaningful" value
+// now we can dereference to get the "meaningful" value
 console.log(buf.deref())  // ← 12345
 
 
@@ -56,6 +58,57 @@ var one = buf.ref()
 
 // and you can dereference all the way back down to an int
 console.log(one.deref().deref())  // ← 12345
+```
+
+
+The "type" interface
+--------------------
+
+You can easily define your own "type" objects at attach to `Buffer` instances.
+It just needs to be a regular JavaScript Object that contains the following
+properties:
+
+  * `size` - Number - The size in bytes required to hold this type
+  * `indirection` - Number - The current level of indirection of the buffer.
+    Usually this would be _1_, and gets incremented on Buffers from `ref()` calls.
+    A value of less than or equal to _0_ is invalid.
+  * `get` - Function (buffer, offset) - the function to invoke when dereferencing
+    this type when the indirection level is _1_.
+  * `set` - Function (buffer, offset, value) - the function to invoke when
+    setting a value to a buffer instance.
+
+For example, you could define a "bigint" type that dereferences into a
+[`bigint`](https://github.com/substack/node-bigint) instance:
+
+``` js
+var ref = require('ref')
+var bigint = require('bigint')
+
+// define the "type" instance according to the spec
+var BigintType = {
+    size: ref.sizeof.int64
+  , indirection: 1
+  , get: function (buffer, offset) {
+      // return a bigint instance from the buffer
+      return bigint.fromBuffer(buffer)
+    }
+  , set: function (buffer, offset, value) {
+      // 'value' would be a bigint instance
+      var val = value.toString()
+      return ref.writeInt64(buffer, offset || 0, val)
+    }
+}
+
+// now we can create instances of the type from existing buffers.
+// "buf" is some Buffer instance returned from some external data
+// source, which should contain "bigint" binary data.
+buf.type = BigintType
+
+// and now you can create "bigint" instances using this generic "types" API
+var val = buf.deref()
+            .add('1234')
+            .sqrt()
+            .shiftLeft(5)
 ```
 
 
