@@ -4,6 +4,13 @@
 #include <node.h>
 #include <node_buffer.h>
 
+#ifdef _WIN32
+  #define snprintf _snprintf_s
+  #define strtoll _strtoi64
+  #define strtoull _strtoui64
+#endif
+
+
 using namespace v8;
 using namespace node;
 
