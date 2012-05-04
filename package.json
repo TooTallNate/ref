@@ -1,5 +1,5 @@
 { "name": "ref"
-, "description": "Native Buffer extensions"
+, "description": "Turn Buffer instances into \"pointers\""
 , "keywords": [ "native", "buffer", "extensions", "c++" ]
 , "version": "0.0.0"
 , "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)"
