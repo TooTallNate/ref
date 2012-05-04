@@ -345,6 +345,8 @@ void init (Handle<Object> target) {
   smap->Set(String::NewSymbol("uint32"),    Integer::New(sizeof(uint32_t)));
   smap->Set(String::NewSymbol("int64"),     Integer::New(sizeof(int64_t)));
   smap->Set(String::NewSymbol("uint64"),    Integer::New(sizeof(uint64_t)));
+  smap->Set(String::NewSymbol("float"),     Integer::New(sizeof(float)));
+  smap->Set(String::NewSymbol("double"),    Integer::New(sizeof(double)));
   // (potentially) variable sizes
   smap->Set(String::NewSymbol("byte"),      Integer::New(sizeof(unsigned char)));
   smap->Set(String::NewSymbol("char"),      Integer::New(sizeof(char)));
@@ -357,8 +359,6 @@ void init (Handle<Object> target) {
   smap->Set(String::NewSymbol("ulong"),     Integer::New(sizeof(unsigned long)));
   smap->Set(String::NewSymbol("longlong"),  Integer::New(sizeof(long long)));
   smap->Set(String::NewSymbol("ulonglong"), Integer::New(sizeof(unsigned long long)));
-  smap->Set(String::NewSymbol("float"),     Integer::New(sizeof(float)));
-  smap->Set(String::NewSymbol("double"),    Integer::New(sizeof(double)));
   smap->Set(String::NewSymbol("pointer"),   Integer::New(sizeof(char *)));
   smap->Set(String::NewSymbol("size_t"),    Integer::New(sizeof(size_t)));
   // size of a Persistent handle to a JS object
