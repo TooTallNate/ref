@@ -12,7 +12,7 @@ now Buffers are a lot more powerful.
 #### Features:
 
  * Get the memory address of any `Buffer` instance
- * Read/write JavaScript Objects to `Buffer` instances
+ * Read/write references to JavaScript Objects into `Buffer` instances
  * Read/write `Buffer` instances' memory addresses to other `Buffer` instances
  * Read/write `int64_t` and `uint64_t` data values (Numbers or Strings)
  * A "type" convention, so that you can specify a buffer as an `int *`,
