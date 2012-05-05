@@ -66,10 +66,4 @@ describe('int64', function () {
     assert.equal(0, rtn)
   })
 
-  it('should read the same value from a "ref()"d buffer as the original address', function () {
-    var buf = new Buffer('test')
-    var test = ref.ref(buf)
-    assert.equal(ref.readUInt64(test), ref.address(buf))
-  })
-
 })
