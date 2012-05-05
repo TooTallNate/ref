@@ -1,3 +1,5 @@
+#include <inttypes.h>
+#include <stdlib.h>
 #include <errno.h>
 
 #include <v8.h>
