@@ -234,7 +234,7 @@ Handle<Value> WritePointer(const Arguments& args) {
     return ThrowException(Exception::TypeError(
           String::New("writePointer: Buffer instance expected as first argument")));
   }
-  if (!Buffer::HasInstance(input)) {
+  if (!(input->IsNull() || Buffer::HasInstance(input))) {
     return ThrowException(Exception::TypeError(
           String::New("writePointer: Buffer instance expected as third argument")));
   }
