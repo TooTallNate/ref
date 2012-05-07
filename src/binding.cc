@@ -406,6 +406,30 @@ Handle<Value> WriteUInt64(const Arguments& args) {
   return Undefined();
 }
 
+/*
+ * Reads a Utf8 C String from the given pointer at the given offset (or 0).
+ * I didn't want to add this function but it ends up being necessary for reading
+ * past a 0 or 1 length Buffer's boundary in node-ffi :\
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to read from
+ * args[1] - Number - the offset from the "buf" buffer's address to read from
+ */
+
+Handle<Value> ReadCString(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("readCString: Buffer instance expected")));
+  }
+
+  int64_t offset = args[1]->IntegerValue();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+
+  return scope.Close(String::New(ptr));
+}
+
 
 } // anonymous namespace
 
@@ -457,5 +481,6 @@ void init (Handle<Object> target) {
   NODE_SET_METHOD(target, "writeInt64", WriteInt64);
   NODE_SET_METHOD(target, "readUInt64", ReadUInt64);
   NODE_SET_METHOD(target, "writeUInt64", WriteUInt64);
+  NODE_SET_METHOD(target, "readCString", ReadCString);
 }
 NODE_MODULE(binding, init);

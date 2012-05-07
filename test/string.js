@@ -14,11 +14,4 @@ describe('C string', function () {
     assert.strictEqual('hello', buf.readCString(0))
   })
 
-  it('should throw on a Buffer containing no \\0 byte', function () {
-    var buf = new Buffer('hello world')
-    assert.throws(function () {
-      buf.readCString(0)
-    })
-  })
-
 })
