@@ -14,4 +14,13 @@ describe('C string', function () {
     assert.strictEqual('hello', buf.readCString(0))
   })
 
+  describe('allocCString()', function () {
+
+    it('should return a new Buffer containing the given string', function () {
+      var buf = ref.allocCString('hello world')
+      assert.strictEqual('hello world', buf.readCString())
+    })
+
+  })
+
 })
