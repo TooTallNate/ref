@@ -21,6 +21,18 @@ describe('C string', function () {
       assert.strictEqual('hello world', buf.readCString())
     })
 
+    it('should return the NULL pointer for `null` values', function () {
+      var buf = ref.allocCString(null)
+      assert(buf.isNull())
+      assert.strictEqual(0, buf.address())
+    })
+
+    it('should return the NULL pointer for `undefined` values', function () {
+      var buf = ref.allocCString(undefined)
+      assert(buf.isNull())
+      assert.strictEqual(0, buf.address())
+    })
+
   })
 
 })
