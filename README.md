@@ -130,29 +130,27 @@ NULL byte regardless.
 Writes `string` as a C String (i.e. NULL terminated) to this Buffer at the given
 offset. `encoding` is optional and defaults to `utf8`.
 
-#### `Buffer#readInt64\[native-endianness](Number offset)` → Number|String
+#### `Buffer#readInt64[native-endianness](Number offset)` → Number|String
 
 Returns a Number or String representation of the 64-bit int read from this Buffer
 at the given offset. If the returned value will fit inside a Number without losing
 precision, then a Number is returned, otherwise a String is returned.
 
-#### `Buffer#writeInt64\[native-endianness](Number|String value, Number offset)` →
-undefined
+#### `Buffer#writeInt64[native-endianness](Number|String value, Number offset)` → undefined
 
 Writes an value as a `int64_t` to this Buffer at the given offset. `value` may be
 either a Number or a String representing the 64-bit int value. Ensure that at
 least `ref.sizeof.int64` (always 8) bytes are available in the Buffer after the
 given offset.
 
-#### `Buffer#readUInt64\[native-endianness](Number offset)` → Number|String
+#### `Buffer#readUInt64[native-endianness](Number offset)` → Number|String
 
 Returns a Number or String representation of the 64-bit unsigned int read from
 this Buffer at the given offset. If the returned value will fit inside a
 Number without losing precision, then a Number is returned, otherwise a String
 is returned.
 
-#### `Buffer#writeUInt64\[native-endianness](Number|String value, Number offset)` →
-undefined
+#### `Buffer#writeUInt64[native-endianness](Number|String value, Number offset)` → undefined
 
 Writes an value as a `int64_t` to this Buffer at the given offset. `value` may be
 either a Number or a String representing the 64-bit unsigned int value. Ensure \
