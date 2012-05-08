@@ -153,7 +153,7 @@ is returned.
 #### `Buffer#writeUInt64[native-endianness](Number|String value, Number offset)` → undefined
 
 Writes an value as a `int64_t` to this Buffer at the given offset. `value` may be
-either a Number or a String representing the 64-bit unsigned int value. Ensure \
+either a Number or a String representing the 64-bit unsigned int value. Ensure
 that at least `ref.sizeof.uint64` (always 8) bytes are available in the Buffer
 after the given offset.
 
