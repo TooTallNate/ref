@@ -1,6 +1,21 @@
 { "name": "ref"
 , "description": "Turn Buffer instances into \"pointers\""
-, "keywords": [ "native", "buffer", "extensions", "c++" ]
+, "keywords": [
+      "native"
+    , "buffer"
+    , "extensions"
+    , "c++"
+    , "pointer"
+    , "reference"
+    , "dereference"
+    , "type"
+    , "int"
+    , "long"
+    , "float"
+    , "double"
+    , "byte"
+    , "64"
+  ]
 , "version": "0.0.2"
 , "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)"
 , "repository": { "type": "git", "url": "git://github.com/TooTallNate/ref.git" }
