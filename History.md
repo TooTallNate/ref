@@ -1,4 +1,10 @@
 
+0.0.4 / 2012-05-08
+==================
+
+ - README improvements; some API documentation
+ - removed some leftover debugging statements
+
 0.0.3 / 2012-05-08
 ==================
 
