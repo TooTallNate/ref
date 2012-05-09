@@ -1,3 +1,4 @@
+#define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -279,7 +280,7 @@ Handle<Value> ReadInt64(const Arguments& args) {
   if (val < JS_MIN_INT || val > JS_MAX_INT) {
     // return a String
     char strbuf[128];
-    snprintf(strbuf, 128, "%lld", val);
+    snprintf(strbuf, 128, "%" PRId64, val);
     rtn = String::New(strbuf);
   } else {
     // return a Number
@@ -355,7 +356,7 @@ Handle<Value> ReadUInt64(const Arguments& args) {
   if (val > JS_MAX_INT) {
     // return a String
     char strbuf[128];
-    snprintf(strbuf, 128, "%llu", val);
+    snprintf(strbuf, 128, "%" PRIu64, val);
     rtn = String::New(strbuf);
   } else {
     // return a Number
