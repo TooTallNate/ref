@@ -1,4 +1,10 @@
 
+0.0.5 / 2012-05-09
+==================
+
+ - quickly add get() and set() functions
+ - use the `PRId64` and `PRIu64` snprintf types
+
 0.0.4 / 2012-05-08
 ==================
 
