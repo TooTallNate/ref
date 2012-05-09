@@ -31,7 +31,7 @@ describe('ref(), deref()', function () {
     var test = new Buffer('???')
     assert.throws(function () {
       ref.deref(test)
-    }, 'unknown "type"')
+    }, /unknown "type"/)
   })
 
   it('should throw when derefing a Buffer with no "type" 2', function () {
@@ -41,7 +41,7 @@ describe('ref(), deref()', function () {
     assert.equal(ref.address(test), ref.address(_test))
     assert.throws(function () {
       ref.deref(_test)
-    }, 'unknown "type"')
+    }, /unknown "type"/)
   })
 
   it('should deref() a "char" type properly', function () {

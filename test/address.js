@@ -12,7 +12,7 @@ describe('address', function () {
 
   it('should give a positive value for any other Buffer', function () {
     var address = ref.address(buf)
-    assert(typeof address === 'number')
+    assert.equal(typeof address, 'number')
     assert(isFinite(address))
     assert(address > 0)
   })

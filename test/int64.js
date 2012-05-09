@@ -8,7 +8,7 @@ describe('int64', function () {
   var JS_MIN_INT = -9007199254740992
 
   it('should allow simple ints to be written and read', function () {
-    var buf = new Buffer(ref.sizeof.longlong)
+    var buf = new Buffer(ref.sizeof.int64)
     var val = 123456789
     ref.writeInt64(buf, 0, val)
     var rtn = ref.readInt64(buf, 0)
@@ -16,7 +16,7 @@ describe('int64', function () {
   })
 
   it('should allow INT64_MAX to be written and read', function () {
-    var buf = new Buffer(ref.sizeof.longlong)
+    var buf = new Buffer(ref.sizeof.int64)
     var val = '9223372036854775807'
     ref.writeInt64(buf, 0, val)
     var rtn = ref.readInt64(buf, 0)
@@ -24,7 +24,7 @@ describe('int64', function () {
   })
 
   it('should return a Number when reading JS_MIN_INT', function () {
-    var buf = new Buffer(ref.sizeof.longlong)
+    var buf = new Buffer(ref.sizeof.int64)
     ref.writeInt64(buf, 0, JS_MIN_INT)
     var rtn = ref.readInt64(buf, 0)
     assert.equal('number', typeof rtn)
@@ -32,7 +32,7 @@ describe('int64', function () {
   })
 
   it('should return a Number when reading JS_MAX_INT', function () {
-    var buf = new Buffer(ref.sizeof.longlong)
+    var buf = new Buffer(ref.sizeof.int64)
     ref.writeInt64(buf, 0, JS_MAX_INT)
     var rtn = ref.readInt64(buf, 0)
     assert.equal('number', typeof rtn)
@@ -40,7 +40,7 @@ describe('int64', function () {
   })
 
   it('should return a String when reading JS_MAX_INT+1', function () {
-    var buf = new Buffer(ref.sizeof.longlong)
+    var buf = new Buffer(ref.sizeof.int64)
     var plus_one = '9007199254740993'
     ref.writeInt64(buf, 0, plus_one)
     var rtn = ref.readInt64(buf, 0)
@@ -49,7 +49,7 @@ describe('int64', function () {
   })
 
   it('should return a String when reading JS_MIN_INT-1', function () {
-    var buf = new Buffer(ref.sizeof.longlong)
+    var buf = new Buffer(ref.sizeof.int64)
     var minus_one = '-9007199254740993'
     ref.writeInt64(buf, 0, minus_one)
     var rtn = ref.readInt64(buf, 0)
@@ -58,7 +58,7 @@ describe('int64', function () {
   })
 
   it('should return a Number when reading 0, even when written as a String', function () {
-    var buf = new Buffer(ref.sizeof.longlong)
+    var buf = new Buffer(ref.sizeof.int64)
     var zero = '0'
     ref.writeInt64(buf, 0, zero)
     var rtn = ref.readInt64(buf, 0)
