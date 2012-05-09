@@ -467,9 +467,58 @@ void init (Handle<Object> target) {
   // size of a Persistent handle to a JS object
   smap->Set(String::NewSymbol("Object"),    Integer::New(sizeof(Persistent<Object>)));
 
+  // "alignof" map
+  Local<Object> amap = Object::New();
+  struct int8_s { int8_t a; };
+  amap->Set(String::NewSymbol("int8"),      Integer::New(__alignof__(struct int8_s)));
+  struct uint8_s { uint8_t a; };
+  amap->Set(String::NewSymbol("uint8"),     Integer::New(__alignof__(struct uint8_s)));
+  struct int16_s { int16_t a; };
+  amap->Set(String::NewSymbol("int16"),     Integer::New(__alignof__(struct int16_s)));
+  struct uint16_s { uint16_t a; };
+  amap->Set(String::NewSymbol("uint16"),    Integer::New(__alignof__(struct uint16_s)));
+  struct int32_s { int32_t a; };
+  amap->Set(String::NewSymbol("int32"),     Integer::New(__alignof__(struct int32_s)));
+  struct uint32_s { uint32_t a; };
+  amap->Set(String::NewSymbol("uint32"),    Integer::New(__alignof__(struct uint32_s)));
+  struct int64_s { int64_t a; };
+  amap->Set(String::NewSymbol("int64"),     Integer::New(__alignof__(struct int64_s)));
+  struct uint64_s { uint64_t a; };
+  amap->Set(String::NewSymbol("uint64"),    Integer::New(__alignof__(struct uint64_s)));
+  struct float_s { float a; };
+  amap->Set(String::NewSymbol("float"),     Integer::New(__alignof__(struct float_s)));
+  struct double_s { double a; };
+  amap->Set(String::NewSymbol("double"),    Integer::New(__alignof__(struct double_s)));
+  struct char_s { char a; };
+  amap->Set(String::NewSymbol("char"),      Integer::New(__alignof__(struct char_s)));
+  struct uchar_s { unsigned char a; };
+  amap->Set(String::NewSymbol("uchar"),     Integer::New(__alignof__(struct uchar_s)));
+  struct short_s { short a; };
+  amap->Set(String::NewSymbol("short"),     Integer::New(__alignof__(struct short_s)));
+  struct ushort_s { unsigned short a; };
+  amap->Set(String::NewSymbol("ushort"),    Integer::New(__alignof__(struct ushort_s)));
+  struct int_s { int a; };
+  amap->Set(String::NewSymbol("int"),       Integer::New(__alignof__(struct int_s)));
+  struct uint_s { unsigned int a; };
+  amap->Set(String::NewSymbol("uint"),      Integer::New(__alignof__(struct uint_s)));
+  struct long_s { long a; };
+  amap->Set(String::NewSymbol("long"),      Integer::New(__alignof__(struct long_s)));
+  struct ulong_s { unsigned long a; };
+  amap->Set(String::NewSymbol("ulong"),     Integer::New(__alignof__(struct ulong_s)));
+  struct longlong_s { long long a; };
+  amap->Set(String::NewSymbol("longlong"),  Integer::New(__alignof__(struct longlong_s)));
+  struct ulonglong_s { unsigned long long a; };
+  amap->Set(String::NewSymbol("ulonglong"), Integer::New(__alignof__(struct ulonglong_s)));
+  struct pointer_s { char *a; };
+  amap->Set(String::NewSymbol("pointer"),   Integer::New(__alignof__(struct pointer_s)));
+  struct size_t_s { size_t a; };
+  amap->Set(String::NewSymbol("size_t"),    Integer::New(__alignof__(struct size_t_s)));
+  struct Object_s { Persistent<Object> a; };
+  amap->Set(String::NewSymbol("Object"),    Integer::New(__alignof__(struct Object_s)));
 
   // exports
   target->Set(String::NewSymbol("sizeof"), smap);
+  target->Set(String::NewSymbol("alignof"), amap);
   target->Set(String::NewSymbol("endianness"), CheckEndianness());
   target->Set(String::NewSymbol("NULL"), WrapNullPointer());
   NODE_SET_METHOD(target, "address", Address);
