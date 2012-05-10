@@ -4,14 +4,32 @@ var ref = require('../')
 
 describe('C string', function () {
 
-  it('should return "" for a Buffer containing "\\0"', function () {
-    var buf = new Buffer('\0')
-    assert.strictEqual('', buf.readCString(0))
+  describe('readCString()', function () {
+
+    it('should return "" for a Buffer containing "\\0"', function () {
+      var buf = new Buffer('\0')
+      assert.strictEqual('', buf.readCString(0))
+    })
+
+    it('should return "hello" for a Buffer containing "hello\\0world"', function () {
+      var buf = new Buffer('hello\0world')
+      assert.strictEqual('hello', buf.readCString(0))
+    })
+
   })
 
-  it('should return "hello" for a Buffer containing "hello\\0world"', function () {
-    var buf = new Buffer('hello\0world')
-    assert.strictEqual('hello', buf.readCString(0))
+  describe('readCString()', function () {
+
+    it('should write a C string (NULL terminated) to a Buffer', function () {
+      var buf = new Buffer(20)
+      var str = 'hello world'
+      buf.writeCString(str)
+      for (var i = 0; i < str.length; i++) {
+        assert.equal(str.charCodeAt(i), buf[i])
+      }
+      assert.equal(0, buf[str.length])
+    })
+
   })
 
   describe('allocCString()', function () {
