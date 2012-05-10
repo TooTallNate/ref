@@ -173,6 +173,8 @@ properties:
     this type when the indirection level is _1_.
   * `set` - Function (buffer, offset, value) - the function to invoke when
     setting a value to a buffer instance.
+  * `alignment` - (optional) - Numer - The alignment of this type when placed in
+    a struct
 
 For example, you could define a "bigint" type that dereferences into a
 [`bigint`](https://github.com/substack/node-bigint) instance:
