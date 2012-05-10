@@ -1,4 +1,11 @@
 
+0.0.6 / 2012-05-09
+==================
+
+ - add `alignof` mappings for the types
+ - add an `Object` type
+ - set the `alignment` property on the built-in types
+
 0.0.5 / 2012-05-09
 ==================
 
