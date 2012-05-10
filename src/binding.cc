@@ -431,6 +431,31 @@ Handle<Value> ReadCString(const Arguments& args) {
   return scope.Close(String::New(ptr));
 }
 
+/*
+ * Returns a new Buffer instance that has the same memory address
+ * as the given buffer, but with the specified size.
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to read the address from
+ * args[1] - Number - the offset from the "buf" buffer's address to read from
+ */
+
+Handle<Value> ReinterpretBuffer(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("readCString: Buffer instance expected")));
+  }
+
+  char *ptr = Buffer::Data(buf.As<Object>());
+  size_t size = args[1]->Uint32Value();
+
+  Buffer *rtn = Buffer::New(ptr, size, read_pointer_cb, NULL);
+
+  return scope.Close(rtn->handle_);
+}
+
 
 } // anonymous namespace
 
@@ -532,5 +557,6 @@ void init (Handle<Object> target) {
   NODE_SET_METHOD(target, "readUInt64", ReadUInt64);
   NODE_SET_METHOD(target, "writeUInt64", WriteUInt64);
   NODE_SET_METHOD(target, "readCString", ReadCString);
+  NODE_SET_METHOD(target, "reinterpret", ReinterpretBuffer);
 }
 NODE_MODULE(binding, init);
