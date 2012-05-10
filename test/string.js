@@ -18,7 +18,7 @@ describe('C string', function () {
 
   })
 
-  describe('readCString()', function () {
+  describe('writeCString()', function () {
 
     it('should write a C string (NULL terminated) to a Buffer', function () {
       var buf = new Buffer(20)
