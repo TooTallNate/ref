@@ -157,6 +157,13 @@ either a Number or a String representing the 64-bit unsigned int value. Ensure
 that at least `ref.sizeof.uint64` (always 8) bytes are available in the Buffer
 after the given offset.
 
+#### `Buffer#reinterpret(Number size)` → Buffer
+
+Returns a new Buffer instance with the exact same memory address as the target
+buffer, only you can specifiy the size of the returned buffer as well.
+
+__Warning:__ This function is potentially _dangerous_! Be sure you need to use it!
+
 
 The "type" interface
 --------------------
