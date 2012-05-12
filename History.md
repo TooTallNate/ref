@@ -1,4 +1,10 @@
 
+0.0.8 / 2012-05-12
+==================
+
+ - make the `void` type "set()" function be a no-op instead of throwing
+ - added some more test cases
+
 0.0.7 / 2012-05-09
 ==================
 
