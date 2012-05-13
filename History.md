@@ -1,4 +1,12 @@
 
+0.0.9 / 2012-05-13
+==================
+
+ - allow `ref.alloc()` to not have a value being set with it
+ - add the `coerceType()` function (get a proper "type" instance from a string)
+ - add the Utf8String type back over from node-ffi
+ - conditionally extend SlowBuffer.prototype for node >= v0.7.9
+
 0.0.8 / 2012-05-12
 ==================
 
