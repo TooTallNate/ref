@@ -26,8 +26,8 @@ static Persistent<Object> null_pointer_buffer;
 // used by the Int64 functions to determine whether to return a Number
 // or String based on whether or not a Number will loose precision.
 // http://stackoverflow.com/q/307179/376773
-#define JS_MAX_INT +9007199254740992
-#define JS_MIN_INT -9007199254740992
+#define JS_MAX_INT +9007199254740992LL
+#define JS_MIN_INT -9007199254740992LL
 
 
 /*
