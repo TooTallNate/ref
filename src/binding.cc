@@ -1,5 +1,4 @@
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
+
 #include <stdlib.h>
 #include <errno.h>
 
@@ -11,6 +10,11 @@
   #define snprintf _snprintf_s
   #define strtoll _strtoi64
   #define strtoull _strtoui64
+  #define PRId64 "lld"
+  #define PRIu64 "llu"
+#else
+  #define __STDC_FORMAT_MACROS
+  #include <inttypes.h>
 #endif
 
 
