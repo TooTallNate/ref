@@ -1,5 +1,4 @@
 
-#include <stddef.h>
 #include <stdlib.h>
 #include <errno.h>
 
@@ -7,11 +6,8 @@
 #include <node.h>
 #include <node_buffer.h>
 
-#ifndef __alignof__
-  #define __alignof__(type) offsetof (struct { char c; type member;}, member)
-#endif
-
 #ifdef _WIN32
+  #define __alignof__ __alignof
   #define snprintf _snprintf_s
   #define strtoll _strtoi64
   #define strtoull _strtoui64
