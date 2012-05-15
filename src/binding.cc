@@ -1,10 +1,15 @@
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <errno.h>
 
 #include <v8.h>
 #include <node.h>
 #include <node_buffer.h>
+
+#ifndef __alignof__
+  #define __alignof__(type) offsetof (struct { char c; type member;}, member)
+#endif
 
 #ifdef _WIN32
   #define snprintf _snprintf_s
