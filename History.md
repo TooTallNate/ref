@@ -1,4 +1,10 @@
 
+0.0.10 / 2012-05-15
+==================
+
+ - fix compiler error on Solaris
+ - fix compiler errors on Windows
+
 0.0.9 / 2012-05-13
 ==================
 
