@@ -162,7 +162,9 @@ after the given offset.
 Returns a new Buffer instance with the exact same memory address as the target
 buffer, only you can specifiy the size of the returned buffer as well.
 
-__Warning:__ This function is potentially _dangerous_! Be sure you need to use it!
+__Warning:__ This function is potentially _dangerous_! There are only a small few
+use-cases where it _really_ needs to be used (i.e. resizing a Buffer returned from
+an FFI'd `malloc()` call), but otherwise, try to avoid it!
 
 
 The "type" interface
