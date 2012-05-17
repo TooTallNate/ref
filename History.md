@@ -1,6 +1,12 @@
 
+0.0.11 / 2012-05-17
+===================
+
+ - always do string type coersion, like on `alloc()`
+ - add a "bool" type, which works with JS `true`/`false` values
+
 0.0.10 / 2012-05-15
-==================
+===================
 
  - fix compiler error on Solaris
  - fix compiler errors on Windows
