@@ -481,6 +481,7 @@ void init (Handle<Object> target) {
   smap->Set(String::NewSymbol("float"),     Integer::New(sizeof(float)));
   smap->Set(String::NewSymbol("double"),    Integer::New(sizeof(double)));
   // (potentially) variable sizes
+  smap->Set(String::NewSymbol("bool"),      Integer::New(sizeof(bool)));
   smap->Set(String::NewSymbol("byte"),      Integer::New(sizeof(unsigned char)));
   smap->Set(String::NewSymbol("char"),      Integer::New(sizeof(char)));
   smap->Set(String::NewSymbol("uchar"),     Integer::New(sizeof(unsigned char)));
@@ -519,6 +520,8 @@ void init (Handle<Object> target) {
   amap->Set(String::NewSymbol("float"),     Integer::New(__alignof__(struct float_s)));
   struct double_s { double a; };
   amap->Set(String::NewSymbol("double"),    Integer::New(__alignof__(struct double_s)));
+  struct bool_s { bool a; };
+  amap->Set(String::NewSymbol("bool"),      Integer::New(__alignof__(struct bool_s)));
   struct char_s { char a; };
   amap->Set(String::NewSymbol("char"),      Integer::New(__alignof__(struct char_s)));
   struct uchar_s { unsigned char a; };
