@@ -116,6 +116,9 @@ Writes the given JS `Object` to the Buffer at the given offset. Make sure that a
 least `ref.sizeof.Object` bytes are available in the Buffer after the specified
 offset. The object can later be retrieved using `readObject()`.
 
+`obj` gets "attached" to the buffer instance, so that the written object won't
+be garbage collected until the target buffer does.
+
 ---
 
 #### `Buffer#readPointer(Number offset, Number size)` → Buffer
@@ -132,6 +135,9 @@ Writes the given Buffer's memory address to this Buffer at the given offset. Mak
 sure that at least `ref.sizeof.pointer` bytes are available in the Buffer after
 the specified offset. The Buffer can later be retrieved again using
 `readPointer()`.
+
+`pointer` gets "attached" to the buffer instance, so that the written pointer
+won't be garbage collected until the target buffer does.
 
 ---
 
@@ -191,6 +197,9 @@ after the given offset.
 
 Returns a new Buffer instance with the exact same memory address as the target
 buffer, only you can specifiy the size of the returned buffer as well.
+
+The original buffer instance gets "attached" to the new buffer instance, so that
+the original buffer won't be garbage collected until the new buffer does.
 
 __Warning:__ This function is potentially _dangerous_! There are only a small few
 use-cases where it _really_ needs to be used (i.e. resizing a Buffer returned from
