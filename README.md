@@ -206,6 +206,44 @@ use-cases where it _really_ needs to be used (i.e. resizing a Buffer returned fr
 an FFI'd `malloc()` call), but otherwise, try to avoid it!
 
 
+Built-in "types"
+----------------
+
+`ref` comes with all the basic fixed-size C types that you are probably familiar with:
+
+| **Name**     | **Description**
+|:-------------|:-----------------------------------------------------
+| `void`       | A `void` type. Derefs to `null`
+| `int8`       | Signed 8-bit Integer
+| `uint8`      | Unsigned 8-bit Integer
+| `int16`      | Signed 16-bit Integer
+| `uint16`     | Unsigned 16-bit Integer
+| `int32`      | Signed 32-bit Integer
+| `uint32`     | Unsigned 32-bit Integer
+| `int64`      | Signed 64-bit Integer
+| `uint64`     | Unsigned 64-bit Integer
+| `float`      | Single Precision Floating Point Number (float)
+| `double`     | Double Precision Floating Point Number (double)
+| `Utf8String` | NULL-terminated String (char *)
+
+In addition to the basic types, there are type aliases for common C types.
+
+| **Name**     | **Description**
+|:-------------|:-----------------------------------------------------
+| `byte`       | unsigned char
+| `char`       | char
+| `uchar`      | unsigned char
+| `short`      | short
+| `ushort`     | unsigned short
+| `int`        | int
+| `uint`       | unsigned int
+| `long`       | long
+| `ulong`      | unsigned long
+| `longlong`   | long
+| `ulonglong`  | unsigned long long
+| `size_t`     | platform-dependent, usually pointer size
+
+
 The "type" interface
 --------------------
 
