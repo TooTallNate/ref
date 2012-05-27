@@ -253,16 +253,13 @@ You can easily define your own "type" objects at attach to `Buffer` instances.
 It just needs to be a regular JavaScript Object that contains the following
 properties:
 
-  * `size` - Number - The size in bytes required to hold this type
-  * `indirection` - Number - The current level of indirection of the buffer.
-    Usually this would be _1_, and gets incremented on Buffers from `ref()` calls.
-    A value of less than or equal to _0_ is invalid.
-  * `get` - Function (buffer, offset) - the function to invoke when dereferencing
-    this type when the indirection level is _1_.
-  * `set` - Function (buffer, offset, value) - the function to invoke when
-    setting a value to a buffer instance.
-  * `alignment` - (optional) - Numer - The alignment of this type when placed in
-    a struct
+| **Name**      | **Data Type**                    | **Description**
+|:--------------|:---------------------------------|:----------------------------------
+| `size`        | Number                           | The size in bytes required to hold this type.
+| `indirection` | Number                           | The current level of indirection of the buffer. Usually this would be _1_, and gets incremented on Buffers from `ref()` calls. A value of less than or equal to _0_ is invalid.
+| `get`         | Function (buffer, offset)        | The function to invoke when dereferencing this type when the indirection level is _1_.
+| `set`         | Function (buffer, offset, value) | The function to invoke when setting a value to a buffer instance.
+| `alignment`   | Number                           | (optional) The alignment of this type when placed in a struct.
 
 For example, you could define a "bigint" type that dereferences into a
 [`bigint`](https://github.com/substack/node-bigint) instance:
