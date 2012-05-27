@@ -241,7 +241,7 @@ In addition to the basic types, there are type aliases for common C types.
 | `uint`       | unsigned int
 | `long`       | long
 | `ulong`      | unsigned long
-| `longlong`   | long
+| `longlong`   | long long
 | `ulonglong`  | unsigned long long
 | `size_t`     | platform-dependent, usually pointer size
 
