@@ -224,7 +224,7 @@ Built-in "types"
 | `uint64`     | Unsigned 64-bit Integer
 | `float`      | Single Precision Floating Point Number (float)
 | `double`     | Double Precision Floating Point Number (double)
-| `Object`     | A type capable a reading/writing references to JS objects
+| `Object`     | A type capable of reading/writing references to JS objects
 | `Utf8String` | NULL-terminated String (char *)
 
 In addition to the basic types, there are type aliases for common C types.
