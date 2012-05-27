@@ -34,7 +34,7 @@ $ npm install ref
 Examples
 --------
 
-#### references and derefencing
+#### referencing and derefencing
 
 ``` js
 var ref = require('ref')
