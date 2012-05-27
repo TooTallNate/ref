@@ -259,7 +259,7 @@ properties:
 | `indirection` | Number                           | The current level of indirection of the buffer. Usually this would be _1_, and gets incremented on Buffers from `ref()` calls. A value of less than or equal to _0_ is invalid.
 | `get`         | Function (buffer, offset)        | The function to invoke when dereferencing this type when the indirection level is _1_.
 | `set`         | Function (buffer, offset, value) | The function to invoke when setting a value to a buffer instance.
-| `alignment`   | Number                           | (optional) The alignment of this type when placed in a struct.
+| `alignment`   | Number                           | _(optional)_ The alignment of this type when placed in a struct.
 
 For example, you could define a "bigint" type that dereferences into a
 [`bigint`](https://github.com/substack/node-bigint) instance:
