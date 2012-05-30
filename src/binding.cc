@@ -441,7 +441,7 @@ Handle<Value> ReadCString(const Arguments& args) {
  * as the given buffer, but with the specified size.
  *
  * args[0] - Buffer - the "buf" Buffer instance to read the address from
- * args[1] - Number - the offset from the "buf" buffer's address to read from
+ * args[1] - Number - the size in bytes that the returned Buffer should be
  */
 
 Handle<Value> ReinterpretBuffer(const Arguments& args) {
@@ -450,11 +450,53 @@ Handle<Value> ReinterpretBuffer(const Arguments& args) {
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
     return ThrowException(Exception::TypeError(
-          String::New("readCString: Buffer instance expected")));
+          String::New("reinterpret: Buffer instance expected")));
   }
 
   char *ptr = Buffer::Data(buf.As<Object>());
   size_t size = args[1]->Uint32Value();
+
+  Buffer *rtn = Buffer::New(ptr, size, read_pointer_cb, NULL);
+
+  return scope.Close(rtn->handle_);
+}
+
+/*
+ * Returns a new Buffer instance that has the same memory address
+ * as the given buffer, but with a length up to the first aligned set of values of
+ * 0 in a row for the given length.
+ *
+ * args[0] - Buffer - the "buf" Buffer instance to read the address from
+ * args[1] - Number - the number of sequential 0-byte values that need to be read
+ */
+
+Handle<Value> ReinterpretBufferUntilZeros(const Arguments& args) {
+  HandleScope scope;
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return ThrowException(Exception::TypeError(
+          String::New("reinterpretUntilZeros: Buffer instance expected")));
+  }
+
+  char *ptr = Buffer::Data(buf.As<Object>());
+  uint32_t numZeros = args[1]->Uint32Value();
+  uint32_t i = 0;
+  size_t size = 0;
+  bool end = false;
+
+  while (!end && size < 10000) {
+    end = true;
+    for (i = 0; i < numZeros; i++) {
+      if (ptr[size + i] != 0) {
+        end = false;
+        break;
+      }
+    }
+    if (!end) {
+      size += numZeros;
+    }
+  }
 
   Buffer *rtn = Buffer::New(ptr, size, read_pointer_cb, NULL);
 
@@ -566,5 +608,6 @@ void init (Handle<Object> target) {
   NODE_SET_METHOD(target, "writeUInt64", WriteUInt64);
   NODE_SET_METHOD(target, "readCString", ReadCString);
   NODE_SET_METHOD(target, "reinterpret", ReinterpretBuffer);
+  NODE_SET_METHOD(target, "reinterpretUntilZeros", ReinterpretBufferUntilZeros);
 }
 NODE_MODULE(binding, init);
