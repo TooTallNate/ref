@@ -1,4 +1,13 @@
 
+0.0.12 / 2012-05-30
+===================
+
+ - make the "char" and "uchar" types accept JS String values
+ - make the synonym types (i.e. longlong is a synonym for int64) be distinct
+   objects, rather than simple JS references
+ - fix coersion of a string value of "Object"
+ - added the `reinterpretUntilZeros()` function
+
 0.0.11 / 2012-05-17
 ===================
 
