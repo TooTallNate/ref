@@ -23,4 +23,8 @@ describe('coerce', function () {
     assert.strictEqual('int', buf.type)
   })
 
+  it('should coerce "Object" to `ref.types.Object`', function () {
+    assert.strictEqual(ref.types.Object, ref.coerceType('Object'))
+  })
+
 })
