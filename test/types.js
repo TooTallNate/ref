@@ -6,6 +6,13 @@ describe('types', function () {
 
   describe('refType()', function () {
 
+    it('should return a new "type" with its `indirection` level increased by 1', function () {
+      var int = ref.types.int
+      var intPtr = ref.refType(int)
+      assert.equal(int.size, intPtr.size)
+      assert.equal(int.indirection + 1, intPtr.indirection)
+    })
+
     it('should coerce string types', function () {
       var intPtr = ref.refType('int')
       assert.equal(2, intPtr.indirection)
