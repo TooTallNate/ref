@@ -1,4 +1,10 @@
 
+0.0.13 / 2012-05-30
+===================
+
+ - make `refType()` coerce string types properly
+ - make the `bool` type inherit from a proper fixed type (like `uint8`)
+
 0.0.12 / 2012-05-30
 ===================
 
