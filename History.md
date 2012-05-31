@@ -1,4 +1,9 @@
 
+0.0.14 / 2012-05-31
+===================
+
+ - fix possible segmentation fault with `readCString()`
+
 0.0.13 / 2012-05-30
 ===================
 
