@@ -46,4 +46,8 @@ describe('Object', function () {
     assert(o_gc, '"o" has not been garbage collected')
   })
 
+  it('should return JS `null` when reading an Object from the NULL pointer', function () {
+    assert.strictEqual(null, ref.NULL.readObject())
+  })
+
 })

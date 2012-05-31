@@ -141,8 +141,11 @@ Handle<Value> ReadObject(const Arguments& args) {
 
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
-  Persistent<Value> rtn = *reinterpret_cast<Persistent<Value>*>(ptr);
 
+  Handle<Value> rtn = Null();
+  if (ptr != NULL) {
+    rtn = *reinterpret_cast<Persistent<Value>*>(ptr);
+  }
   return scope.Close(rtn);
 }
 
