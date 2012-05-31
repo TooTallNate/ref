@@ -433,7 +433,11 @@ Handle<Value> ReadCString(const Arguments& args) {
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  return scope.Close(String::New(ptr));
+  Handle<Value> rtn = Null();
+  if (ptr != NULL) {
+    rtn = String::New(ptr);
+  }
+  return scope.Close(rtn);
 }
 
 /*

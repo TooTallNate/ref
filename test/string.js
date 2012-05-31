@@ -16,6 +16,10 @@ describe('C string', function () {
       assert.strictEqual('hello', buf.readCString(0))
     })
 
+    it('should return `null` when reading a NULL pointer', function () {
+      assert.strictEqual(null, ref.NULL.readCString())
+    })
+
   })
 
   describe('writeCString()', function () {
