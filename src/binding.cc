@@ -298,7 +298,7 @@ Handle<Value> ReadInt64(const Arguments& args) {
     rtn = Number::New(val);
   }
 
-  return rtn;
+  return scope.Close(rtn);
 }
 
 /*
@@ -374,7 +374,7 @@ Handle<Value> ReadUInt64(const Arguments& args) {
     rtn = Number::New(val);
   }
 
-  return rtn;
+  return scope.Close(rtn);
 }
 
 /*
