@@ -4,6 +4,16 @@ var ref = require('../')
 
 describe('types', function () {
 
+  describe('refType()', function () {
+
+    it('should coerce string types', function () {
+      var intPtr = ref.refType('int')
+      assert.equal(2, intPtr.indirection)
+      assert.equal(intPtr.size, ref.types.int.size)
+    })
+
+  })
+
   describe('size', function () {
     Object.keys(ref.types).forEach(function (name) {
       if (name === 'void') return
