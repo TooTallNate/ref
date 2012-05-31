@@ -218,12 +218,15 @@ Handle<Value> ReadPointer(const Arguments& args) {
 
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
-
   size_t size = args[2]->Uint32Value();
-  char *val = *reinterpret_cast<char **>(ptr);
-  Buffer *rtn = Buffer::New(val, size, read_pointer_cb, NULL);
 
-  return scope.Close(rtn->handle_);
+  Handle<Value> rtn = Null();
+  if (ptr != NULL) {
+    char *val = *reinterpret_cast<char **>(ptr);
+    Buffer *rtn_buf = Buffer::New(val, size, read_pointer_cb, NULL);
+    rtn = rtn_buf->handle_;
+  }
+  return scope.Close(rtn);
 }
 
 /*

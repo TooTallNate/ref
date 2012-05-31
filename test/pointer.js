@@ -45,4 +45,8 @@ describe('pointer', function () {
     assert(child_gc, '"child" has not been garbage collected')
   })
 
+  it('should return JS `null` when reading a NULL pointer', function () {
+    assert.strictEqual(null, ref.NULL.readPointer())
+  })
+
 })
