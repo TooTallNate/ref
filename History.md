@@ -1,4 +1,10 @@
 
+0.0.15 / 2012-05-31
+===================
+
+ - fix possible segmentation fault with `readObject()`
+ - fix possible segmentation fault with `readPointer()`
+
 0.0.14 / 2012-05-31
 ===================
 
