@@ -14,7 +14,7 @@ describe('ref(), deref()', function () {
     assert.equal(test.toString(), _test.toString())
   })
 
-  it('should work 2 levels deep', function () {
+  it('should work 2 layers deep', function () {
     var test = new Buffer('two layers deep')
     var one = ref.ref(test)
     var two = ref.ref(one)
