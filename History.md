@@ -1,4 +1,17 @@
 
+0.0.16 / 2012-06-01
+===================
+
+ - use Object.create() and Object.getPrototypeOf() for `refType()` and
+ `derefType()`
+ - remove `cloneType()`
+ - make reading from a NULL pointer always throw an Error:
+   - readCString()
+   - readPointer()
+   - readObject()
+   - readInt64()
+   - readUInt64()
+
 0.0.15 / 2012-05-31
 ===================
 
