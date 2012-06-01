@@ -26,4 +26,11 @@ describe('bool', function () {
     assert.strictEqual(1, buf[0])
   })
 
+  it('should allow uint8 number values to be written to it', function () {
+    var val = 255
+    ref.set(buf, 0, val)
+    assert.strictEqual(true, ref.get(buf))
+    assert.strictEqual(val, buf[0])
+  })
+
 })
