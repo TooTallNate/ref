@@ -66,4 +66,16 @@ describe('int64', function () {
     assert.equal(0, rtn)
   })
 
+  it('should throw an Error when reading an int64_t from the NULL pointer', function () {
+    assert.throws(function () {
+      ref.readInt64(ref.NULL)
+    })
+  })
+
+  it('should throw an Error when reading a uint64_t from the NULL pointer', function () {
+    assert.throws(function () {
+      ref.readUInt64(ref.NULL)
+    })
+  })
+
 })

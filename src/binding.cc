@@ -142,10 +142,12 @@ Handle<Value> ReadObject(const Arguments& args) {
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  Handle<Value> rtn = Null();
-  if (ptr != NULL) {
-    rtn = *reinterpret_cast<Persistent<Value>*>(ptr);
+  if (ptr == NULL) {
+    return ThrowException(Exception::Error(
+          String::New("readObject: Cannot read from NULL pointer")));
   }
+
+  Handle<Value> rtn = *reinterpret_cast<Persistent<Value>*>(ptr);
   return scope.Close(rtn);
 }
 
@@ -220,13 +222,14 @@ Handle<Value> ReadPointer(const Arguments& args) {
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   size_t size = args[2]->Uint32Value();
 
-  Handle<Value> rtn = Null();
-  if (ptr != NULL) {
-    char *val = *reinterpret_cast<char **>(ptr);
-    Buffer *rtn_buf = Buffer::New(val, size, read_pointer_cb, NULL);
-    rtn = rtn_buf->handle_;
+  if (ptr == NULL) {
+    return ThrowException(Exception::Error(
+          String::New("readPointer: Cannot read from NULL pointer")));
   }
-  return scope.Close(rtn);
+
+  char *val = *reinterpret_cast<char **>(ptr);
+  Buffer *rtn_buf = Buffer::New(val, size, read_pointer_cb, NULL);
+  return scope.Close(rtn_buf->handle_);
 }
 
 /*
@@ -284,6 +287,11 @@ Handle<Value> ReadInt64(const Arguments& args) {
 
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+
+  if (ptr == NULL) {
+    return ThrowException(Exception::Error(
+          String::New("readInt64: Cannot read from NULL pointer")));
+  }
 
   int64_t val = *reinterpret_cast<int64_t *>(ptr);
 
@@ -360,6 +368,11 @@ Handle<Value> ReadUInt64(const Arguments& args) {
 
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+
+  if (ptr == NULL) {
+    return ThrowException(Exception::Error(
+          String::New("readUInt64: Cannot read from NULL pointer")));
+  }
 
   uint64_t val = *reinterpret_cast<uint64_t *>(ptr);
 
@@ -439,10 +452,12 @@ Handle<Value> ReadCString(const Arguments& args) {
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  Handle<Value> rtn = Null();
-  if (ptr != NULL) {
-    rtn = String::New(ptr);
+  if (ptr == NULL) {
+    return ThrowException(Exception::Error(
+          String::New("readCString: Cannot read from NULL pointer")));
   }
+
+  Handle<Value> rtn = String::New(ptr);
   return scope.Close(rtn);
 }
 
