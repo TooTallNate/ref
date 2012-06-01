@@ -45,7 +45,7 @@ describe('pointer', function () {
     assert(child_gc, '"child" has not been garbage collected')
   })
 
-  it('should throw an Error when reading a NULL pointer', function () {
+  it('should throw an Error when reading from the NULL pointer', function () {
     assert.throws(function () {
       ref.NULL.readPointer()
     })
