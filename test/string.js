@@ -59,4 +59,14 @@ describe('C string', function () {
 
   })
 
+  describe('Utf8String', function () {
+
+    it('should return JS `null` when given a pointer pointing to NULL', function () {
+      var buf = ref.alloc(ref.types.Utf8String)
+      buf.writePointer(ref.NULL)
+      assert.strictEqual(null, buf.deref())
+    })
+
+  })
+
 })
