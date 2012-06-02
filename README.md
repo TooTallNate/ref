@@ -48,7 +48,7 @@ buf.writeInt32LE(12345, 0)
 console.log(buf.address())  // ← 140362165284824
 
 // using `ref`, you can set the "type", and gain magic abilities!
-buf.type = ref.types.int32
+buf.type = ref.types.int
 
 // now we can dereference to get the "meaningful" value
 console.log(buf.deref())  // ← 12345
@@ -259,6 +259,7 @@ properties:
 | `indirection` | Number                           | The current level of indirection of the buffer. Usually this would be _1_, and gets incremented on Buffers from `ref()` calls. A value of less than or equal to _0_ is invalid.
 | `get`         | Function (buffer, offset)        | The function to invoke when dereferencing this type when the indirection level is _1_.
 | `set`         | Function (buffer, offset, value) | The function to invoke when setting a value to a buffer instance.
+| `name`        | String                           | _(optional)_ The name to use during debugging for this type.
 | `alignment`   | Number                           | _(optional)_ The alignment of this type when placed in a struct. Defaults to the type's `size`.
 
 For example, you could define a "bigint" type that dereferences into a
