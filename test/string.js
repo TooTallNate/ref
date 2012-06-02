@@ -65,6 +65,8 @@ describe('C string', function () {
       var buf = ref.alloc(ref.types.Utf8String)
       buf.writePointer(ref.NULL)
       assert.strictEqual(null, buf.deref())
+
+      assert.strictEqual(null, ref.get(ref.NULL_POINTER, 0, ref.types.Utf8String))
     })
 
     it('should read a utf8 string from a Buffer', function () {
