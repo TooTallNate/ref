@@ -481,6 +481,11 @@ Handle<Value> ReinterpretBuffer(const Arguments& args) {
   char *ptr = Buffer::Data(buf.As<Object>());
   size_t size = args[1]->Uint32Value();
 
+  if (ptr == NULL) {
+    return ThrowException(Exception::Error(
+          String::New("reinterpret: Cannot reinterpret from NULL pointer")));
+  }
+
   Buffer *rtn = Buffer::New(ptr, size, read_pointer_cb, NULL);
 
   return scope.Close(rtn->handle_);
@@ -505,6 +510,12 @@ Handle<Value> ReinterpretBufferUntilZeros(const Arguments& args) {
   }
 
   char *ptr = Buffer::Data(buf.As<Object>());
+
+  if (ptr == NULL) {
+    return ThrowException(Exception::Error(
+          String::New("reinterpretUntilZeros: Cannot reinterpret from NULL pointer")));
+  }
+
   uint32_t numZeros = args[1]->Uint32Value();
   uint32_t i = 0;
   size_t size = 0;
