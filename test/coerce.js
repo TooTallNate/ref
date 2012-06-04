@@ -37,7 +37,6 @@ describe('coerce', function () {
     var b = new Buffer(ref.sizeof.int8)
     ref.set(b, 0, 5, 'int8')
     assert.strictEqual(5, b[0])
-    b[0] = 5
   })
 
 })
