@@ -27,4 +27,17 @@ describe('coerce', function () {
     assert.strictEqual(ref.types.Object, ref.coerceType('Object'))
   })
 
+  it('should coerce the optional type in `ref.get()`', function () {
+    var b = new Buffer(ref.sizeof.int8)
+    b[0] = 5
+    assert.strictEqual(5, ref.get(b, 0, 'int8'))
+  })
+
+  it('should coerce the optional type in `ref.set()`', function () {
+    var b = new Buffer(ref.sizeof.int8)
+    ref.set(b, 0, 5, 'int8')
+    assert.strictEqual(5, b[0])
+    b[0] = 5
+  })
+
 })
