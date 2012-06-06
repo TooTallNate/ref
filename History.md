@@ -1,4 +1,13 @@
 
+0.0.17 / 2012-06-05
+===================
+
+ - allow the "bool" type to write arbitrary number values (0-255) to it
+ - Utf8String: return JS `null` when reading a pointer pointing to NULL
+ - make `reinterpret()` and `reinterpretUntilZeros()` throw an Error when given a NULL pointer
+ - make `ref.get()` and `ref.set()` coerce their optional type when given
+ - some more tests
+
 0.0.16 / 2012-06-01
 ===================
 
