@@ -51,4 +51,20 @@ describe('pointer', function () {
     })
   })
 
+  describe('offset', function () {
+
+    it('should read two pointers next to each other in memory', function () {
+      var buf = new Buffer(ref.sizeof.pointer * 2)
+      var a = new Buffer('hello')
+      var b = new Buffer('world')
+      buf.writePointer(a, 0 * ref.sizeof.pointer)
+      buf.writePointer(b, 1 * ref.sizeof.pointer)
+      var _a = buf.readPointer(0 * ref.sizeof.pointer)
+      var _b = buf.readPointer(1 * ref.sizeof.pointer)
+      assert.equal(a.address(), _a.address())
+      assert.equal(b.address(), _b.address())
+    })
+
+  })
+
 })
