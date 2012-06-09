@@ -227,7 +227,14 @@ Handle<Value> ReadPointer(const Arguments& args) {
           String::New("readPointer: Cannot read from NULL pointer")));
   }
 
-  char *val = *reinterpret_cast<char **>(ptr);
+  char *val;
+
+  if (offset == 0) {
+    val = *reinterpret_cast<char **>(ptr);
+  } else {
+    val = ptr;
+  }
+
   Buffer *rtn_buf = Buffer::New(val, size, read_pointer_cb, NULL);
   return scope.Close(rtn_buf->handle_);
 }
