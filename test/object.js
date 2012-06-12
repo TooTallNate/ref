@@ -52,4 +52,20 @@ describe('Object', function () {
     })
   })
 
+  describe('offset', function () {
+
+    it('should read two Objects next to each other in memory', function () {
+      var buf = new Buffer(ref.sizeof.pointer * 2)
+      var a = {}
+      var b = {}
+      buf.writeObject(a, 0 * ref.sizeof.pointer)
+      buf.writeObject(b, 1 * ref.sizeof.pointer)
+      var _a = buf.readObject(0 * ref.sizeof.pointer)
+      var _b = buf.readObject(1 * ref.sizeof.pointer)
+      assert.strictEqual(a, _a)
+      assert.strictEqual(b, _b)
+    })
+
+  })
+
 })
