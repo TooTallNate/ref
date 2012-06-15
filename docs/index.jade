@@ -1,0 +1,14 @@
+
+h1 ref
+
+each doc in dox
+  - console.error(doc)
+  if (!doc.ignore && doc.ctx)
+    suffix = doc.ctx.type === 'method' ? '()' : ''
+    if (doc.ctx.receiver === 'exports')
+      h2 ref.#{doc.ctx.name}#{suffix}
+    else
+      h2 #{doc.ctx.constructor}##{doc.ctx.name}#{suffix}
+    .desc
+      .summary!= doc.description.summary.replace(/<br ?\/?>/g, ' ')
+      .body!= doc.description.body.replace(/<br ?\/?>/g, ' ')
