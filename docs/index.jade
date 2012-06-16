@@ -1,14 +1,39 @@
 
-h1 ref
+- // first parse out the 3 "sections": ref, types, and Buffer
+sections = []
+base = 0
+- for (var i = 0; i < dox.length; i++) {
+-   if (dox[i].tags[0] && dox[i].tags[0].type === 'section') {
+-     sections.push(dox.slice(base, i))
+-     base = i
+-   }
+- }
+- sections.push(dox.slice(base))
 
-each doc in dox
-  - console.error(doc)
-  if (!doc.ignore && doc.ctx)
-    suffix = doc.ctx.type === 'method' ? '()' : ''
-    if (doc.ctx.receiver === 'exports')
-      h2 ref.#{doc.ctx.name}#{suffix}
-    else
-      h2 #{doc.ctx.constructor}##{doc.ctx.name}#{suffix}
-    .desc
-      .summary!= doc.description.summary.replace(/<br ?\/?>/g, ' ')
-      .body!= doc.description.body.replace(/<br ?\/?>/g, ' ')
+!!! 5
+html
+  head
+    title ref docs
+  body
+    h1 ref
+
+    each section, i in sections
+      each doc in section
+        if (!doc.ignore)
+          if (doc.ctx)
+            receiver = doc.ctx.receiver
+            if (receiver === 'exports')
+              - receiver = 'ref'
+            if (!receiver && typeof doc.ctx.constructor === 'string')
+              - receiver = doc.ctx.constructor
+            if (receiver)
+              h2 #{receiver}#{doc.ctx.receiver ? '.' : '#'}#{doc.ctx.name}#{doc.ctx.type === 'method' ? '()' : ''}
+          else
+            - console.error(doc)
+          .desc
+            .summary!= doc.description.summary.replace(/<br ?\/?>/g, ' ')
+            body = doc.description.body.replace(/<br ?\/?>/g, ' ')
+            if (body)
+              .body!= body
+      if (i < sections.length - 1)
+        hr
