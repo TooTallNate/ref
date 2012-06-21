@@ -1,4 +1,10 @@
 
+0.0.18 / 2012-06-21
+===================
+
+ - add the non-native-endian read+write int64 functions
+ - starting on some real (inline) documentation
+
 0.0.17 / 2012-06-05
 ===================
 
