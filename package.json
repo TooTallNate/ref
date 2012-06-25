@@ -25,7 +25,8 @@
     , "test": "mocha -gc --reporter spec"
   }
 , "dependencies": {
-      "debug": "*"
+      "bindings": "*"
+    , "debug": "*"
   }
 , "devDependencies": {
       "mocha": "*"
