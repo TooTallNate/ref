@@ -190,6 +190,7 @@ Writes an value as a `int64_t` to this Buffer at the given offset. `value` may b
 either a Number or a String representing the 64-bit unsigned int value. Ensure
 that at least `ref.sizeof.uint64` (always 8) bytes are available in the Buffer
 after the given offset.
+
 ---
 
 #### `Buffer#readInt64BE(Number offset)` → Number|String
