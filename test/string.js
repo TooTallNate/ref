@@ -59,19 +59,19 @@ describe('C string', function () {
 
   })
 
-  describe('Utf8String', function () {
+  describe('CString', function () {
 
     it('should return JS `null` when given a pointer pointing to NULL', function () {
-      var buf = ref.alloc(ref.types.Utf8String)
+      var buf = ref.alloc(ref.types.CString)
       buf.writePointer(ref.NULL)
       assert.strictEqual(null, buf.deref())
 
-      assert.strictEqual(null, ref.get(ref.NULL_POINTER, 0, ref.types.Utf8String))
+      assert.strictEqual(null, ref.get(ref.NULL_POINTER, 0, ref.types.CString))
     })
 
     it('should read a utf8 string from a Buffer', function () {
       var str = 'hello world'
-      var buf = ref.alloc(ref.types.Utf8String)
+      var buf = ref.alloc(ref.types.CString)
       buf.writePointer(Buffer(str + '\0'))
       assert.strictEqual(str, buf.deref())
     })
