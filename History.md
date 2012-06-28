@@ -1,4 +1,11 @@
 
+0.0.20 / 2012-06-27
+===================
+
+ - rename the `Utf8String` type to `CString` (#5)
+ - make `Utf8String` an alias to `CString` and deprecated
+ - more work on docs (not yet ready)
+
 0.0.19 / 2012-06-25
 ==================
 
