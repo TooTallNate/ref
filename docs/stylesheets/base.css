@@ -334,7 +334,7 @@ a.nav:hover code {
 /* GitHub Ribbon
  * http://unindented.org/articles/2009/10/github-ribbon-using-css-transforms */
 .ribbon {
-  background-color: #a00;
+  background-color: #fcf8f2;
   overflow: hidden;
   /* top right corner */
   position: fixed;
@@ -346,11 +346,15 @@ a.nav:hover code {
   /* shadow */
   -moz-box-shadow: 0 0 1em #888;
   -webkit-box-shadow: 0 0 1em #888;
+  /* hover transition */
+  -webkit-transition-property: background-color;
+  -webkit-transition-duration: 0.3s;
+  -webkit-transition-delay: 0s;
 }
 
 .ribbon a {
-  border: 1px solid #faa;
-  color: #fff;
+  border: solid 1px rgba(68, 68, 68, 0.4);
+  color: #444;
   display: block;
   font: bold 81.25% 'Helvetiva Neue', Helvetica, Arial, sans-serif;
   margin: 0.05em 0 0.075em 0;
@@ -358,5 +362,9 @@ a.nav:hover code {
   text-align: center;
   text-decoration: none;
   /* shadow */
-  text-shadow: 0 0 0.5em #444;
+  text-shadow: 0 0 0.5em #888;
+}
+
+.ribbon:hover {
+  background-color: #dbe8d9;
 }
