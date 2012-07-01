@@ -116,10 +116,13 @@ html(lang="en")
             |  system
       .columns.sixteen.intro
         p
-          | A "type" in ref is simply an plain 'ol JavaScript Object, with a set 
-          | of expected functions attached that implement the logic for getting 
-          | setting values on a given Buffer instance, as well as the size of the 
-          | datatype.
+          | A "type" in 
+          code ref
+          |  is simply an plain 'ol JavaScript Object, with a set 
+          | of expected properties attached that implement the logic for getting 
+          | setting values on a given 
+          code Buffer
+          |  instance.
         p
           | To attach a "type" to a Buffer instance, you simply attach the "type"
           | object to the Buffer's <code>type</code> property. 
@@ -128,7 +131,31 @@ html(lang="en")
           | section. All the built-in "types" can be found on the 
           code ref.types
           |  Object. All the built-in types use "native endianness" when 
-          | multi-byte values are used.
+          | multi-byte datatypes are involved.
+        h4 Creating your own "type"
+        p
+          | It is trivial to create your own "type" that reads and writes your 
+          | own custom datatype/class to and from Buffer instances using 
+          code ref
+          | 's unified API.
+          br
+          | To create your own "type", simply create an JavaScript Object with 
+          | the following properties defined:
+          table
+            tr
+              th Name
+              th Data Type
+              th Description
+            tr
+              td: code size
+              td: code Number
+              td The size in bytes required to hold this datatype.
+            tr
+              td: code indirection
+              td: code Number
+              td
+                | The current level of indirection of the buffer. When defining 
+                | your own "types", just set this value to <code>1</code>.
       each doc in types
         if (!doc.ignore)
           .columns.sixteen
