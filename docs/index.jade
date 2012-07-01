@@ -18,6 +18,8 @@ html(lang="en")
     link(rel="apple-touch-icon", sizes="114x114", href="images/apple-touch-icon-114x114.png")
 
   body
+    .ribbon
+      a(href="https://github.com/TooTallNate/ref", rel="me") Fork me on GitHub
     .container
       .columns.three.logo
         a(href="")
@@ -90,7 +92,6 @@ html(lang="en")
           |  variable.
 
       hr
-
       .columns.eight.section.exports
         a(name="exports")
         a(href="#exports")
@@ -100,7 +101,6 @@ html(lang="en")
           | ref exports are the results of 
           code require('ref')
           | .
-
       each doc in exports
         if (!doc.ignore)
           .columns.sixteen
@@ -109,7 +109,6 @@ html(lang="en")
               h3 ref.#{doc.ctx.name}()
 
       hr
-
       .columns.eight.section.exports
         a(name="types")
         a(href="#types")
@@ -121,7 +120,6 @@ html(lang="en")
           | the type system
 
       hr
-
       .columns.eight.section.exports
         a(name="extensions")
         a(href="#extensions")
