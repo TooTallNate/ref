@@ -52,8 +52,9 @@ html(lang="en")
           em meat 
           |  to 
           code ref
-          | , but it all fits together in one way or another in the end. For
-          | simplicity, 
+          | , but it all fits together in one way or another in the end.
+          br
+          | For simplicity, 
           code ref
           | 's API can be broken down into 3 sections:
       a.nav.columns.five(href='#')
@@ -61,10 +62,8 @@ html(lang="en")
         p
           | All the static versions of 
           code ref
-          | 's functions and default "types" are located in 
-          code ref
-          | 's 
-          code exports
+          | 's functions and default "types" available on the exports returned from 
+          code require('ref')
           | .
       a.nav.columns.five(href='#')
         h4 <em>"type"</em> system
@@ -80,12 +79,9 @@ html(lang="en")
       a.nav.columns.five(href='#')
         h4 <code>Buffer</code> extensions
         p
-          code ref
-          |  extends 
           code Buffer.prototype
-          |  with some convenience functions. These all just mirror their 
-          code ref
-          |  export counterpart, using the Buffer's 
+          |  gets extended with some convenience functions. These all just mirror
+          |  their static counterpart, using the Buffer's 
           code this
           |  variable as the 
           code buffer
