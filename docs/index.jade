@@ -25,11 +25,62 @@ html(lang="en")
         h3 Turn Buffer instances into "pointers"
       .columns.sixteen
         h4 What is <code>ref</code>?
-        p.
-          <code>ref</code> is a native addon for
-          <a href="http://nodejs.org">Node.js</a> that extends the built-in
-          <a href="http://nodejs.org/api/buffer.html"><code>Buffer</code>
-          class</a> with some fancy additions like reading and writing "pointers".
-      .column.one-third.feature ref exports
-      .column.one-third.feature "type" system
-      .column.one-third.feature Buffer extensions
+        p
+          code ref
+          |  is a native addon for 
+          a(href="http://nodejs.org") Node.js
+          |  that extends the built-in 
+          a(href="http://nodejs.org/api/buffer.html")
+            code Buffer
+            |  class
+          |  with some fancy additions like:
+          ul
+            li Getting the memory address of a Buffer
+            li Checking if a Buffer represents the NULL pointer
+            li Reading and writing "pointers" with Buffers
+            li Reading and writing C Strings
+            li Reading and writing JavaScript Object references
+            li Reading and writing 
+              code int64_t
+              |  and 
+              code uint64_t
+              |  values
+            li A "type" convention to define the contents of a Buffer
+        p
+          | So no doubt, there is a lot of 
+          em meat 
+          |  to 
+          code ref
+          | , but it all fits together in one way or another in the end. For
+          | simplicity, 
+          code ref
+          | 's API can be broken down into 3 sections:
+      .column.one-third
+        h4 ref <code>exports</code>
+        p
+          | All the generic helper functions and default "types" are located in 
+          code ref
+          | 's 
+          code exports
+          | .
+      .column.one-third
+        h4 <em>"type"</em> system
+        p
+          | The 
+          em "type"
+          |  system allows you to define a "type" on any Buffer instance, and then
+          |  use generic ref() and deref() functions to reference and dereference
+          |  values.
+      .column.one-third
+        h4 <code>Buffer</code> extensions
+        p
+          code ref
+          |  extends 
+          code Buffer.prototype
+          |  with some convenience functions. These all just mirror the 
+          code ref
+          |  export counterpart, using the Buffer's 
+          code this
+          |  variable as the 
+          code buffer
+          |  variable.
