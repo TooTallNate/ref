@@ -34,6 +34,7 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
         exports: sections[0]
       , types: sections[1]
       , extensions: sections[2]
+      , package: require('../package.json')
     })
 
     fs.writeFile(__dirname + '/index.html', html, function (err) {

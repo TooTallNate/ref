@@ -286,15 +286,23 @@ p a {
   text-decoration: underline;
 }
 
-.logo h1 span {
+.logo h1 .pointer {
   color: #dbe8d9;
   -webkit-transition-property: color;
   -webkit-transition-duration: 0.5s;
   -webkit-transition-delay: 0s;
 }
 
-.logo h1:hover span {
+.logo h1:hover .pointer {
   color: #444;
+}
+
+.logo h1 .version {
+  color: #aaa;
+  font-size: 0.3em;
+  position: absolute;
+  top: 12px;
+  left: 70px;
 }
 
 .intro ul {

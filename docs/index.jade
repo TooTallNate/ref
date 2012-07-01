@@ -2,7 +2,7 @@ doctype 5
 html(lang="en")
   head
     meta(charset="utf-8")
-    title "ref" documentation
+    title "ref" documentation v#{package.version}
     meta(name="description", content="Turn Buffer instances into \"pointers\"")
     meta(name="author", content="Nathan Rajlich")
 
@@ -22,7 +22,8 @@ html(lang="en")
       .columns.three.logo
         a(href="")
           h1 ref 
-            span *
+            span.pointer *
+            span.version v#{package.version}
       .columns.thirteen
         h3 Turn Buffer instances into "pointers"
       .columns.sixteen.intro
