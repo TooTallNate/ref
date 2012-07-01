@@ -208,10 +208,6 @@ html(lang="en")
       each doc in extensions
         if (!doc.ignore && doc.ctx)
           .columns.sixteen
-            - console.log(doc)
-            - console.log()
-            - console.log()
-            - console.log()
             a(name='extensions-' + doc.ctx.name)
             a(href='#extensions-' + doc.ctx.name)
               h3 Buffer##{doc.ctx.name}()
@@ -229,5 +225,5 @@ html(lang="en")
     .ribbon
       a(href="https://github.com/TooTallNate/ref", rel="me") Fork me on GitHub
 
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
-    script(src='scripts/main.js')
+    script(src="scripts/jquery-1.7.2.min.js")
+    script(src="scripts/main.js")

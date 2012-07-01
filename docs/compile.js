@@ -26,6 +26,7 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
   var types = sections[1]
   var extensions = sections[2]
 
+  // get a reference to the ref export doc object for every Buffer extension doc
   extensions.forEach(function (doc) {
     var name = doc.ctx.name
     doc.ref = exports.filter(function (ref) {
