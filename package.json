@@ -21,7 +21,7 @@
 , "repository": { "type": "git", "url": "git://github.com/TooTallNate/ref.git" }
 , "main": "./lib/ref.js"
 , "scripts": {
-      "docs": "jade docs/index.jade --obj \"{ dox: $(dox < lib/ref.js) }\""
+      "docs": "node docs/compile"
     , "test": "mocha -gc --reporter spec"
   }
 , "dependencies": {

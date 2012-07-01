@@ -1,39 +1,35 @@
-
-- // first parse out the 3 "sections": ref, types, and Buffer
-sections = []
-base = 0
-- for (var i = 0; i < dox.length; i++) {
--   if (dox[i].tags[0] && dox[i].tags[0].type === 'section') {
--     sections.push(dox.slice(base, i))
--     base = i
--   }
-- }
-- sections.push(dox.slice(base))
-
-!!! 5
-html
+doctype 5
+html(lang="en")
   head
-    title ref docs
-  body
-    h1 ref
+    meta(charset="utf-8")
+    title "ref" Documentation
+    meta(name="description", content="Turn Buffer instances into \"pointers\"")
+    meta(name="author", content="Nathan Rajlich")
 
-    each section, i in sections
-      each doc in section
-        if (!doc.ignore)
-          if (doc.ctx)
-            receiver = doc.ctx.receiver
-            if (receiver === 'exports')
-              - receiver = 'ref'
-            if (!receiver && typeof doc.ctx.constructor === 'string')
-              - receiver = doc.ctx.constructor
-            if (receiver)
-              h2 #{receiver}#{doc.ctx.receiver ? '.' : '#'}#{doc.ctx.name}#{doc.ctx.type === 'method' ? '()' : ''}
-          else
-            - console.error(doc)
-          .desc
-            .summary!= doc.description.summary.replace(/<br ?\/?>/g, ' ')
-            body = doc.description.body.replace(/<br ?\/?>/g, ' ')
-            if (body)
-              .body!= body
-      if (i < sections.length - 1)
-        hr
+    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1")
+
+    link(rel="stylesheet", href="stylesheets/base.css")
+    link(rel="stylesheet", href="stylesheets/skeleton.css")
+    link(rel="stylesheet", href="stylesheets/layout.css")
+
+    link(rel="shortcut icon", href="images/favicon.ico")
+    link(rel="apple-touch-icon", href="images/apple-touch-icon.png")
+    link(rel="apple-touch-icon", sizes="72x72", href="images/apple-touch-icon-72x72.png")
+    link(rel="apple-touch-icon", sizes="114x114", href="images/apple-touch-icon-114x114.png")
+
+  body
+    .container
+      .columns.two
+        h1 ref
+      .columns.fourteen
+        h3 Turn Buffer instances into "pointers"
+      .columns.sixteen
+        h4 What is <code>ref</code>?
+        p.
+          <code>ref</code> is a native addon for
+          <a href="http://nodejs.org">Node.js</a> that extends the built-in
+          <a href="http://nodejs.org/api/buffer.html"><code>Buffer</code>
+          class</a> with some fancy additions like reading and writing "pointers".
+      .column.one-third.feature ref exports
+      .column.one-third.feature "type" system
+      .column.one-third.feature Buffer extensions
