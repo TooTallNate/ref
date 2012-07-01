@@ -23,8 +23,8 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
 
   // get the 3 sections
   var exports = sections[0].sort(sort)
-  var types = sections[1];
-  var extensions = sections[3];
+  var types = sections[1]
+  var extensions = sections[2]
 
   fs.readFile(__dirname + '/index.jade', 'utf8', function (err, template) {
     if (err) throw err

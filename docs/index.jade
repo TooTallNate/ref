@@ -116,7 +116,30 @@ html(lang="en")
             |  system
       .columns.sixteen.intro
         p
-          | the type system
+          | A "type" in ref is simply an plain 'ol JavaScript Object, with a set 
+          | of expected functions attached that implement the logic for getting 
+          | setting values on a given Buffer instance, as well as the size of the 
+          | datatype.
+        p
+          | To attach a "type" to a Buffer instance, you simply attach the "type"
+          | object to the Buffer's <code>type</code> property. 
+          code ref
+          |  comes with a set of commonly used types which are described in this 
+          | section. All the built-in "types" can be found on the 
+          code ref.types
+          |  Object. All the built-in types use "native endianness" when 
+          | multi-byte values are used.
+      each doc in types
+        if (!doc.ignore)
+          .columns.sixteen
+            - console.log(doc)
+            - console.log()
+            - console.log()
+            - console.log()
+            a(name='types-' + doc.ctx.name)
+            a(href='#types-' + doc.ctx.name)
+              h3 types.#{doc.ctx.name}
+            pre: code: doc.ctx.code
 
       hr
       .columns.eight.section.exports
