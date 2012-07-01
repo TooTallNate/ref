@@ -344,8 +344,8 @@ a.nav:hover code {
   -moz-transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
   /* shadow */
-  -moz-box-shadow: 0 0 1em #888;
-  -webkit-box-shadow: 0 0 1em #888;
+  -moz-box-shadow: 0 0 0.5em #888;
+  -webkit-box-shadow: 0 0 0.5em #888;
   /* hover transition */
   -webkit-transition-property: background-color;
   -webkit-transition-duration: 0.3s;

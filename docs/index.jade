@@ -3,7 +3,7 @@ html(lang="en")
   head
     meta(charset="utf-8")
     title "ref" documentation v#{package.version}
-    meta(name="description", content="Turn Buffer instances into \"pointers\"")
+    meta(name="description", content=package.description)
     meta(name="author", content="Nathan Rajlich")
 
     meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1")
@@ -21,11 +21,11 @@ html(lang="en")
     .container
       .columns.three.logo
         a(href="")
-          h1 ref 
+          h1 #{package.name} 
             span.pointer *
             span.version v#{package.version}
       .columns.thirteen
-        h3 Turn Buffer instances into "pointers"
+        h3= package.description
       .columns.sixteen.intro
         h4 What is <code>ref</code>?
         p
@@ -96,7 +96,7 @@ html(lang="en")
           h2 ref exports
       .columns.sixteen.intro
         p
-          | ref exports are the results of 
+          | This section documents all the functions exported from 
           code require('ref')
           | .
       each doc in exports
