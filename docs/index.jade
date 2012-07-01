@@ -120,7 +120,7 @@ html(lang="en")
           code ref
           |  is simply an plain 'ol JavaScript Object, with a set 
           | of expected properties attached that implement the logic for getting 
-          | setting values on a given 
+          | &amp; setting values on a given 
           code Buffer
           |  instance.
         p
@@ -216,10 +216,14 @@ html(lang="en")
             a(href='#extensions-' + doc.ctx.name)
               h3 Buffer##{doc.ctx.name}()
             p
-              | Shorthand for 
-              a(href='#exports-' + doc.ctx.name)
-                code ref.#{doc.ctx.name}(this, ...)
-              | .
+              if (doc.ctx.name === 'inspect')
+                != doc.description.full
+              else
+                | Shorthand for 
+                a(href='#exports-' + doc.ctx.name)
+                  code ref.#{doc.ctx.name}(this, ...)
+                | . !{doc}
+
 
     .ribbon
       a(href="https://github.com/TooTallNate/ref", rel="me") Fork me on GitHub
