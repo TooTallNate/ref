@@ -19,11 +19,12 @@ html(lang="en")
 
   body
     .container
-      .columns.two
-        h1 ref
-      .columns.fourteen
+      .columns.three.logo
+        h1 ref 
+          span *
+      .columns.thirteen
         h3 Turn Buffer instances into "pointers"
-      .columns.sixteen
+      .columns.sixteen.intro
         h4 What is <code>ref</code>?
         p
           code ref
@@ -38,16 +39,16 @@ html(lang="en")
             li Getting the memory address of a Buffer
             li Checking if a Buffer represents the NULL pointer
             li Reading and writing "pointers" with Buffers
-            li Reading and writing C Strings
+            li Reading and writing C Strings (NULL-terminated)
             li Reading and writing JavaScript Object references
             li Reading and writing 
-              code int64_t
+              strong int64_t
               |  and 
-              code uint64_t
+              strong uint64_t
               |  values
             li A "type" convention to define the contents of a Buffer
         p
-          | So no doubt, there is a lot of 
+          | There is indeed a lot of 
           em meat 
           |  to 
           code ref
@@ -58,7 +59,9 @@ html(lang="en")
       .column.one-third
         h4 ref <code>exports</code>
         p
-          | All the generic helper functions and default "types" are located in 
+          | All the static versions of 
+          code ref
+          | 's functions and default "types" are located in 
           code ref
           | 's 
           code exports
@@ -77,7 +80,7 @@ html(lang="en")
           code ref
           |  extends 
           code Buffer.prototype
-          |  with some convenience functions. These all just mirror the 
+          |  with some convenience functions. These all just mirror their 
           code ref
           |  export counterpart, using the Buffer's 
           code this

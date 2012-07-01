@@ -267,3 +267,27 @@
 	.add-bottom { margin-bottom: 20px !important; }
 
 
+/* `ref` stuff */
+code {
+  background-color: #fcf8f2;
+  border: solid 1px #444;
+  border-radius: 2px;
+  padding: 1px 2px;
+}
+
+.logo h1 span {
+  color: #c6c6c6;
+  padding-left: 4px;
+  -webkit-transition-property: color;
+  -webkit-transition-duration: 0.5s;
+  -webkit-transition-delay: 0s;
+}
+
+.logo h1:hover span {
+  color: #444;
+}
+
+.intro ul {
+  list-style: disc;
+  margin-left: 40px;
+}
