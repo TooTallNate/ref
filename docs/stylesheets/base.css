@@ -270,13 +270,16 @@
 /* `ref` stuff */
 code {
   background-color: #fcf8f2;
-  border: solid 1px #444;
+  border: solid 1px rgba(68, 68, 68, 0.3);
   border-radius: 2px;
   padding: 1px 2px;
+  -webkit-transition-property: background-color;
+  -webkit-transition-duration: 0.5s;
+  -webkit-transition-delay: 0s;
 }
 
 .logo h1 span {
-  color: #dad8d3;
+  color: #dbe8d9;
   -webkit-transition-property: color;
   -webkit-transition-duration: 0.5s;
   -webkit-transition-delay: 0s;
@@ -289,4 +292,24 @@ code {
 .intro ul {
   list-style: disc;
   margin-left: 40px;
+}
+
+a.nav {
+  border: solid 1px transparent;
+  border-radius: 2px;
+  padding: 3px;
+  text-decoration: none;
+  background-color: transparent;
+  -webkit-transition-property: background-color, border-color;
+  -webkit-transition-duration: 0.5s;
+  -webkit-transition-delay: 0s;
+}
+
+a.nav:hover {
+  background-color: #fcf8f2;
+  border-color: rgba(68, 68, 68, 0.3);
+}
+
+a.nav:hover code {
+  background-color: #dbe8d9;
 }
