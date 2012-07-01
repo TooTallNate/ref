@@ -193,7 +193,7 @@ html(lang="en")
             a(name='types-' + doc.ctx.name)
             a(href='#types-' + doc.ctx.name)
               h3 types.#{doc.ctx.name}
-            pre: code: doc.ctx.string
+            != doc.description.full.replace(/\<br ?\/?\>/g, ' ')
 
       hr
       .columns.eight.section.exports
