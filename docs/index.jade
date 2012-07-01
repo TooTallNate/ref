@@ -20,8 +20,9 @@ html(lang="en")
   body
     .container
       .columns.three.logo
-        h1 ref 
-          span *
+        a(href="")
+          h1 ref 
+            span *
       .columns.thirteen
         h3 Turn Buffer instances into "pointers"
       .columns.sixteen.intro
@@ -86,5 +87,18 @@ html(lang="en")
           |  variable as the 
           code buffer
           |  variable.
+
+      hr
+
+      .columns.four.section.exports
+        a(name="exports")
+        h2 ref exports
+
+        each doc in exports
+          if (!doc.ignore)
+            .columns.eight
+              a(name='exports-' + doc.ctx.name)
+              h3 ref.#{doc.ctx.name}()
+
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
     script(src='scripts/main.js')

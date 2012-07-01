@@ -278,6 +278,10 @@ code {
   -webkit-transition-delay: 0s;
 }
 
+.logo a {
+  text-decoration: none;
+}
+
 .logo h1 span {
   color: #dbe8d9;
   -webkit-transition-property: color;
@@ -298,6 +302,7 @@ a.nav {
   border: solid 1px transparent;
   border-radius: 2px;
   padding: 3px;
+  margin-bottom: 20px;
   text-decoration: none;
   background-color: transparent;
   -webkit-transition-property: background-color, border-color;

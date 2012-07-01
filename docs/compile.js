@@ -21,6 +21,11 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
   })
   sections.push(docs.slice(base))
 
+  // get the 3 sections
+  var exports = sections[0].sort(sort)
+  var types = sections[1];
+  var extensions = sections[3];
+
   fs.readFile(__dirname + '/index.jade', 'utf8', function (err, template) {
     if (err) throw err
 
@@ -36,3 +41,23 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
     })
   })
 })
+
+
+/**
+ * Sorts an array of dox objects by ctx.name. If the first letter is an '_' then
+ * it is considered "private" and gets sorted at the bottom.
+ */
+
+function sort (a, b) {
+  var aname = a.ctx.name
+  var bname = b.ctx.name
+  var aprivate = aname[0] === '_'
+  var bprivate = bname[0] === '_'
+  if (aprivate && !bprivate) {
+    return 1
+  }
+  if (bprivate && !aprivate) {
+    return -1
+  }
+  return aname > bname ? 1 : -1
+}
