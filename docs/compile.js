@@ -26,6 +26,13 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
   var types = sections[1]
   var extensions = sections[2]
 
+  extensions.forEach(function (doc) {
+    var name = doc.ctx.name
+    doc.ref = exports.filter(function (ref) {
+      return ref.ctx.name === name
+    })[0]
+  })
+
   fs.readFile(__dirname + '/index.jade', 'utf8', function (err, template) {
     if (err) throw err
 

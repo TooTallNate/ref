@@ -215,14 +215,15 @@ html(lang="en")
             a(name='extensions-' + doc.ctx.name)
             a(href='#extensions-' + doc.ctx.name)
               h3 Buffer##{doc.ctx.name}()
-            p
-              if (doc.ctx.name === 'inspect')
-                != doc.description.full
-              else
+            if (doc.ctx.name === 'inspect')
+              != doc.description.full.replace(/\<br ?\/?\>/g, ' ')
+            else
+              p
                 | Shorthand for 
                 a(href='#exports-' + doc.ctx.name)
                   code ref.#{doc.ctx.name}(this, ...)
-                | . !{doc}
+                | .
+              != (doc.ref && doc.ref.description.full || '').replace(/\<br ?\/?\>/g, ' ')
 
 
     .ribbon
