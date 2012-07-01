@@ -278,6 +278,10 @@ code {
   -webkit-transition-delay: 0s;
 }
 
+th {
+  font-weight: bold;
+}
+
 a {
   text-decoration: none;
 }
@@ -308,6 +312,15 @@ p a {
 .intro ul {
   list-style: disc;
   margin-left: 40px;
+}
+
+.types table, .types tr {
+  border: solid 1px #444;
+}
+
+.types td, .types th {
+  border: solid 1px #444;
+  padding: 4px;
 }
 
 a.nav {

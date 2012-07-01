@@ -108,13 +108,13 @@ html(lang="en")
               h3 ref.#{doc.ctx.name}()
 
       hr
-      .columns.eight.section.exports
+      .columns.eight.section.types
         a(name="types")
         a(href="#types")
           h2
             em "type"
             |  system
-      .columns.sixteen.intro
+      .columns.sixteen.intro.types
         p
           | A "type" in 
           code ref
@@ -134,12 +134,12 @@ html(lang="en")
           | multi-byte datatypes are involved.
         h4 Creating your own "type"
         p
-          | It is trivial to create your own "type" that reads and writes your 
+          | It's trivial to create your own "type" that reads and writes your 
           | own custom datatype/class to and from Buffer instances using 
           code ref
           | 's unified API.
           br
-          | To create your own "type", simply create an JavaScript Object with 
+          | To create your own "type", simply create a JavaScript Object with 
           | the following properties defined:
           table
             tr
@@ -156,6 +156,35 @@ html(lang="en")
               td
                 | The current level of indirection of the buffer. When defining 
                 | your own "types", just set this value to <code>1</code>.
+            tr
+              td: code get
+              td: code Function
+              td
+                | The function to invoke when 
+                code ref.get()
+                |  is invoked on a buffer of this type.
+            tr
+              td: code set
+              td: code Function
+              td
+                | The function to invoke when
+                code ref.set()
+                |  is invoked on a buffer of this type.
+            tr
+              td: code name
+              td: code String
+              td
+                em (Optional)
+                |  The name to use during debugging for this datatype.
+            tr
+              td: code alignment
+              td: code Number
+              td
+                em (Optional)
+                |  The alignment of this datatype when placed inside a struct. 
+                | Defaults to the type's 
+                code size
+                | .
       each doc in types
         if (!doc.ignore)
           .columns.sixteen
