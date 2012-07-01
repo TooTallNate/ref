@@ -167,7 +167,7 @@ html(lang="en")
               td: code set
               td: code Function
               td
-                | The function to invoke when
+                | The function to invoke when 
                 code ref.set()
                 |  is invoked on a buffer of this type.
             tr
@@ -188,14 +188,10 @@ html(lang="en")
       each doc in types
         if (!doc.ignore)
           .columns.sixteen
-            - console.log(doc)
-            - console.log()
-            - console.log()
-            - console.log()
             a(name='types-' + doc.ctx.name)
             a(href='#types-' + doc.ctx.name)
               h3 types.#{doc.ctx.name}
-            pre: code: doc.ctx.code
+            pre: code: doc.ctx.string
 
       hr
       .columns.eight.section.exports
@@ -204,7 +200,24 @@ html(lang="en")
           h2 Buffer extensions
       .columns.sixteen.intro
         p
-          | the buffer extensions
+          code Buffer.prototype
+          |  gets extended with some convenience functions that you can use in 
+          | your modules and/or applications.
+      each doc in extensions
+        if (!doc.ignore && doc.ctx)
+          .columns.sixteen
+            - console.log(doc)
+            - console.log()
+            - console.log()
+            - console.log()
+            a(name='extensions-' + doc.ctx.name)
+            a(href='#extensions-' + doc.ctx.name)
+              h3 Buffer##{doc.ctx.name}()
+            p
+              | Shorthand for 
+              a(href='#exports-' + doc.ctx.name)
+                code ref.#{doc.ctx.name}(this, ...)
+              | .
 
     .ribbon
       a(href="https://github.com/TooTallNate/ref", rel="me") Fork me on GitHub
