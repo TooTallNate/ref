@@ -278,8 +278,12 @@ code {
   -webkit-transition-delay: 0s;
 }
 
-.logo a {
+a {
   text-decoration: none;
+}
+
+p a {
+  text-decoration: underline;
 }
 
 .logo h1 span {

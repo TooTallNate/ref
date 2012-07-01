@@ -90,15 +90,44 @@ html(lang="en")
 
       hr
 
-      .columns.four.section.exports
+      .columns.six.section.exports
         a(name="exports")
-        h2 ref exports
+        a(href="#exports")
+          h2 ref exports
+      .columns.sixteen.intro
+        p
+          | ref exports are the results of 
+          code require('ref')
+          | .
 
-        each doc in exports
-          if (!doc.ignore)
-            .columns.eight
-              a(name='exports-' + doc.ctx.name)
+      each doc in exports
+        if (!doc.ignore)
+          .columns.sixteen
+            a(name='exports-' + doc.ctx.name)
+            a(href='#exports-' + doc.ctx.name)
               h3 ref.#{doc.ctx.name}()
+
+      hr
+
+      .columns.six.section.exports
+        a(name="types")
+        a(href="#types")
+          h2
+            em "type"
+            |  system
+      .columns.sixteen.intro
+        p
+          | the type system
+
+      hr
+
+      .columns.six.section.exports
+        a(name="extensions")
+        a(href="#extensions")
+          h2 Buffer extensions
+      .columns.sixteen.intro
+        p
+          | the buffer extensions
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
     script(src='scripts/main.js')
