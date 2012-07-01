@@ -106,6 +106,7 @@ html(lang="en")
             a(name='exports-' + doc.ctx.name)
             a(href='#exports-' + doc.ctx.name)
               h3 ref.#{doc.ctx.name}()
+            != (doc && doc.description.full || '').replace(/\<br ?\/?\>/g, ' ')
 
       hr
       .columns.eight.section.types
@@ -128,10 +129,7 @@ html(lang="en")
           | object to the Buffer's <code>type</code> property. 
           code ref
           |  comes with a set of commonly used types which are described in this 
-          | section. All the built-in "types" can be found on the 
-          code ref.types
-          |  Object. All the built-in types use "native endianness" when 
-          | multi-byte datatypes are involved.
+          | section.
         h4 Creating your own "type"
         p
           | It's trivial to create your own "type" that reads and writes your 
@@ -187,6 +185,15 @@ html(lang="en")
                 | Defaults to the type's 
                 code size
                 | .
+        h4 The built-in "types"
+        p
+          | Here is the list of 
+          code ref
+          | 's built-in "type" Objects. All these built-in "types" can be found 
+          |  on the 
+          code ref.types
+          |  export Object. All the built-in types use "native endianness" when 
+          | multi-byte datatypes are involved.
       each doc in types
         if (!doc.ignore)
           .columns.sixteen
