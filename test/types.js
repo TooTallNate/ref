@@ -21,6 +21,24 @@ describe('types', function () {
 
   })
 
+  describe('derefType()', function () {
+
+    it('should return a new "type" with its `indirection` level decreased by 1', function () {
+      var intPtr = Object.create(ref.types.int)
+      intPtr.indirection++
+      var int = ref.derefType(intPtr)
+      assert.equal(intPtr.size, intPtr.size)
+      assert.equal(intPtr.indirection - 1, int.indirection)
+    })
+
+    it('should throw an Error when given a "type" with its `indirection` level already at 1', function () {
+      assert.throws(function () {
+        ref.derefType(ref.types.int)
+      })
+    })
+
+  })
+
   describe('size', function () {
     Object.keys(ref.types).forEach(function (name) {
       if (name === 'void') return
