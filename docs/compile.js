@@ -83,8 +83,8 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
 function sort (a, b) {
   var aname = a.ctx.name
   var bname = b.ctx.name
-  var aprivate = aname[0] === '_'
-  var bprivate = bname[0] === '_'
+  var aprivate = a.isPrivate
+  var bprivate = b.isPrivate
   if (aprivate && !bprivate) {
     return 1
   }
