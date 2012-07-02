@@ -8,7 +8,6 @@ var dox = require('dox')
 var jade = require('jade')
 var marked = require('marked')
 var hljs = require('highlight.js')
-var highlight = hljs.highlight
 
 fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
   if (err) throw err
@@ -92,11 +91,18 @@ function markdown (code) {
   if (!code) return code
   return marked(code, {
       gfm: true
-    , highlight: function (code, lang) {
-        if (!hljs.LANGUAGES.hasOwnProperty(lang)) {
-          lang = 'javascript'
-        }
-        return highlight(lang, code).value
-      }
+    , highlight: highlight
   })
+}
+
+/**
+ * Add syntax highlighting HTML to the given `code` block.
+ * `lang` defaults to "javascript" if no valid name is given.
+ */
+
+function highlight (code, lang) {
+  if (!hljs.LANGUAGES.hasOwnProperty(lang)) {
+    lang = 'javascript'
+  }
+  return hljs.highlight(lang, code).value
 }
