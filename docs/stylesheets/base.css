@@ -334,6 +334,7 @@ ul {
 }
 
 .param, .rtn {
+  display: inline-block;
   font-size: 0.8em;
   font-style: italic;
 }
