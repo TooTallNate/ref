@@ -29,10 +29,12 @@
     , "debug": "*"
   }
 , "devDependencies": {
-      "mocha": "*"
-    , "weak": "*"
-    , "dox": "*"
+      "dox": "*"
+    , "highlight.js": "1"
     , "jade": "*"
+    , "marked": "*"
+    , "mocha": "*"
+    , "weak": "*"
   }
 , "engines": { "node": "*" }
 }
