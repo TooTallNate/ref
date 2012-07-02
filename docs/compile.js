@@ -8,6 +8,7 @@ var dox = require('dox')
 var jade = require('jade')
 var marked = require('marked')
 var hljs = require('highlight.js')
+var assert = require('assert')
 
 fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
   if (err) throw err
@@ -25,9 +26,17 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
   sections.push(docs.slice(base))
 
   // get the 3 sections
-  var exports = sections[0].sort(sort)
+  var exports = sections[0]
   var types = sections[1]
   var extensions = sections[2]
+
+  // move NULL_POINTER from "types" to "exports"
+  var null_pointer = types.pop()
+  assert.equal(null_pointer.ctx.name, 'NULL_POINTER')
+  exports.push(null_pointer)
+
+  // sort
+  exports = exports.sort(sort)
 
   ;[exports, types, extensions].forEach(function (docs) {
     docs.forEach(function (doc) {
@@ -55,6 +64,8 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
       , types: sections[1]
       , extensions: sections[2]
       , package: require('../package.json')
+      , markdown: markdown
+      , highlight: highlight
     })
 
     fs.writeFile(__dirname + '/index.html', html, function (err) {

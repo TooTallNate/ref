@@ -108,7 +108,8 @@ html(lang="en")
           .columns.sixteen
             a(name='exports-' + doc.ctx.name)
             a(href='#exports-' + doc.ctx.name)
-              h3 ref.#{doc.ctx.name}()
+              isFunc = doc.ctx.type == 'method' || doc.ctx.name[0] == '_'
+              h3 ref.#{doc.ctx.name}#{isFunc ? '()' : ''}
             != (doc && doc.description.full || '').replace(/\<br ?\/?\>/g, ' ')
 
 
