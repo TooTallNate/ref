@@ -120,6 +120,10 @@ html(lang="en")
                   | )
                 if (doc.returnType)
                   span.rtn  &rArr; #{doc.returnType.types.join('|')}
+            if (doc.paramTypes.length > 0)
+              ul
+                each param in doc.paramTypes
+                  li #{param.name} - !{param.description}
             != (doc && doc.description.full || '').replace(/\<br ?\/?\>/g, ' ')
 
 

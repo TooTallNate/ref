@@ -37,6 +37,14 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
 
   // extract the "return" and "param" types
   exports.forEach(function (doc) {
+    doc.tags.forEach(function (t) {
+      if (t.description) {
+        // parse the Markdown descriptions
+        t.description = markdown(t.description).trim()
+        // remove the surrounding <p> tags
+        t.description = t.description.substring(3, t.description.length - 4)
+      }
+    })
     doc.returnType = doc.tags.filter(function (t) {
       return t.type == 'return'
     })[0]
