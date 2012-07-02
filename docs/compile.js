@@ -35,9 +35,20 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
   assert.equal(null_pointer.ctx.name, 'NULL_POINTER')
   exports.push(null_pointer)
 
+  // extract the "return" and "param" types
+  exports.forEach(function (doc) {
+    doc.returnType = doc.tags.filter(function (t) {
+      return t.type == 'return'
+    })[0]
+    doc.paramTypes = doc.tags.filter(function (t) {
+      return t.type == 'param'
+    })
+  })
+
   // sort
   exports = exports.sort(sort)
 
+  // parse and highlight the Markdown descriptions
   ;[exports, types, extensions].forEach(function (docs) {
     docs.forEach(function (doc) {
       var desc = doc.description

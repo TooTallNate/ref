@@ -333,6 +333,11 @@ p a {
   padding: 4px;
 }
 
+.param, .rtn {
+  font-size: 0.8em;
+  font-style: italic;
+}
+
 a.nav {
   border: solid 1px transparent;
   border-radius: 2px;

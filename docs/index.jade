@@ -109,7 +109,17 @@ html(lang="en")
             a(name='exports-' + doc.ctx.name)
             a(href='#exports-' + doc.ctx.name)
               isFunc = doc.ctx.type == 'method' || doc.isPrivate
-              h3 ref.#{doc.ctx.name}#{isFunc ? '()' : ''}
+              h3
+                | ref.#{doc.ctx.name}
+                if (isFunc)
+                  | (
+                  each param, i in doc.paramTypes
+                    span.param #{param.types.join('|')} #{param.name}
+                    if (i + 1 < doc.paramTypes.length)
+                      | , 
+                  | )
+                if (doc.returnType)
+                  span.rtn  &rArr; #{doc.returnType.types.join('|')}
             != (doc && doc.description.full || '').replace(/\<br ?\/?\>/g, ' ')
 
 
