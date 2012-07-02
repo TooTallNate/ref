@@ -300,6 +300,11 @@ p a {
   text-decoration: underline;
 }
 
+ul {
+  list-style: disc;
+  margin-left: 40px;
+}
+
 .logo h1 .pointer {
   color: #dbe8d9;
   -webkit-transition-property: color;
@@ -317,11 +322,6 @@ p a {
   position: absolute;
   top: 12px;
   left: 70px;
-}
-
-.intro ul {
-  list-style: disc;
-  margin-left: 40px;
 }
 
 .types table, .types tr {
