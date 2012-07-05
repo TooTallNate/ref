@@ -125,10 +125,14 @@ html(lang="en")
                 if (!isFunc)
                   |  
                   span.rtn  &rArr; #{doc.type}
-            if (doc.paramTypes.length > 0)
+            if (doc.paramTypes.length > 0 || doc.returnType)
               ul
                 each param in doc.paramTypes
                   li #{param.name} - !{param.description}
+                if (doc.returnType)
+                  li
+                    strong Return: 
+                    | !{doc.returnType.description}
             != (doc && doc.description.full || '').replace(/\<br ?\/?\>/g, ' ')
 
 
