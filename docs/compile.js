@@ -34,7 +34,7 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
       doc.name = doc.ctx && doc.ctx.name
     }
     if (!doc.type) {
-      doc.type = doc.ctx && doc.ctx.type
+      doc.type = doc.ctx && doc.ctx.type || 'property'
     }
   })
   sections.push(docs.slice(base))
