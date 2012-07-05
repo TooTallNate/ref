@@ -164,6 +164,11 @@ a.nav:hover code {
   margin-top: 18px;
 }
 
+.section {
+  margin-bottom: 50px;
+}
+
+
 /* GitHub Ribbon
  * http://unindented.org/articles/2009/10/github-ribbon-using-css-transforms */
 .ribbon {

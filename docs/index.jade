@@ -106,7 +106,7 @@ html(lang="en")
           | .
       each doc in exports
         if (!doc.ignore)
-          .columns.sixteen
+          .columns.sixteen.section
             a(name='exports-' + doc.name)
             a(href='#exports-' + doc.name)
               isFunc = doc.type == 'method' || doc.isPrivate
@@ -220,7 +220,7 @@ html(lang="en")
           | multi-byte datatypes are involved.
       each doc in types
         if (!doc.ignore)
-          .columns.sixteen
+          .columns.sixteen.section
             a(name='types-' + doc.name)
             a(href='#types-' + doc.name)
               h3 types.#{doc.name}
@@ -239,7 +239,7 @@ html(lang="en")
           | your modules and/or applications.
       each doc in extensions
         if (!doc.ignore)
-          .columns.sixteen
+          .columns.sixteen.section
             a(name='extensions-' + doc.name)
             a(href='#extensions-' + doc.name)
               h3 Buffer##{doc.name}()
