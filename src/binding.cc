@@ -630,8 +630,8 @@ void init (Handle<Object> target) {
   // exports
   target->Set(String::NewSymbol("sizeof"), smap);
   target->Set(String::NewSymbol("alignof"), amap);
-  target->Set(String::NewSymbol("endianness"), CheckEndianness());
-  target->Set(String::NewSymbol("NULL"), WrapNullPointer());
+  target->Set(String::NewSymbol("endianness"), CheckEndianness(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+  target->Set(String::NewSymbol("NULL"), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
   NODE_SET_METHOD(target, "address", Address);
   NODE_SET_METHOD(target, "isNull", IsNull);
   NODE_SET_METHOD(target, "readObject", ReadObject);
