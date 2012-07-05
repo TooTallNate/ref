@@ -96,6 +96,10 @@ ul {
   margin-left: 40px;
 }
 
+h3 {
+  color: #777;
+}
+
 .container {
   margin: 100px auto;
 }
@@ -132,6 +136,7 @@ ul {
   display: inline-block;
   font-size: 0.8em;
   font-style: italic;
+  color: #444;
 }
 
 a.nav {
