@@ -70,6 +70,7 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
 
   // sort
   exports = exports.sort(sort)
+  extensions = extensions.sort(sort)
 
   // parse and highlight the Markdown descriptions
   ;[exports, types, extensions].forEach(function (docs) {
