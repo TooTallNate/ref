@@ -249,7 +249,7 @@ html(lang="en")
               p
                 | Shorthand for 
                 a(href='#exports-' + doc.name)
-                  code ref.#{doc.name}(this, ...)
+                  code ref.#{doc.name}(this, …)
                 | .
               != (doc.ref && doc.ref.description.full || '').replace(/\<br ?\/?\>/g, ' ')
 
