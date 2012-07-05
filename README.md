@@ -331,6 +331,21 @@ var val = buf.deref()
             .shiftLeft(5)
 ```
 
+Build the docs
+--------------
+
+Install the dev dependencies
+
+``` bash
+$ npm install
+```
+
+Generate the docs
+
+``` bash
+$ npm run docs
+```
+
 
 License
 -------
