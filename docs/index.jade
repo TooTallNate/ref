@@ -119,8 +119,12 @@ html(lang="en")
                     if (i + 1 < doc.paramTypes.length)
                       | , 
                   | )
-                if (doc.returnType)
-                  span.rtn  &rArr; #{doc.returnType.types.join('|')}
+                  if (doc.returnType)
+                    |  
+                    span.rtn &rarr; #{doc.returnType.types.join('|')}
+                if (!isFunc)
+                  |  
+                  span.rtn  &rArr; #{doc.type}
             if (doc.paramTypes.length > 0)
               ul
                 each param in doc.paramTypes
