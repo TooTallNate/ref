@@ -87,6 +87,10 @@ a {
   text-decoration: none;
 }
 
+p {
+  margin: 10px 0;
+}
+
 p a {
   text-decoration: underline;
 }
