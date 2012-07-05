@@ -155,6 +155,10 @@ a.nav:hover code {
   background-color: #dbe8d9;
 }
 
+.subtitle h3 {
+  margin-top: 18px;
+}
+
 /* GitHub Ribbon
  * http://unindented.org/articles/2009/10/github-ribbon-using-css-transforms */
 .ribbon {
