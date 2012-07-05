@@ -18,12 +18,27 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
   var base = 0
   var sections = []
   docs.forEach(function (doc, i) {
-    if (doc.tags[0] && doc.tags[0].type === 'section') {
-      sections.push(docs.slice(base, i))
-      base = i
+    doc.tags.forEach(function (t) {
+      if (t.type === 'section') {
+        sections.push(docs.slice(base, i))
+        base = i
+      }
+      if (t.type === 'name') {
+        doc.name = t.string
+      }
+      if (t.type === 'type') {
+        doc.type = t.types[0]
+      }
+    })
+    if (!doc.name) {
+      doc.name = doc.ctx && doc.ctx.name
+    }
+    if (!doc.type) {
+      doc.type = doc.ctx && doc.ctx.type
     }
   })
   sections.push(docs.slice(base))
+  assert.equal(sections.length, 3)
 
   // get the 3 sections
   var exports = sections[0]
@@ -32,7 +47,7 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
 
   // move NULL_POINTER from "types" to "exports"
   var null_pointer = types.pop()
-  assert.equal(null_pointer.ctx.name, 'NULL_POINTER')
+  assert.equal(null_pointer.name, 'NULL_POINTER')
   exports.push(null_pointer)
 
   // extract the "return" and "param" types
@@ -68,9 +83,8 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
 
   // get a reference to the ref export doc object for every Buffer extension doc
   extensions.forEach(function (doc) {
-    var name = doc.ctx.name
     doc.ref = exports.filter(function (ref) {
-      return ref.ctx.name === name
+      return ref.name === doc.name
     })[0]
   })
 
@@ -95,13 +109,13 @@ fs.readFile(__dirname + '/../lib/ref.js', 'utf8', function (err, data) {
 
 
 /**
- * Sorts an array of dox objects by ctx.name. If the first letter is an '_' then
+ * Sorts an array of dox objects by doc.name. If the first letter is an '_' then
  * it is considered "private" and gets sorted at the bottom.
  */
 
 function sort (a, b) {
-  var aname = a.ctx.name
-  var bname = b.ctx.name
+  var aname = a.name
+  var bname = b.name
   var aprivate = a.isPrivate
   var bprivate = b.isPrivate
   if (aprivate && !bprivate) {

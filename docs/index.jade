@@ -106,11 +106,11 @@ html(lang="en")
       each doc in exports
         if (!doc.ignore)
           .columns.sixteen
-            a(name='exports-' + doc.ctx.name)
-            a(href='#exports-' + doc.ctx.name)
-              isFunc = doc.ctx.type == 'method' || doc.isPrivate
+            a(name='exports-' + doc.name)
+            a(href='#exports-' + doc.name)
+              isFunc = doc.type == 'method' || doc.isPrivate
               h3
-                | ref.#{doc.ctx.name}
+                | ref.#{doc.name}
                 if (isFunc)
                   | (
                   each param, i in doc.paramTypes
@@ -216,9 +216,9 @@ html(lang="en")
       each doc in types
         if (!doc.ignore)
           .columns.sixteen
-            a(name='types-' + doc.ctx.name)
-            a(href='#types-' + doc.ctx.name)
-              h3 types.#{doc.ctx.name}
+            a(name='types-' + doc.name)
+            a(href='#types-' + doc.name)
+              h3 types.#{doc.name}
             != doc.description.full.replace(/\<br ?\/?\>/g, ' ')
 
 
@@ -233,18 +233,18 @@ html(lang="en")
           |  gets extended with some convenience functions that you can use in 
           | your modules and/or applications.
       each doc in extensions
-        if (!doc.ignore && doc.ctx)
+        if (!doc.ignore)
           .columns.sixteen
-            a(name='extensions-' + doc.ctx.name)
-            a(href='#extensions-' + doc.ctx.name)
-              h3 Buffer##{doc.ctx.name}()
-            if (doc.ctx.name === 'inspect')
+            a(name='extensions-' + doc.name)
+            a(href='#extensions-' + doc.name)
+              h3 Buffer##{doc.name}()
+            if (doc.name === 'inspect')
               != doc.description.full.replace(/\<br ?\/?\>/g, ' ')
             else
               p
                 | Shorthand for 
-                a(href='#exports-' + doc.ctx.name)
-                  code ref.#{doc.ctx.name}(this, ...)
+                a(href='#exports-' + doc.name)
+                  code ref.#{doc.name}(this, ...)
                 | .
               != (doc.ref && doc.ref.description.full || '').replace(/\<br ?\/?\>/g, ' ')
 
