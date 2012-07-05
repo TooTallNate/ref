@@ -15,7 +15,11 @@ $(document.body).on('click', 'a', function () {
 function scrollTo (hash) {
   var name = hash.substring(1)
   var target = $('a[name="' + name + '"]')
-  $('html, body').animate({ scrollTop: $(target).offset().top }
-    , { duration: 500, easing: 'swing'})
+  if (target.length) {
+    $('html, body').animate({ scrollTop: target.offset().top }
+      , { duration: 500, easing: 'swing'})
+  } else {
+    console.log('documentation not written: %s', name)
+  }
   return target
 }
