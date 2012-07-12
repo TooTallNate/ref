@@ -1,0 +1,589 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>"ref" documentation v0.0.20</title><meta name="description" content="Turn Buffer instances into &quot;pointers&quot;"><meta name="keywords" content="node.js, ref, native, buffer, extensions, c++, pointer, reference, dereference, type, int, long, float, double, byte, 64"><meta name="author" content="Nathan Rajlich"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><link rel="stylesheet" href="stylesheets/hightlight.css"><link rel="stylesheet" href="stylesheets/base.css"><link rel="stylesheet" href="stylesheets/skeleton.css"><link rel="stylesheet" href="stylesheets/layout.css"></head><body><div class="container"><div class="columns three logo"><a href=""><h1>ref <span class="pointer">*</span><span class="version">v0.0.20</span></h1></a></div><div class="columns thirteen subtitle"><h3>Turn Buffer instances into &quot;pointers&quot;</h3></div><div class="columns sixteen intro"><h4>What is <code>ref</code>?</h4><p><code>ref</code> is a native addon for <a href="http://nodejs.org">Node.js</a> that aids in doing C programming in JavaScript, by extending 
+the built-in <a href="http://nodejs.org/api/buffer.html"><code>Buffer</code> class</a> with some fancy additions like:<ul><li>Getting the memory address of a Buffer</li><li>Checking the endianness of the processor</li><li>Checking if a Buffer represents the NULL pointer</li><li>Reading and writing "pointers" with Buffers</li><li>Reading and writing C Strings (NULL-terminated)</li><li>Reading and writing JavaScript Object references</li><li>Reading and writing <strong>int64_t</strong> and <strong>uint64_t</strong> values</li><li>A "type" convention to define the contents of a Buffer</li></ul></p><p>There is indeed a lot of <em>meat </em> to <code>ref</code>, but it all fits together in one way or another in the end.<br>For simplicity, <code>ref</code>'s API can be broken down into 3 sections:</p></div><a href="#exports" class="nav columns five"><h4>ref <code>exports</code></h4><p>All the static versions of <code>ref</code>'s functions and default "types" available on the exports returned from <code>require('ref')</code>.</p></a><a href="#types" class="nav columns five"><h4><em>"type"</em> system</h4><p>The <em>"type"</em> system allows you to define a "type" on any Buffer instance, and then
+ use generic <code>ref()</code> and <code>deref()</code> functions to reference and dereference values.</p></a><a href="#extensions" class="nav columns five"><h4><code>Buffer</code> extensions</h4><p><code>Buffer.prototype</code> gets extended with some convenience functions. These all just mirror
+ their static counterpart, using the Buffer's <code>this</code> variable as the <code>buffer</code> variable.</p></a><hr><div class="columns eight section exports"><a name="exports"></a><a href="#exports"><h2>ref exports</h2></a></div><div class="columns sixteen intro"><p>This section documents all the functions exported from <code>require('ref')</code>.</p></div><div class="columns sixteen section"><a name="exports-NULL"></a><a href="#exports-NULL"><h3>ref.NULL <span class="rtn"> &rArr; Buffer</span></h3></a><p>A <code>Buffer</code> that references the C NULL pointer. That is, its memory address
+points to 0. Its <code>length</code> is 0 because accessing any data from this buffer
+would cause a <em>segmentation fault</em>.
+
+</p>
+<pre><code>console.log(ref.NULL);
+&lt;SlowBuffer@<span class="number">0x0</span> ></code></pre>
+</div><div class="columns sixteen section"><a name="exports-NULL_POINTER"></a><a href="#exports-NULL_POINTER"><h3>ref.NULL_POINTER <span class="rtn"> &rArr; Buffer</span></h3></a><p><code>NULL_POINTER</code> is a pointer-sized <code>Buffer</code> instance pointing to <code>NULL</code>.
+Conceptually, it&#39;s equivalent to the following C code:
+
+</p>
+<pre><code class="lang-c">char *null_pointer;
+null_pointer = NULL;</code></pre>
+</div><div class="columns sixteen section"><a name="exports-address"></a><a href="#exports-address"><h3>ref.address(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; Number</span></h3></a><ul><li>buffer - The buffer to get the memory address of.</li><li><strong>Return: </strong>The memory address the buffer instance.</li></ul><p>Accepts a <code>Buffer</code> instance and returns the memory address of the buffer
+instance.
+
+</p>
+<pre><code>console.log(ref.address(<span class="keyword">new</span> Buffer(<span class="number">1</span>)));
+<span class="number">4320233616</span>
+
+console.log(ref.address(ref.NULL)));
+<span class="number">0</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-alloc"></a><a href="#exports-alloc"><h3>ref.alloc(<span class="param">Object|String type</span>, <span class="param">? value</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>type - The &quot;type&quot; object to allocate. Strings get coerced first.</li><li>value - (optional) The initial value set on the returned Buffer, using <em>type</em>&#39;s <code>set()</code> function.</li><li><strong>Return: </strong>A new Buffer instance with it&#39;s <code>type</code> set to &quot;type&quot;, and (optionally) &quot;value&quot; written to it.</li></ul><p>Returns a new Buffer instance big enough to hold <code>type</code>,
+with the given <code>value</code> written to it.
+
+</p>
+<pre><code class="lang-js"><span class="keyword">var</span> intBuf = ref.alloc(ref.types.int)
+<span class="keyword">var</span> int_with_4 = ref.alloc(ref.types.int, <span class="number">4</span>)</code></pre>
+</div><div class="columns sixteen section"><a name="exports-allocCString"></a><a href="#exports-allocCString"><h3>ref.allocCString(<span class="param">String string</span>, <span class="param">String encoding</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>string - The JavaScript string to be converted to a C string.</li><li>encoding - (optional) The encoding to use for the C string. Defaults to <strong>&#39;utf8&#39;</strong>.</li><li><strong>Return: </strong>The new <code>Buffer</code> instance with the specified String wrtten to it, and a trailing NUL byte.</li></ul><p>Returns a new <code>Buffer</code> instance with the given String written to it with the
+given encoding (defaults to <strong>&#39;utf8&#39;</strong>). The buffer is 1 byte longer than the
+string itself, and is NUL terminated.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.allocCString(<span class="string">'hello world'</span>);
+
+console.log(buf.toString());
+<span class="string">'hello world\u0000'</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-coerceType"></a><a href="#exports-coerceType"><h3>ref.coerceType(<span class="param">Object|String type</span>) <span class="rtn">&rarr; Object</span></h3></a><ul><li>type - The &quot;type&quot; Object or String to coerce.</li><li><strong>Return: </strong>A &quot;type&quot; object</li></ul><p>Coerces a &quot;type&quot; object from a String or an actual &quot;type&quot; object. String values
+are looked up from the <code>ref.types</code> Object. So:
+
+</p>
+<ul>
+<li><code>&quot;int&quot;</code> gets coerced into <code>ref.types.int</code>.</li>
+<li><code>&quot;int *&quot;</code> gets translated into <code>ref.refType(ref.types.int)</code></li>
+<li><code>ref.types.int</code> gets translated into <code>ref.types.int</code> (returns itself)</li>
+</ul>
+<p>Throws an Error if no valid &quot;type&quot; object could be determined. Most <code>ref</code>
+functions use this function under the, so anywhere a &quot;type&quot; object is expected,
+a String may be passed as well, including simply setting the <code>buffer.type</code>
+property.
+
+</p>
+<pre><code><span class="keyword">var</span> type = ref.coerceType(<span class="string">'int **'</span>);
+
+console.log(type.indirection);
+<span class="number">3</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-deref"></a><a href="#exports-deref"><h3>ref.deref(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; ?</span></h3></a><ul><li>buffer - A Buffer instance to dereference.</li><li><strong>Return: </strong>The returned value after dereferencing <em>buffer</em>.</li></ul><p>Acceps a Buffer instance and attempts to &quot;dereference&quot; it.
+That is, first it checks the &quot;indirection&quot; count of <em>buffer</em>&#39;s &quot;type&quot;, and if
+it&#39;s greater than <strong>1</strong> then it merely returns another Buffer, but with one
+level less <code>indirection</code>.
+
+</p>
+<p>When <em>buffer</em>&#39;s indirection is at <strong>1</strong>, then it checks for <code>buffer.type</code>
+which should be an Object with its own <code>get()</code> function.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int'</span>, <span class="number">6</span>);
+
+<span class="keyword">var</span> val = ref.deref(buf);
+console.log(val);
+<span class="number">6</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-derefType"></a><a href="#exports-derefType"><h3>ref.derefType(<span class="param">Object|String type</span>) <span class="rtn">&rarr; Object</span></h3></a><ul><li>type - The &quot;type&quot; object to create a dereference type from. Strings get coerced first.</li><li><strong>Return: </strong>The new &quot;type&quot; object with its <code>indirection</code> decremented by 1.</li></ul><p>Returns a new clone of the given &quot;type&quot; object, with its
+&quot;indirection&quot; level decremented by 1.
+</p>
+</div><div class="columns sixteen section"><a name="exports-endianness"></a><a href="#exports-endianness"><h3>ref.endianness <span class="rtn"> &rArr; String</span></h3></a><p>A string that represents the native endianness of the machine&#39;s processor.
+The possible values are either <code>&quot;LE&quot;</code> or <code>&quot;BE&quot;</code>.
+
+</p>
+<pre><code>console.log(ref.endianness);
+<span class="string">'LE'</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-get"></a><a href="#exports-get"><h3>ref.get(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Object|String type</span>) <span class="rtn">&rarr; ?</span></h3></a><ul><li>buffer - The Buffer instance to read from.</li><li>offset - (optional) The offset on the Buffer to start reading from. Defaults to 0.</li><li>type - (optional) The &quot;type&quot; object to use when reading. Defaults to calling <code>getType()</code> on the buffer.</li><li><strong>Return: </strong>Whatever value the &quot;type&quot; used when reading returns.</li></ul><p>Calls the <code>get()</code> function of the Buffer&#39;s current &quot;type&quot; (or the
+passed in <em>type</em> if present) at the given <em>offset</em>.
+
+</p>
+<p>This function handles checking the &quot;indirection&quot; level and returning a
+proper &quot;dereferenced&quot; Bufffer instance when necessary.
+</p>
+</div><div class="columns sixteen section"><a name="exports-getType"></a><a href="#exports-getType"><h3>ref.getType(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; Object</span></h3></a><ul><li>buffer - The Buffer instance to get the &quot;type&quot; object from.</li><li><strong>Return: </strong>The &quot;type&quot; object from the given Buffer.</li></ul><p>Returns the &quot;type&quot; property of the given Buffer.
+Creates a default type for the buffer when none exists.
+</p>
+</div><div class="columns sixteen section"><a name="exports-isNull"></a><a href="#exports-isNull"><h3>ref.isNull(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; Boolean</span></h3></a><ul><li>buffer - The buffer to check for NULL.</li><li><strong>Return: </strong>true or false.</li></ul><p>Accepts a <code>Buffer</code> instance and returns <em>true</em> if the buffer represents the
+NULL pointer, <em>false</em> otherwise.
+
+</p>
+<pre><code>console.log(<span class="keyword">new</span> Buffer(<span class="number">1</span>).isNull());
+<span class="literal">false</span>
+
+console.log(ref.NULL.isNull());
+<span class="literal">true</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-readCString"></a><a href="#exports-readCString"><h3>ref.readCString(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>) <span class="rtn">&rarr; String</span></h3></a><ul><li>buffer - The buffer to read a Buffer from.</li><li>offset - The offset to begin reading from.</li><li><strong>Return: </strong>The String that was read from <em>buffer</em>.</li></ul><p>Returns a JavaScript String read from <em>buffer</em> at the given <em>offset</em>. The
+C String is read until the first NULL byte, which indicates the end of the
+String.
+
+</p>
+<p>This function can read beyond the <code>length</code> of a Buffer.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = <span class="keyword">new</span> Buffer(<span class="string">'hello\0world\0'</span>);
+
+<span class="keyword">var</span> str = ref.readCString(buf, <span class="number">0</span>);
+console.log(str);
+<span class="string">'hello'</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-readInt64BE"></a><a href="#exports-readInt64BE"><h3>ref.readInt64BE(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>) <span class="rtn">&rarr; Number|String</span></h3></a><ul><li>buffer - The buffer to read a Buffer from.</li><li>offset - The offset to begin reading from.</li><li><strong>Return: </strong>The Number or String that was read from <em>buffer</em>.</li></ul><p>Returns a big-endian signed 64-bit int read from <em>buffer</em> at the given
+<em>offset</em>.
+
+</p>
+<p>If the returned value will fit inside a JavaScript Number without losing
+precision, then a Number is returned, otherwise a String is returned.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int64'</span>);
+ref.writeInt64BE(buf, <span class="number">0</span>, <span class="string">'9223372036854775807'</span>);
+
+<span class="keyword">var</span> val = ref.readInt64BE(buf, <span class="number">0</span>)
+console.log(val)
+<span class="string">'9223372036854775807'</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-readInt64LE"></a><a href="#exports-readInt64LE"><h3>ref.readInt64LE(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>) <span class="rtn">&rarr; Number|String</span></h3></a><ul><li>buffer - The buffer to read a Buffer from.</li><li>offset - The offset to begin reading from.</li><li><strong>Return: </strong>The Number or String that was read from <em>buffer</em>.</li></ul><p>Returns a little-endian signed 64-bit int read from <em>buffer</em> at the given
+<em>offset</em>.
+
+</p>
+<p>If the returned value will fit inside a JavaScript Number without losing
+precision, then a Number is returned, otherwise a String is returned.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int64'</span>);
+ref.writeInt64LE(buf, <span class="number">0</span>, <span class="string">'9223372036854775807'</span>);
+
+<span class="keyword">var</span> val = ref.readInt64LE(buf, <span class="number">0</span>)
+console.log(val)
+<span class="string">'9223372036854775807'</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-readObject"></a><a href="#exports-readObject"><h3>ref.readObject(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>) <span class="rtn">&rarr; Object</span></h3></a><ul><li>buffer - The buffer to read an Object from.</li><li>offset - The offset to begin reading from.</li><li><strong>Return: </strong>The Object that was read from <em>buffer</em>.</li></ul><p>Reads a JavaScript Object that has previously been written to the given
+<em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> obj = { foo: <span class="string">'bar'</span> };
+<span class="keyword">var</span> buf = ref.alloc(<span class="string">'Object'</span>, obj);
+
+<span class="keyword">var</span> obj2 = ref.readObject(buf, <span class="number">0</span>);
+console.log(obj === obj2);
+<span class="literal">true</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-readPointer"></a><a href="#exports-readPointer"><h3>ref.readPointer(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>buffer - The buffer to read a Buffer from.</li><li>offset - The offset to begin reading from.</li><li><strong>Return: </strong>The Buffer instance that was read from <em>buffer</em>.</li></ul><p>Reads a Buffer instance from the given <em>buffer</em> at the given <em>offset</em>.
+The <em>size</em> parameter specifies the <code>length</code> of the returned Buffer instance,
+which defaults to <strong>0</strong>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = <span class="keyword">new</span> Buffer(<span class="string">'hello world'</span>);
+<span class="keyword">var</span> pointer = ref.alloc(<span class="string">'pointer'</span>);
+
+<span class="keyword">var</span> buf2 = ref.readPointer(pointer, <span class="number">0</span>, buf.length);
+console.log(buf.toString());
+<span class="string">'hello world'</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-readUInt64BE"></a><a href="#exports-readUInt64BE"><h3>ref.readUInt64BE(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>) <span class="rtn">&rarr; Number|String</span></h3></a><ul><li>buffer - The buffer to read a Buffer from.</li><li>offset - The offset to begin reading from.</li><li><strong>Return: </strong>The Number or String that was read from <em>buffer</em>.</li></ul><p>Returns a big-endian unsigned 64-bit int read from <em>buffer</em> at the given
+<em>offset</em>.
+
+</p>
+<p>If the returned value will fit inside a JavaScript Number without losing
+precision, then a Number is returned, otherwise a String is returned.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'uint64'</span>);
+ref.writeUInt64BE(buf, <span class="number">0</span>, <span class="string">'18446744073709551615'</span>);
+
+<span class="keyword">var</span> val = ref.readUInt64BE(buf, <span class="number">0</span>)
+console.log(val)
+<span class="string">'18446744073709551615'</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-readUInt64LE"></a><a href="#exports-readUInt64LE"><h3>ref.readUInt64LE(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>) <span class="rtn">&rarr; Number|String</span></h3></a><ul><li>buffer - The buffer to read a Buffer from.</li><li>offset - The offset to begin reading from.</li><li><strong>Return: </strong>The Number or String that was read from <em>buffer</em>.</li></ul><p>Returns a little-endian unsigned 64-bit int read from <em>buffer</em> at the given
+<em>offset</em>.
+
+</p>
+<p>If the returned value will fit inside a JavaScript Number without losing
+precision, then a Number is returned, otherwise a String is returned.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'uint64'</span>);
+ref.writeUInt64LE(buf, <span class="number">0</span>, <span class="string">'18446744073709551615'</span>);
+
+<span class="keyword">var</span> val = ref.readUInt64LE(buf, <span class="number">0</span>)
+console.log(val)
+<span class="string">'18446744073709551615'</span></code></pre>
+</div><div class="columns sixteen section"><a name="exports-ref"></a><a href="#exports-ref"><h3>ref.ref(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>buffer - A Buffer instance to create a reference to.</li><li><strong>Return: </strong>A new Buffer instance pointing to &quot;buffer&quot;.</li></ul><p><code>ref()</code> acceps a Buffer instance and returns a new Buffer
+instance that is &quot;pointer&quot; sized and has it&#39;s data pointing to the given
+Buffer instance. Essentially the created Buffer is a &quot;reference&quot; to the
+original pointer, equivalent to the following C code:
+
+</p>
+<pre><code class="lang-c">char *buf = buffer;
+char **ref = &amp;buf;</code></pre>
+</div><div class="columns sixteen section"><a name="exports-refType"></a><a href="#exports-refType"><h3>ref.refType(<span class="param">Object|String type</span>) <span class="rtn">&rarr; Object</span></h3></a><ul><li>type - The &quot;type&quot; object to create a reference type from. Strings get coerced first.</li><li><strong>Return: </strong>The new &quot;type&quot; object with its <code>indirection</code> incremented by 1.</li></ul><p>Returns a new clone of the given &quot;type&quot; object, with its
+<code>indirection</code> level incremented by <strong>1</strong>.
+
+</p>
+<p>Say you wanted to create a type representing a <code>void *</code>:
+
+</p>
+<pre><code><span class="keyword">var</span> voidPtrType = ref.refType(ref.types.<span class="keyword">void</span>);</code></pre>
+</div><div class="columns sixteen section"><a name="exports-reinterpret"></a><a href="#exports-reinterpret"><h3>ref.reinterpret(<span class="param">Buffer buffer</span>, <span class="param">Number size</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>buffer - A Buffer instance to base the returned Buffer off of.</li><li>size - The <code>length</code> property of the returned Buffer.</li><li><strong>Return: </strong>A new Buffer instance with the same memory address as <em>buffer</em>, and the requested <em>size</em>.</li></ul><p>Returns a new Buffer instance with the specified <em>size</em>, with the same memory
+address as <em>buffer</em>.
+
+</p>
+<p>This function &quot;attaches&quot; <em>buffer</em> to the returned Buffer to prevent it from
+being garbage collected.
+</p>
+</div><div class="columns sixteen section"><a name="exports-reinterpretUntilZeros"></a><a href="#exports-reinterpretUntilZeros"><h3>ref.reinterpretUntilZeros(<span class="param">Buffer buffer</span>, <span class="param">Number size</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>buffer - A Buffer instance to base the returned Buffer off of.</li><li>size - The number of sequential, aligned <code>NULL</code> bytes are required to terminate the buffer.</li><li><strong>Return: </strong>A new Buffer instance with the same memory address as <em>buffer</em>, and a variable <code>length</code> that is terminated by <em>size</em> NUL bytes.</li></ul><p>Accepts a <code>Buffer</code> instance and a number of <code>NULL</code> bytes to read from the
+pointer. This function will scan past the boundary of the Buffer&#39;s <code>length</code>
+until it finds <code>size</code> number of aligned <code>NULL</code> bytes.
+
+</p>
+<p>This is useful for finding the end of NUL-termintated array or C string. For
+example, the <code>readCString()</code> function <em>could</em> be implemented like:
+
+</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">readCString</span> <span class="params">(buf)</span> {</span>
+  <span class="keyword">return</span> ref.reinterpretUntilZeros(buf, <span class="number">1</span>).toString(<span class="string">'utf8'</span>)
+}</code></pre>
+<p>This function &quot;attaches&quot; <em>buffer</em> to the returned Buffer to prevent it from
+being garbage collected.
+</p>
+</div><div class="columns sixteen section"><a name="exports-set"></a><a href="#exports-set"><h3>ref.set(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">? value</span>, <span class="param">Object|String type</span>)</h3></a><ul><li>buffer - The Buffer instance to write to.</li><li>offset - The offset on the Buffer to start writing to.</li><li>value - The value to write to the Buffer instance.</li><li>type - (optional) The &quot;type&quot; object to use when reading. Defaults to calling <code>getType()</code> on the buffer.</li></ul><p>Calls the <code>set()</code> function of the Buffer&#39;s current &quot;type&quot; (or the
+passed in <em>type</em> if present) at the given <em>offset</em>.
+
+</p>
+<p>This function handles checking the &quot;indirection&quot; level writing a pointer rather
+than calling the <code>set()</code> function if the indirection is greater than 1.
+</p>
+</div><div class="columns sixteen section"><a name="exports-writeCString"></a><a href="#exports-writeCString"><h3>ref.writeCString(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">String string</span>, <span class="param">String encoding</span>)</h3></a><ul><li>buffer - The Buffer instance to write to.</li><li>offset - The offset of the buffer to begin writing at.</li><li>string - The JavaScript String to write that will be written to the buffer.</li><li>encoding - (optional) The encoding to read the C string as. Defaults to <strong>&#39;utf8&#39;</strong>.</li></ul><p>Writes the given string as a C String (NULL terminated) to the given buffer
+at the given offset. &quot;encoding&quot; is optional and defaults to <strong>&#39;utf8&#39;</strong>.
+
+</p>
+<p>Unlike <code>readCString()</code>, this function requires the buffer to actually have the
+proper length.
+</p>
+</div><div class="columns sixteen section"><a name="exports-writeInt64BE"></a><a href="#exports-writeInt64BE"><h3>ref.writeInt64BE(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Number|String input</span>)</h3></a><ul><li>buffer - The buffer to write to.</li><li>offset - The offset to begin writing from.</li><li>input - This String or Number which gets written.</li></ul><p>Writes the <em>input</em> Number or String as a big-endian signed 64-bit int into
+<em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int64'</span>);
+ref.writeInt64BE(buf, <span class="number">0</span>, <span class="string">'9223372036854775807'</span>);</code></pre>
+</div><div class="columns sixteen section"><a name="exports-writeInt64LE"></a><a href="#exports-writeInt64LE"><h3>ref.writeInt64LE(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Number|String input</span>)</h3></a><ul><li>buffer - The buffer to write to.</li><li>offset - The offset to begin writing from.</li><li>input - This String or Number which gets written.</li></ul><p>Writes the <em>input</em> Number or String as a little-endian signed 64-bit int into
+<em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int64'</span>);
+ref.writeInt64LE(buf, <span class="number">0</span>, <span class="string">'9223372036854775807'</span>);</code></pre>
+</div><div class="columns sixteen section"><a name="exports-writeObject"></a><a href="#exports-writeObject"><h3>ref.writeObject(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Object object</span>)</h3></a><ul><li>buffer - A Buffer instance to write <em>object</em> to.</li><li>offset - The offset on the Buffer to start writing at.</li><li>object - The Object to be written into <em>buffer</em>.</li></ul><p>Writes a pointer to <em>object</em> into <em>buffer</em> at the specified _offset.
+
+</p>
+<p>This function &quot;attaches&quot; <em>object</em> to <em>buffer</em> to prevent it from being garbage
+collected.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'Object'</span>);
+ref.writeObject(buf, <span class="number">0</span>, { foo: <span class="string">'bar'</span> });</code></pre>
+</div><div class="columns sixteen section"><a name="exports-writePointer"></a><a href="#exports-writePointer"><h3>ref.writePointer(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Buffer pointer</span>)</h3></a><ul><li>buffer - A Buffer instance to write _pointer to.</li><li>offset - The offset on the Buffer to start writing at.</li><li>pointer - The Buffer instance whose memory address will be written to <em>buffer</em>.</li></ul><p>Writes the memory address of <em>pointer</em> to <em>buffer</em> at the specified <em>offset</em>.
+
+</p>
+<p>This function &quot;attaches&quot; <em>object</em> to <em>buffer</em> to prevent it from being garbage
+collected.
+
+</p>
+<pre><code><span class="keyword">var</span> someBuffer = <span class="keyword">new</span> Buffer(<span class="string">'whatever'</span>);
+<span class="keyword">var</span> buf = ref.alloc(<span class="string">'pointer'</span>);
+ref.writePointer(buf, <span class="number">0</span>, someBuffer);</code></pre>
+</div><div class="columns sixteen section"><a name="exports-writeUInt64BE"></a><a href="#exports-writeUInt64BE"><h3>ref.writeUInt64BE(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Number|String input</span>)</h3></a><ul><li>buffer - The buffer to write to.</li><li>offset - The offset to begin writing from.</li><li>input - This String or Number which gets written.</li></ul><p>Writes the <em>input</em> Number or String as a big-endian unsigned 64-bit int into
+<em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'uint64'</span>);
+ref.writeUInt64BE(buf, <span class="number">0</span>, <span class="string">'18446744073709551615'</span>);</code></pre>
+</div><div class="columns sixteen section"><a name="exports-writeUInt64LE"></a><a href="#exports-writeUInt64LE"><h3>ref.writeUInt64LE(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Number|String input</span>)</h3></a><ul><li>buffer - The buffer to write to.</li><li>offset - The offset to begin writing from.</li><li>input - This String or Number which gets written.</li></ul><p>Writes the <em>input</em> Number or String as a little-endian unsigned 64-bit int
+into <em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'uint64'</span>);
+ref.writeUInt64LE(buf, <span class="number">0</span>, <span class="string">'18446744073709551615'</span>);</code></pre>
+</div><div class="columns sixteen section"><a name="exports-_attach"></a><a href="#exports-_attach"><h3>ref._attach(<span class="param">Buffer buffer</span>, <span class="param">Object|Buffer object</span>)</h3></a><ul><li>buffer - A Buffer instance to attach <em>object</em> to.</li><li>object - An Object or Buffer to prevent from being garbage collected until <em>buffer</em> does.</li></ul><p>Attaches <em>object</em> to <em>buffer</em> such that it prevents <em>object</em> from being garbage
+collected until <em>buffer</em> does.
+</p>
+</div><div class="columns sixteen section"><a name="exports-_reinterpret"></a><a href="#exports-_reinterpret"><h3>ref._reinterpret(<span class="param">Buffer buffer</span>, <span class="param">Number size</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>buffer - A Buffer instance to base the returned Buffer off of.</li><li>size - The <code>length</code> property of the returned Buffer.</li><li><strong>Return: </strong>A new Buffer instance with the same memory address as <em>buffer</em>, and the requested <em>size</em>.</li></ul><p>Same as <code>ref.reinterpret()</code>, except that this version does not attach
+<em>buffer</em> to the returned Buffer, which is potentially unsafe if the
+garbage collector runs.
+</p>
+</div><div class="columns sixteen section"><a name="exports-_reinterpretUntilZeros"></a><a href="#exports-_reinterpretUntilZeros"><h3>ref._reinterpretUntilZeros(<span class="param">Buffer buffer</span>, <span class="param">Number size</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>buffer - A Buffer instance to base the returned Buffer off of.</li><li>size - The number of sequential, aligned <code>NULL</code> bytes that are required to terminate the buffer.</li><li><strong>Return: </strong>A new Buffer instance with the same memory address as <em>buffer</em>, and a variable <code>length</code> that is terminated by <em>size</em> NUL bytes.</li></ul><p>Same as <code>ref.reinterpretUntilZeros()</code>, except that this version does not
+attach <em>buffer</em> to the returned Buffer, which is potentially unsafe if the
+garbage collector runs.
+</p>
+</div><div class="columns sixteen section"><a name="exports-_writeObject"></a><a href="#exports-_writeObject"><h3>ref._writeObject(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Object object</span>)</h3></a><ul><li>buffer - A Buffer instance to write <em>object</em> to.</li><li>offset - The offset on the Buffer to start writing at.</li><li>object - The Object to be written into <em>buffer</em>.</li></ul><p>Same as <code>ref.writeObject()</code>, except that this version does not <em>attach</em> the
+Object to the Buffer, which is potentially unsafe if the garbage collector
+runs.
+</p>
+</div><div class="columns sixteen section"><a name="exports-_writePointer"></a><a href="#exports-_writePointer"><h3>ref._writePointer(<span class="param">Buffer buffer</span>, <span class="param">Number offset</span>, <span class="param">Buffer pointer</span>)</h3></a><ul><li>buffer - A Buffer instance to write _pointer to.</li><li>offset - The offset on the Buffer to start writing at.</li><li>pointer - The Buffer instance whose memory address will be written to <em>buffer</em>.</li></ul><p>Same as <code>ref.writePointer()</code>, except that this version does not attach
+<em>pointer</em> to <em>buffer</em>, which is potentially unsafe if the garbage collector
+runs.
+</p>
+</div><hr><div class="columns eight section types"><a name="types"></a><a href="#types"><h2><em>"type"</em> system</h2></a></div><div class="columns sixteen intro types"><p>A "type" in <code>ref</code> is simply an plain 'ol JavaScript Object, with a set 
+of expected properties attached that implement the logic for getting 
+&amp; setting values on a given <code>Buffer</code> instance.</p><p>To attach a "type" to a Buffer instance, you simply attach the "type"
+object to the Buffer's <code>type</code> property. <code>ref</code> comes with a set of commonly used types which are described in this 
+section.</p><h4>Creating your own "type"</h4><p>It's trivial to create your own "type" that reads and writes your 
+own custom datatype/class to and from Buffer instances using <code>ref</code>'s unified API.<br>To create your own "type", simply create a JavaScript Object with 
+the following properties defined:<table><tr><th>Name</th><th>Data Type</th><th>Description</th></tr><tr><td><code>size</code></td><td><code>Number</code></td><td>The size in bytes required to hold this datatype.</td></tr><tr><td><code>indirection</code></td><td><code>Number</code></td><td>The current level of indirection of the buffer. When defining 
+your own "types", just set this value to <code>1</code>.</td></tr><tr><td><code>get</code></td><td><code>Function</code></td><td>The function to invoke when <a href="#exports-get"><code>ref.get()</code></a> is invoked on a buffer of this type.</td></tr><tr><td><code>set</code></td><td><code>Function</code></td><td>The function to invoke when <a href="#exports-set"><code>ref.set()</code></a> is invoked on a buffer of this type.</td></tr><tr><td><code>name</code></td><td><code>String</code></td><td><em>(Optional)</em> The name to use during debugging for this datatype.</td></tr><tr><td><code>alignment</code></td><td><code>Number</code></td><td><em>(Optional)</em> The alignment of this datatype when placed inside a struct. 
+Defaults to the type's <code>size</code>.</td></tr></table></p><h4>The built-in "types"</h4><p>Here is the list of <code>ref</code>'s built-in "type" Objects. All these built-in "types" can be found 
+ on the <code>ref.types</code> export Object. All the built-in types use "native endianness" when 
+multi-byte datatypes are involved.</p></div><div class="columns sixteen section"><a name="types-void"></a><a href="#types-void"><h3>types.void</h3></a><p>The <code>void</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-int8"></a><a href="#types-int8"><h3>types.int8</h3></a><p>The <code>int8</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-uint8"></a><a href="#types-uint8"><h3>types.uint8</h3></a><p>The <code>uint8</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-int16"></a><a href="#types-int16"><h3>types.int16</h3></a><p>The <code>int16</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-uint16"></a><a href="#types-uint16"><h3>types.uint16</h3></a><p>The <code>uint16</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-int32"></a><a href="#types-int32"><h3>types.int32</h3></a><p>The <code>int32</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-uint32"></a><a href="#types-uint32"><h3>types.uint32</h3></a><p>The <code>uint32</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-int64"></a><a href="#types-int64"><h3>types.int64</h3></a><p>The <code>int64</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-uint64"></a><a href="#types-uint64"><h3>types.uint64</h3></a><p>The <code>uint64</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-float"></a><a href="#types-float"><h3>types.float</h3></a><p>The <code>float</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-double"></a><a href="#types-double"><h3>types.double</h3></a><p>The <code>double</code> type.</p>
+</div><div class="columns sixteen section"><a name="types-Object"></a><a href="#types-Object"><h3>types.Object</h3></a><p>The <code>Object</code> type. This can be used to read/write regular JS Objects
+into raw memory.</p>
+</div><div class="columns sixteen section"><a name="types-CString"></a><a href="#types-CString"><h3>types.CString</h3></a><p>The <code>CString</code> (a.k.a <code>&quot;string&quot;</code>) type.
+
+</p>
+<p>CStrings are a kind of weird thing. We say it&#39;s <code>sizeof(char *)</code>, and
+<code>indirection</code> level of 1, which means that we have to return a Buffer that
+is pointer sized, and points to a some utf8 string data, so we have to create
+a 2nd &quot;in-between&quot; buffer.</p>
+</div><div class="columns sixteen section"><a name="types-bool"></a><a href="#types-bool"><h3>types.bool</h3></a><p>The <code>bool</code> type.
+
+</p>
+<p>Wrapper type around <code>types.uint8</code> that accepts/returns <code>true</code> or
+<code>false</code> Boolean JavaScript values.
+</p>
+</div><div class="columns sixteen section"><a name="types-byte"></a><a href="#types-byte"><h3>types.byte</h3></a><p>The <code>byte</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-char"></a><a href="#types-char"><h3>types.char</h3></a><p>The <code>char</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-uchar"></a><a href="#types-uchar"><h3>types.uchar</h3></a><p>The <code>uchar</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-short"></a><a href="#types-short"><h3>types.short</h3></a><p>The <code>short</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-ushort"></a><a href="#types-ushort"><h3>types.ushort</h3></a><p>The <code>ushort</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-int"></a><a href="#types-int"><h3>types.int</h3></a><p>The <code>int</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-uint"></a><a href="#types-uint"><h3>types.uint</h3></a><p>The <code>uint</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-long"></a><a href="#types-long"><h3>types.long</h3></a><p>The <code>long</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-ulong"></a><a href="#types-ulong"><h3>types.ulong</h3></a><p>The <code>ulong</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-longlong"></a><a href="#types-longlong"><h3>types.longlong</h3></a><p>The <code>longlong</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-ulonglong"></a><a href="#types-ulonglong"><h3>types.ulonglong</h3></a><p>The <code>ulonglong</code> type.
+</p>
+</div><div class="columns sixteen section"><a name="types-size_t"></a><a href="#types-size_t"><h3>types.size_t</h3></a><p>The <code>size_t</code> type.
+</p>
+</div><hr><div class="columns eight section exports"><a name="extensions"></a><a href="#extensions"><h2>Buffer extensions</h2></a></div><div class="columns sixteen intro"><p><code>Buffer.prototype</code> gets extended with some convenience functions that you can use in 
+your modules and/or applications.</p></div><div class="columns sixteen section"><a name="extensions-address"></a><a href="#extensions-address"><h3>Buffer#address()</h3></a><p>Shorthand for <a href="#exports-address"><code>ref.address(this, …)</code></a>.</p><p>Accepts a <code>Buffer</code> instance and returns the memory address of the buffer
+instance.
+
+</p>
+<pre><code>console.log(ref.address(<span class="keyword">new</span> Buffer(<span class="number">1</span>)));
+<span class="number">4320233616</span>
+
+console.log(ref.address(ref.NULL)));
+<span class="number">0</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-deref"></a><a href="#extensions-deref"><h3>Buffer#deref()</h3></a><p>Shorthand for <a href="#exports-deref"><code>ref.deref(this, …)</code></a>.</p><p>Acceps a Buffer instance and attempts to &quot;dereference&quot; it.
+That is, first it checks the &quot;indirection&quot; count of <em>buffer</em>&#39;s &quot;type&quot;, and if
+it&#39;s greater than <strong>1</strong> then it merely returns another Buffer, but with one
+level less <code>indirection</code>.
+
+</p>
+<p>When <em>buffer</em>&#39;s indirection is at <strong>1</strong>, then it checks for <code>buffer.type</code>
+which should be an Object with its own <code>get()</code> function.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int'</span>, <span class="number">6</span>);
+
+<span class="keyword">var</span> val = ref.deref(buf);
+console.log(val);
+<span class="number">6</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-inspect"></a><a href="#extensions-inspect"><h3>Buffer#inspect()</h3></a><p><code>ref</code> overwrites the default <code>Buffer#inspect()</code> function to include the
+hex-encoded memory address of the Buffer instance when invoked.
+
+</p>
+<p>This is simply a nice-to-have.
+
+</p>
+<p><strong>Before</strong>:
+
+</p>
+<pre><code class="lang-js">console.log(<span class="keyword">new</span> Buffer(<span class="string">'ref'</span>));
+&lt;Buffer <span class="number">72</span> <span class="number">65</span> <span class="number">66</span>></code></pre>
+<p><strong>After</strong>:
+
+</p>
+<pre><code class="lang-js">console.log(<span class="keyword">new</span> Buffer(<span class="string">'ref'</span>));
+&lt;Buffer@<span class="number">0x103015490</span> <span class="number">72</span> <span class="number">65</span> <span class="number">66</span>></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-isNull"></a><a href="#extensions-isNull"><h3>Buffer#isNull()</h3></a><p>Shorthand for <a href="#exports-isNull"><code>ref.isNull(this, …)</code></a>.</p><p>Accepts a <code>Buffer</code> instance and returns <em>true</em> if the buffer represents the
+NULL pointer, <em>false</em> otherwise.
+
+</p>
+<pre><code>console.log(<span class="keyword">new</span> Buffer(<span class="number">1</span>).isNull());
+<span class="literal">false</span>
+
+console.log(ref.NULL.isNull());
+<span class="literal">true</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-readCString"></a><a href="#extensions-readCString"><h3>Buffer#readCString()</h3></a><p>Shorthand for <a href="#exports-readCString"><code>ref.readCString(this, …)</code></a>.</p><p>Returns a JavaScript String read from <em>buffer</em> at the given <em>offset</em>. The
+C String is read until the first NULL byte, which indicates the end of the
+String.
+
+</p>
+<p>This function can read beyond the <code>length</code> of a Buffer.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = <span class="keyword">new</span> Buffer(<span class="string">'hello\0world\0'</span>);
+
+<span class="keyword">var</span> str = ref.readCString(buf, <span class="number">0</span>);
+console.log(str);
+<span class="string">'hello'</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-readInt64BE"></a><a href="#extensions-readInt64BE"><h3>Buffer#readInt64BE()</h3></a><p>Shorthand for <a href="#exports-readInt64BE"><code>ref.readInt64BE(this, …)</code></a>.</p><p>Returns a big-endian signed 64-bit int read from <em>buffer</em> at the given
+<em>offset</em>.
+
+</p>
+<p>If the returned value will fit inside a JavaScript Number without losing
+precision, then a Number is returned, otherwise a String is returned.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int64'</span>);
+ref.writeInt64BE(buf, <span class="number">0</span>, <span class="string">'9223372036854775807'</span>);
+
+<span class="keyword">var</span> val = ref.readInt64BE(buf, <span class="number">0</span>)
+console.log(val)
+<span class="string">'9223372036854775807'</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-readInt64LE"></a><a href="#extensions-readInt64LE"><h3>Buffer#readInt64LE()</h3></a><p>Shorthand for <a href="#exports-readInt64LE"><code>ref.readInt64LE(this, …)</code></a>.</p><p>Returns a little-endian signed 64-bit int read from <em>buffer</em> at the given
+<em>offset</em>.
+
+</p>
+<p>If the returned value will fit inside a JavaScript Number without losing
+precision, then a Number is returned, otherwise a String is returned.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int64'</span>);
+ref.writeInt64LE(buf, <span class="number">0</span>, <span class="string">'9223372036854775807'</span>);
+
+<span class="keyword">var</span> val = ref.readInt64LE(buf, <span class="number">0</span>)
+console.log(val)
+<span class="string">'9223372036854775807'</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-readObject"></a><a href="#extensions-readObject"><h3>Buffer#readObject()</h3></a><p>Shorthand for <a href="#exports-readObject"><code>ref.readObject(this, …)</code></a>.</p><p>Reads a JavaScript Object that has previously been written to the given
+<em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> obj = { foo: <span class="string">'bar'</span> };
+<span class="keyword">var</span> buf = ref.alloc(<span class="string">'Object'</span>, obj);
+
+<span class="keyword">var</span> obj2 = ref.readObject(buf, <span class="number">0</span>);
+console.log(obj === obj2);
+<span class="literal">true</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-readPointer"></a><a href="#extensions-readPointer"><h3>Buffer#readPointer()</h3></a><p>Shorthand for <a href="#exports-readPointer"><code>ref.readPointer(this, …)</code></a>.</p><p>Reads a Buffer instance from the given <em>buffer</em> at the given <em>offset</em>.
+The <em>size</em> parameter specifies the <code>length</code> of the returned Buffer instance,
+which defaults to <strong>0</strong>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = <span class="keyword">new</span> Buffer(<span class="string">'hello world'</span>);
+<span class="keyword">var</span> pointer = ref.alloc(<span class="string">'pointer'</span>);
+
+<span class="keyword">var</span> buf2 = ref.readPointer(pointer, <span class="number">0</span>, buf.length);
+console.log(buf.toString());
+<span class="string">'hello world'</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-readUInt64BE"></a><a href="#extensions-readUInt64BE"><h3>Buffer#readUInt64BE()</h3></a><p>Shorthand for <a href="#exports-readUInt64BE"><code>ref.readUInt64BE(this, …)</code></a>.</p><p>Returns a big-endian unsigned 64-bit int read from <em>buffer</em> at the given
+<em>offset</em>.
+
+</p>
+<p>If the returned value will fit inside a JavaScript Number without losing
+precision, then a Number is returned, otherwise a String is returned.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'uint64'</span>);
+ref.writeUInt64BE(buf, <span class="number">0</span>, <span class="string">'18446744073709551615'</span>);
+
+<span class="keyword">var</span> val = ref.readUInt64BE(buf, <span class="number">0</span>)
+console.log(val)
+<span class="string">'18446744073709551615'</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-readUInt64LE"></a><a href="#extensions-readUInt64LE"><h3>Buffer#readUInt64LE()</h3></a><p>Shorthand for <a href="#exports-readUInt64LE"><code>ref.readUInt64LE(this, …)</code></a>.</p><p>Returns a little-endian unsigned 64-bit int read from <em>buffer</em> at the given
+<em>offset</em>.
+
+</p>
+<p>If the returned value will fit inside a JavaScript Number without losing
+precision, then a Number is returned, otherwise a String is returned.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'uint64'</span>);
+ref.writeUInt64LE(buf, <span class="number">0</span>, <span class="string">'18446744073709551615'</span>);
+
+<span class="keyword">var</span> val = ref.readUInt64LE(buf, <span class="number">0</span>)
+console.log(val)
+<span class="string">'18446744073709551615'</span></code></pre>
+</div><div class="columns sixteen section"><a name="extensions-ref"></a><a href="#extensions-ref"><h3>Buffer#ref()</h3></a><p>Shorthand for <a href="#exports-ref"><code>ref.ref(this, …)</code></a>.</p><p><code>ref()</code> acceps a Buffer instance and returns a new Buffer
+instance that is &quot;pointer&quot; sized and has it&#39;s data pointing to the given
+Buffer instance. Essentially the created Buffer is a &quot;reference&quot; to the
+original pointer, equivalent to the following C code:
+
+</p>
+<pre><code class="lang-c">char *buf = buffer;
+char **ref = &amp;buf;</code></pre>
+</div><div class="columns sixteen section"><a name="extensions-reinterpret"></a><a href="#extensions-reinterpret"><h3>Buffer#reinterpret()</h3></a><p>Shorthand for <a href="#exports-reinterpret"><code>ref.reinterpret(this, …)</code></a>.</p><p>Returns a new Buffer instance with the specified <em>size</em>, with the same memory
+address as <em>buffer</em>.
+
+</p>
+<p>This function &quot;attaches&quot; <em>buffer</em> to the returned Buffer to prevent it from
+being garbage collected.
+</p>
+</div><div class="columns sixteen section"><a name="extensions-reinterpretUntilZeros"></a><a href="#extensions-reinterpretUntilZeros"><h3>Buffer#reinterpretUntilZeros()</h3></a><p>Shorthand for <a href="#exports-reinterpretUntilZeros"><code>ref.reinterpretUntilZeros(this, …)</code></a>.</p><p>Accepts a <code>Buffer</code> instance and a number of <code>NULL</code> bytes to read from the
+pointer. This function will scan past the boundary of the Buffer&#39;s <code>length</code>
+until it finds <code>size</code> number of aligned <code>NULL</code> bytes.
+
+</p>
+<p>This is useful for finding the end of NUL-termintated array or C string. For
+example, the <code>readCString()</code> function <em>could</em> be implemented like:
+
+</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">readCString</span> <span class="params">(buf)</span> {</span>
+  <span class="keyword">return</span> ref.reinterpretUntilZeros(buf, <span class="number">1</span>).toString(<span class="string">'utf8'</span>)
+}</code></pre>
+<p>This function &quot;attaches&quot; <em>buffer</em> to the returned Buffer to prevent it from
+being garbage collected.
+</p>
+</div><div class="columns sixteen section"><a name="extensions-writeCString"></a><a href="#extensions-writeCString"><h3>Buffer#writeCString()</h3></a><p>Shorthand for <a href="#exports-writeCString"><code>ref.writeCString(this, …)</code></a>.</p><p>Writes the given string as a C String (NULL terminated) to the given buffer
+at the given offset. &quot;encoding&quot; is optional and defaults to <strong>&#39;utf8&#39;</strong>.
+
+</p>
+<p>Unlike <code>readCString()</code>, this function requires the buffer to actually have the
+proper length.
+</p>
+</div><div class="columns sixteen section"><a name="extensions-writeInt64BE"></a><a href="#extensions-writeInt64BE"><h3>Buffer#writeInt64BE()</h3></a><p>Shorthand for <a href="#exports-writeInt64BE"><code>ref.writeInt64BE(this, …)</code></a>.</p><p>Writes the <em>input</em> Number or String as a big-endian signed 64-bit int into
+<em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int64'</span>);
+ref.writeInt64BE(buf, <span class="number">0</span>, <span class="string">'9223372036854775807'</span>);</code></pre>
+</div><div class="columns sixteen section"><a name="extensions-writeInt64LE"></a><a href="#extensions-writeInt64LE"><h3>Buffer#writeInt64LE()</h3></a><p>Shorthand for <a href="#exports-writeInt64LE"><code>ref.writeInt64LE(this, …)</code></a>.</p><p>Writes the <em>input</em> Number or String as a little-endian signed 64-bit int into
+<em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'int64'</span>);
+ref.writeInt64LE(buf, <span class="number">0</span>, <span class="string">'9223372036854775807'</span>);</code></pre>
+</div><div class="columns sixteen section"><a name="extensions-writeObject"></a><a href="#extensions-writeObject"><h3>Buffer#writeObject()</h3></a><p>Shorthand for <a href="#exports-writeObject"><code>ref.writeObject(this, …)</code></a>.</p><p>Writes a pointer to <em>object</em> into <em>buffer</em> at the specified _offset.
+
+</p>
+<p>This function &quot;attaches&quot; <em>object</em> to <em>buffer</em> to prevent it from being garbage
+collected.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'Object'</span>);
+ref.writeObject(buf, <span class="number">0</span>, { foo: <span class="string">'bar'</span> });</code></pre>
+</div><div class="columns sixteen section"><a name="extensions-writePointer"></a><a href="#extensions-writePointer"><h3>Buffer#writePointer()</h3></a><p>Shorthand for <a href="#exports-writePointer"><code>ref.writePointer(this, …)</code></a>.</p><p>Writes the memory address of <em>pointer</em> to <em>buffer</em> at the specified <em>offset</em>.
+
+</p>
+<p>This function &quot;attaches&quot; <em>object</em> to <em>buffer</em> to prevent it from being garbage
+collected.
+
+</p>
+<pre><code><span class="keyword">var</span> someBuffer = <span class="keyword">new</span> Buffer(<span class="string">'whatever'</span>);
+<span class="keyword">var</span> buf = ref.alloc(<span class="string">'pointer'</span>);
+ref.writePointer(buf, <span class="number">0</span>, someBuffer);</code></pre>
+</div><div class="columns sixteen section"><a name="extensions-writeUInt64BE"></a><a href="#extensions-writeUInt64BE"><h3>Buffer#writeUInt64BE()</h3></a><p>Shorthand for <a href="#exports-writeUInt64BE"><code>ref.writeUInt64BE(this, …)</code></a>.</p><p>Writes the <em>input</em> Number or String as a big-endian unsigned 64-bit int into
+<em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'uint64'</span>);
+ref.writeUInt64BE(buf, <span class="number">0</span>, <span class="string">'18446744073709551615'</span>);</code></pre>
+</div><div class="columns sixteen section"><a name="extensions-writeUInt64LE"></a><a href="#extensions-writeUInt64LE"><h3>Buffer#writeUInt64LE()</h3></a><p>Shorthand for <a href="#exports-writeUInt64LE"><code>ref.writeUInt64LE(this, …)</code></a>.</p><p>Writes the <em>input</em> Number or String as a little-endian unsigned 64-bit int
+into <em>buffer</em> at the given <em>offset</em>.
+
+</p>
+<pre><code><span class="keyword">var</span> buf = ref.alloc(<span class="string">'uint64'</span>);
+ref.writeUInt64LE(buf, <span class="number">0</span>, <span class="string">'18446744073709551615'</span>);</code></pre>
+</div></div><div class="ribbon"><a href="https://github.com/TooTallNate/ref" rel="me">Fork me on GitHub</a></div><script src="scripts/jquery-1.7.2.min.js"></script><script src="scripts/main.js"></script></body></html>
