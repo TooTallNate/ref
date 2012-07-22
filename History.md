@@ -1,4 +1,12 @@
 
+0.1.0 / 2012-07-22
+==================
+
+ - initial release of the documentation (http://tootallnate.github.com/ref)
+ - binding: make "endianness" and "NULL" be 'frozen'
+ - lib: make derefType() throw an Error when given a "type" with indirection 1
+ - augment the Buffer#inspect() function to print out the memory address as well
+
 0.0.20 / 2012-06-27
 ===================
 
