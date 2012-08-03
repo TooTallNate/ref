@@ -1,4 +1,9 @@
 
+0.1.1 / 2012-08-03
+==================
+
+ - prevent multiple instances of ref from chaining inspects in "overwriteInspect"
+
 0.1.0 / 2012-07-22
 ==================
 
