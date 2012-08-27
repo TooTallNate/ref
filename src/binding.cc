@@ -467,6 +467,7 @@ Handle<Value> ReadCString(const Arguments& args) {
  *
  * args[0] - Buffer - the "buf" Buffer instance to read the address from
  * args[1] - Number - the size in bytes that the returned Buffer should be
+ * args[2] - Number - the offset from the "buf" buffer's address to read from
  */
 
 Handle<Value> ReinterpretBuffer(const Arguments& args) {
@@ -478,13 +479,15 @@ Handle<Value> ReinterpretBuffer(const Arguments& args) {
           String::New("reinterpret: Buffer instance expected")));
   }
 
-  char *ptr = Buffer::Data(buf.As<Object>());
-  size_t size = args[1]->Uint32Value();
+  int64_t offset = args[2]->IntegerValue();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
     return ThrowException(Exception::Error(
           String::New("reinterpret: Cannot reinterpret from NULL pointer")));
   }
+
+  size_t size = args[1]->Uint32Value();
 
   Buffer *rtn = Buffer::New(ptr, size, read_pointer_cb, NULL);
 
@@ -498,6 +501,7 @@ Handle<Value> ReinterpretBuffer(const Arguments& args) {
  *
  * args[0] - Buffer - the "buf" Buffer instance to read the address from
  * args[1] - Number - the number of sequential 0-byte values that need to be read
+ * args[2] - Number - the offset from the "buf" buffer's address to read from
  */
 
 Handle<Value> ReinterpretBufferUntilZeros(const Arguments& args) {
@@ -509,7 +513,8 @@ Handle<Value> ReinterpretBufferUntilZeros(const Arguments& args) {
           String::New("reinterpretUntilZeros: Buffer instance expected")));
   }
 
-  char *ptr = Buffer::Data(buf.As<Object>());
+  int64_t offset = args[2]->IntegerValue();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
     return ThrowException(Exception::Error(
