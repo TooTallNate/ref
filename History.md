@@ -1,4 +1,9 @@
 
+0.1.2 / 2012-09-02
+==================
+
+ - allow an offset as the third argument to the "reinterpret" functions
+
 0.1.1 / 2012-08-03
 ==================
 
