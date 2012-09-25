@@ -53,7 +53,8 @@ Handle<Value> Address(const Arguments& args) {
 
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
-  Local<Number> ret = Number::New((size_t)ptr);
+  intptr_t intptr = (intptr_t)ptr;
+  Local<Number> ret = Number::New(static_cast<double>(intptr));
 
   return scope.Close(ret);
 }
@@ -303,7 +304,7 @@ Handle<Value> ReadInt64(const Arguments& args) {
     rtn = String::New(strbuf);
   } else {
     // return a Number
-    rtn = Number::New(val);
+    rtn = Number::New(static_cast<double>(val));
   }
 
   return scope.Close(rtn);
@@ -384,7 +385,7 @@ Handle<Value> ReadUInt64(const Arguments& args) {
     rtn = String::New(strbuf);
   } else {
     // return a Number
-    rtn = Number::New(val);
+    rtn = Number::New(static_cast<double>(val));
   }
 
   return scope.Close(rtn);
