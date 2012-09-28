@@ -57,6 +57,12 @@ describe('C string', function () {
       assert.strictEqual(0, buf.address())
     })
 
+    it('should return the NULL pointer for a NULL pointer Buffer', function () {
+      var buf = ref.allocCString(ref.NULL)
+      assert(buf.isNull())
+      assert.strictEqual(0, buf.address())
+    })
+
   })
 
   describe('CString', function () {
