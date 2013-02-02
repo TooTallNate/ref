@@ -186,7 +186,10 @@ Handle<Value> WriteObject(const Arguments& args) {
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   Persistent<Value> obj = Persistent<Value>::New(args[2]);
-  obj.MakeWeak(NULL, write_object_cb);
+
+  bool persistent = args[3]->BooleanValue();
+  if (!persistent) obj.MakeWeak(NULL, write_object_cb);
+
   *reinterpret_cast<Persistent<Value>*>(ptr) = obj;
 
   return Undefined();
