@@ -105,7 +105,6 @@ Handle<Value> CheckEndianness() {
 
 void unref_null_cb(char *data, void *hint) {
   assert(0 && "NULL Buffer should never be garbage collected");
-  fprintf(stderr, "FATAL: NULL Buffer should never be garbage collected\n");
 }
 
 /*
