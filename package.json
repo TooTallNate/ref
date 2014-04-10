@@ -39,8 +39,5 @@
     "marked": "*",
     "mocha": "*",
     "weak": "*"
-  },
-  "engines": {
-    "node": "*"
   }
 }
