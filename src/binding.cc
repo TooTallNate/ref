@@ -140,8 +140,8 @@ NAN_METHOD(ReadObject) {
   }
 
   //Handle<Value> rtn = *reinterpret_cast<Persistent<Value>*>(ptr);
-  Persistent<Value> prtn = *reinterpret_cast<Persistent<Value>*>(ptr);
-  Local<Value> rtn = NanPersistentToLocal(prtn);
+  Persistent<Value>* prtn = reinterpret_cast<Persistent<Value>*>(ptr);
+  Local<Value> rtn = NanPersistentToLocal(*prtn);
   NanReturnValue(rtn);
 }
 
@@ -150,10 +150,9 @@ NAN_METHOD(ReadObject) {
  * gets garbage collected. We just have to dispose of our weak reference now.
  */
 
-static NAN_WEAK_CALLBACK(void *, write_object_cb) {
+NAN_WEAK_CALLBACK(void *, write_object_cb) {
   //fprintf(stderr, "write_object_cb\n");
-  NAN_WEAK_CALLBACK_OBJECT.Dispose();
-  NAN_WEAK_CALLBACK_OBJECT.Clear();
+  NanDisposePersistent(NAN_WEAK_CALLBACK_OBJECT);
 }
 
 /*
@@ -177,14 +176,19 @@ NAN_METHOD(WriteObject) {
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  NanInitPersistent(Value, obj, args[2]);
+  //NanInitPersistent(Value, obj, args[2]);
   //Persistent<Value> obj = Persistent<Value>::New(args[2]);
 
-  bool persistent = args[3]->BooleanValue();
-  if (!persistent) obj.MakeWeak((void **)NULL, write_object_cb);
-  //if (!persistent) NanMakeWeak(obj, NULL, write_object_cb);
+  Persistent<Value>* pptr = reinterpret_cast<Persistent<Value>*>(ptr);
+  NanAssignPersistent(Value, (*pptr), args[2]);
+  //*pptr = obj;
 
-  *reinterpret_cast<Persistent<Value>*>(ptr) = obj;
+  bool persistent = args[3]->BooleanValue();
+  void *user_data = NULL;
+  //if (!persistent) obj.MakeWeak(user_data, write_object_cb);
+  if (!persistent) {
+    NanMakeWeak((*pptr), user_data, write_object_cb);
+  }
 
   NanReturnUndefined();
 }
@@ -195,7 +199,6 @@ NAN_METHOD(WriteObject) {
  */
 
 void read_pointer_cb(char *data, void *hint) {
-//static NAN_WEAK_CALLBACK(void*, read_pointer_cb) {
   //fprintf(stderr, "read_pointer_cb\n");
 }
 
@@ -229,7 +232,6 @@ NAN_METHOD(ReadPointer) {
   Local<Object> rtn_buf = NanNewBufferHandle(val, size, read_pointer_cb, user_data);
   //Buffer *rtn_buf = Buffer::New(val, size, read_pointer_cb, NULL);
   NanReturnValue(rtn_buf);
-  //return scope.Close(rtn_buf);
 }
 
 /*
@@ -286,7 +288,7 @@ NAN_METHOD(ReadInt64) {
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
-    return NanThrowError("readInt64: Cannot read from NULL pointer");
+    return NanThrowTypeError("readInt64: Cannot read from NULL pointer");
   }
 
   int64_t val = *reinterpret_cast<int64_t *>(ptr);
@@ -368,7 +370,7 @@ NAN_METHOD(ReadUInt64) {
 
   uint64_t val = *reinterpret_cast<uint64_t *>(ptr);
 
-  Handle<Value> rtn;
+  Local<Value> rtn;
   if (val > JS_MAX_INT) {
     // return a String
     char strbuf[128];
