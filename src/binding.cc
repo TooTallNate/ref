@@ -176,7 +176,7 @@ NAN_METHOD(WriteObject) {
 
   Persistent<Object>* pptr = reinterpret_cast<Persistent<Object>*>(ptr);
   Persistent<Object> p = *pptr;
-  NanAssignPersistent(Object, p, args[2].As<Object>());
+  NanAssignPersistent(p, args[2].As<Object>());
   //*pptr = obj;
 
   bool persistent = args[3]->BooleanValue();
