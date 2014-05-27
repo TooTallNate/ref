@@ -29,8 +29,9 @@
     "test": "mocha -gc --reporter spec"
   },
   "dependencies": {
-    "bindings": "*",
-    "debug": "*"
+    "bindings": "~1.2.0",
+    "debug": "~0.8.0",
+    "nan": "~1.1.0"
   },
   "devDependencies": {
     "dox": "*",
@@ -39,8 +40,5 @@
     "marked": "*",
     "mocha": "*",
     "weak": "*"
-  },
-  "engines": {
-    "node": "*"
   }
 }
