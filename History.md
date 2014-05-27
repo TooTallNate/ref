@@ -1,4 +1,12 @@
 
+0.2.1 / 2014-05-27
+==================
+
+  * package: pin dev dependency versions
+  * package: use explicit nan commit with LLVM fix
+  * README: use https for Travis URL
+  * travis: test node v0.6.x
+
 0.2.0 / 2014-05-26
 ==================
 
