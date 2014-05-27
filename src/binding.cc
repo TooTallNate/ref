@@ -159,6 +159,9 @@ NAN_WEAK_CALLBACK(write_object_cb) {
  * args[1] - Number - the offset from the "buf" buffer's address to write to
  * args[2] - Object - the "obj" Object which will have a new Persistent reference
  *                    created for the obj, who'se memory address will be written
+ * args[3] - Boolean - `false` by default. if `true` is passed in then a
+ *                    persistent reference will be written to the Buffer instance.
+ *                    A weak reference gets written by default.
  */
 
 NAN_METHOD(WriteObject) {
@@ -172,19 +175,16 @@ NAN_METHOD(WriteObject) {
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  //Persistent<Value> obj = Persistent<Value>::New(args[2]);
-
   Persistent<Object>* pptr = reinterpret_cast<Persistent<Object>*>(ptr);
-  Persistent<Object> p = *pptr;
-  NanAssignPersistent(p, args[2].As<Object>());
-  //*pptr = obj;
+  Local<Object> val = args[2].As<Object>();
 
   bool persistent = args[3]->BooleanValue();
-  //if (!persistent) obj.MakeWeak(user_data, write_object_cb);
-  if (!persistent) {
+  if (persistent) {
+    NanAssignPersistent(*pptr, val);
+  } else {
     void *user_data = NULL;
-    NanMakeWeakPersistent(p, user_data, &write_object_cb<Object, void>);
-    //NanMakeWeak(p, user_data, write_object_cb);
+    _NanWeakCallbackInfo<Object, void>* info = NanMakeWeakPersistent(val, user_data, &write_object_cb<Object, void>);
+    NanAssignPersistent(*pptr, info->persistent);
   }
 
   NanReturnUndefined();
