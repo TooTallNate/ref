@@ -1,4 +1,19 @@
 
+0.2.0 / 2014-05-26
+==================
+
+  * binding: use `rvagg/nan` for node v0.8, v0.10, and v0.11 compat
+  * package: update "nan" to v1.1.0
+  * package: remove "engines" section
+  * README: add appveyor test badge
+  * README: use .svg for Travis badge
+  * add appveyor.yml file
+  * .travis: don't test node v0.9.x
+  * package: beautify
+  * add a `persistent` option to writeObject()
+  * make passing `ref.NULL` to allocCString() work as expected
+  * docs: document the "length" parameter of ref.readPointer()
+
 0.1.3 / 2012-09-25
 ==================
 
