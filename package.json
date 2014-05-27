@@ -34,11 +34,11 @@
     "nan": "https://github.com/rvagg/nan/archive/47a7e16956a876adfc86efef3c28b4d0ecbb6752.tar.gz"
   },
   "devDependencies": {
-    "dox": "*",
+    "dox": "0.4.4",
     "highlight.js": "1",
     "jade": "0.35.0",
-    "marked": "*",
+    "marked": "0.3.2",
     "mocha": "*",
-    "weak": "*"
+    "weak": "0.3.2"
   }
 }
