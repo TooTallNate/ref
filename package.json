@@ -36,7 +36,7 @@
   "devDependencies": {
     "dox": "*",
     "highlight.js": "1",
-    "jade": "*",
+    "jade": "0.35.0",
     "marked": "*",
     "mocha": "*",
     "weak": "*"
