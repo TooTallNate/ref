@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 
 #include "node.h"
@@ -184,7 +185,7 @@ NAN_METHOD(WriteObject) {
   } else {
     void *user_data = NULL;
     _NanWeakCallbackInfo<Object, void>* info = NanMakeWeakPersistent(val, user_data, &write_object_cb<Object, void>);
-    NanAssignPersistent(*pptr, info->persistent);
+    memcpy(pptr, &info->persistent, sizeof(Persistent<Object>));
   }
 
   NanReturnUndefined();
