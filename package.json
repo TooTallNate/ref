@@ -30,8 +30,8 @@
   },
   "dependencies": {
     "bindings": "~1.2.0",
-    "debug": "~0.8.0",
-    "nan": "https://github.com/rvagg/nan/archive/47a7e16956a876adfc86efef3c28b4d0ecbb6752.tar.gz"
+    "debug": "~0.8.1",
+    "nan": "~1.1.2"
   },
   "devDependencies": {
     "dox": "0.4.4",
