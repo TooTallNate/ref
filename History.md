@@ -1,4 +1,10 @@
 
+0.2.2 / 2014-06-01
+==================
+
+  * package: update "nan" to v1.1.2
+  * travis: remove IRC notifications from Travis
+
 0.2.1 / 2014-05-27
 ==================
 
