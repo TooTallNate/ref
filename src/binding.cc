@@ -228,7 +228,6 @@ NAN_METHOD(ReadPointer) {
   char *val = *reinterpret_cast<char **>(ptr);
   void *user_data = NULL;
   Local<Object> rtn_buf = NanNewBufferHandle(val, size, read_pointer_cb, user_data);
-  //Buffer *rtn_buf = Buffer::New(val, size, read_pointer_cb, NULL);
   NanReturnValue(rtn_buf);
 }
 
@@ -476,8 +475,6 @@ NAN_METHOD(ReinterpretBuffer) {
   size_t size = args[1]->Uint32Value();
 
   Local<Object> rtn = NanNewBufferHandle(ptr, size, read_pointer_cb, NULL);
-  //Buffer *rtn = Buffer::New(ptr, size, read_pointer_cb, NULL);
-
   NanReturnValue(rtn);
 }
 
