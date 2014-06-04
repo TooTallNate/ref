@@ -184,7 +184,7 @@ NAN_METHOD(WriteObject) {
     NanAssignPersistent(*pptr, val);
   } else {
     void *user_data = NULL;
-    _NanWeakCallbackInfo<Object, void>* info = NanMakeWeakPersistent(val, user_data, &write_object_cb<Object, void>);
+    _NanWeakCallbackInfo<Object, void>* info = NanMakeWeakPersistent(val, user_data, &write_object_cb);
     memcpy(pptr, &info->persistent, sizeof(Persistent<Object>));
   }
 
