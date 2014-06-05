@@ -9,7 +9,7 @@
 
 #ifdef _WIN32
   #define __alignof__ __alignof
-  #define snprintf _snprintf_s
+  #define snprintf(buf, bufSize, format, arg) _snprintf_s(buf, bufSize, _TRUNCATE, format, arg)
   #define strtoll _strtoi64
   #define strtoull _strtoui64
   #define PRId64 "lld"
