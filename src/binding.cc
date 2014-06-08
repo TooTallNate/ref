@@ -33,7 +33,12 @@ namespace {
 
 
 /*
- * Returns the pointer address as a Number of the given Buffer instance
+ * Returns the pointer address as a Number of the given Buffer instance.
+ * It's recommended to use `hexAddress()` in most cases instead of this function.
+ *
+ * WARNING: a JavaScript Number cannot precisely store a full 64-bit memory
+ * address, so there's a possibility of an inaccurate value being returned
+ * on 64-bit systems.
  *
  * args[0] - Buffer - the Buffer instance get the memory address of
  * args[1] - Number - optional (0) - the offset of the Buffer start at
@@ -49,8 +54,8 @@ NAN_METHOD(Address) {
 
   int64_t offset = args[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
-  intptr_t intptr = (intptr_t)ptr;
-  Local<Number> rtn = NanNew<v8::Number>(static_cast<double>(intptr));
+  uintptr_t intptr = (uintptr_t)ptr;
+  Local<Number> rtn = NanNew(static_cast<double>(intptr));
 
   NanReturnValue(rtn);
 }
