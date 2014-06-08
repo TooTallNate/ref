@@ -1,4 +1,14 @@
 
+0.3.0 / 2014-06-08
+==================
+
+  * ref: use `hexAddress()` for the Buffer inspect() override
+  * ref: add `hexAddress()` function
+  * src: use `NanEscapableScope` where appropriate
+  * src: use `uintptr_t` to ensure a positive address
+  * src: better _snprintf_s #define macro (#12, @fjhub)
+  * package: update "debug" to v1.0.1
+
 0.2.3 / 2014-06-04
 ==================
 
