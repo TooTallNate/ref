@@ -45,7 +45,7 @@ namespace {
  */
 
 NAN_METHOD(Address) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
@@ -68,7 +68,7 @@ NAN_METHOD(Address) {
  */
 
 NAN_METHOD(IsNull) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
@@ -128,7 +128,7 @@ Local<Object> WrapNullPointer() {
  */
 
 NAN_METHOD(ReadObject) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
@@ -215,7 +215,7 @@ void read_pointer_cb(char *data, void *hint) {
  */
 
 NAN_METHOD(ReadPointer) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
@@ -279,7 +279,7 @@ NAN_METHOD(WritePointer) {
  */
 
 NAN_METHOD(ReadInt64) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
@@ -356,7 +356,7 @@ NAN_METHOD(WriteInt64) {
  */
 
 NAN_METHOD(ReadUInt64) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
@@ -435,7 +435,7 @@ NAN_METHOD(WriteUInt64) {
  */
 
 NAN_METHOD(ReadCString) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
@@ -463,7 +463,7 @@ NAN_METHOD(ReadCString) {
  */
 
 NAN_METHOD(ReinterpretBuffer) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
@@ -494,7 +494,7 @@ NAN_METHOD(ReinterpretBuffer) {
  */
 
 NAN_METHOD(ReinterpretBufferUntilZeros) {
-  NanScope();
+  NanEscapableScope();
 
   Local<Value> buf = args[0];
   if (!Buffer::HasInstance(buf)) {
