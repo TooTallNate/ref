@@ -44,7 +44,7 @@ describe('address', function () {
   describe('inspect()', function () {
 
     it('should overwrite the default Buffer#inspect() to print the memory address', function () {
-      assert(buf.inspect().indexOf(buf.address().toString(16)) !== -1)
+      assert(buf.inspect().indexOf(buf.hexAddress()) !== -1)
     })
 
   })
