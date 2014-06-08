@@ -60,6 +60,39 @@ NAN_METHOD(Address) {
   NanReturnValue(rtn);
 }
 
+/**
+ * Returns the pointer address as a hexadecimal String. This function
+ * is safe to use for displaying memory addresses, as compared to the
+ * `address()` function which could overflow since it returns a Number.
+ *
+ * args[0] - Buffer - the Buffer instance get the memory address of
+ * args[1] - Number - optional (0) - the offset of the Buffer start at
+ */
+
+NAN_METHOD(HexAddress) {
+  NanEscapableScope();
+
+  Local<Value> buf = args[0];
+  if (!Buffer::HasInstance(buf)) {
+    return NanThrowTypeError("hexAddress: Buffer instance expected");
+  }
+
+  int64_t offset = args[1]->IntegerValue();
+  char *ptr = Buffer::Data(buf.As<Object>()) + offset;
+  char strbuf[30]; /* should be plenty... */
+  snprintf(strbuf, 30, "%p", ptr);
+
+  Local<String> val;
+  if (strbuf[0] == '0' && strbuf[1] == 'x') {
+    /* strip the leading "0x" from the address */
+    val = NanNew(strbuf + 2);
+  } else {
+    val = NanNew(strbuf);
+  }
+
+  NanReturnValue(val);
+}
+
 /*
  * Returns "true" if the given Buffer points to NULL, "false" otherwise.
  *
@@ -625,6 +658,7 @@ void init (Handle<Object> target) {
   target->Set(NanNew<v8::String>("endianness"), NanNew<v8::String>(CheckEndianness()), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
   target->Set(NanNew<v8::String>("NULL"), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
   NODE_SET_METHOD(target, "address", Address);
+  NODE_SET_METHOD(target, "hexAddress", HexAddress);
   NODE_SET_METHOD(target, "isNull", IsNull);
   NODE_SET_METHOD(target, "readObject", ReadObject);
   NODE_SET_METHOD(target, "writeObject", WriteObject);
