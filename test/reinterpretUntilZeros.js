@@ -2,6 +2,7 @@
 var fs = require('fs')
 var assert = require('assert')
 var weak = require('weak')
+var iconv = require('iconv-lite')
 var ref = require('../')
 
 describe('reinterpretUntilZeros()', function () {
@@ -30,8 +31,9 @@ describe('reinterpretUntilZeros()', function () {
     var data = fs.readFileSync(__dirname + '/utf16le.bin');
     var strBuf = ref.reinterpretUntilZeros(data, 2);
     assert(strBuf.length > 10000);
+    var str = iconv.decode(strBuf, 'ucs2');
     // the data in `utf16le.bin` should be a JSON parsable string
-    JSON.parse(strBuf.toString('utf16le'));
+    assert(JSON.parse(str));
   })
 
 })
