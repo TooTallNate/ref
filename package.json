@@ -37,7 +37,6 @@
     "dox": "0.4.4",
     "highlight.js": "1",
     "jade": "0.35.0",
-    "iconv-lite": "0.2.11",
     "marked": "0.3.2",
     "mocha": "*",
     "weak": "0.3.2"
