@@ -31,6 +31,9 @@ namespace {
 #define JS_MAX_INT +9007199254740992LL
 #define JS_MIN_INT -9007199254740992LL
 
+// mirrors deps/v8/src/objects.h.
+// we could use `node::Buffer::kMaxLength`, but it's not defined on node v0.6.x
+static const unsigned int kMaxLength = 0x3fffffff;
 
 /*
  * Returns the pointer address as a Number of the given Buffer instance.
@@ -546,7 +549,7 @@ NAN_METHOD(ReinterpretBufferUntilZeros) {
   size_t size = 0;
   bool end = false;
 
-  while (!end && size < node::Buffer::kMaxLength) {
+  while (!end && size < kMaxLength) {
     end = true;
     for (i = 0; i < numZeros; i++) {
       if (ptr[size + i] != 0) {
