@@ -1,4 +1,5 @@
 
+var fs = require('fs')
 var assert = require('assert')
 var weak = require('weak')
 var ref = require('../')
@@ -23,6 +24,14 @@ describe('reinterpretUntilZeros()', function () {
     var buf2 = buf.reinterpretUntilZeros(2)
     assert.equal(str.length, buf2.length / 2)
     assert.equal(buf2.toString('ucs2'), str)
+  })
+
+  it('should return a large Buffer instance > 10,000 bytes with UTF16-LE char bytes', function () {
+    var data = fs.readFileSync(__dirname + '/utf16le.bin');
+    var strBuf = ref.reinterpretUntilZeros(data, 2);
+    assert(strBuf.length > 10000);
+    // the data in `utf16le.bin` should be a JSON parsable string
+    JSON.parse(strBuf.toString('utf16le'));
   })
 
 })

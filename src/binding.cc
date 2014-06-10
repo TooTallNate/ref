@@ -546,7 +546,7 @@ NAN_METHOD(ReinterpretBufferUntilZeros) {
   size_t size = 0;
   bool end = false;
 
-  while (!end && size < 10000) {
+  while (!end && size < node::Buffer::kMaxLength) {
     end = true;
     for (i = 0; i < numZeros; i++) {
       if (ptr[size + i] != 0) {
