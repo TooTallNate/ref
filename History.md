@@ -1,4 +1,11 @@
 
+0.3.1 / 2014-06-09
+==================
+
+  * src: allow Buffers returned from `reinterpretUntilZeros()` up to `kMaxLength` bytes
+  * test: move the reinterpretUntilZeros() tests to their own file
+  * test: fix `Buffer#inspect()` test on Windows
+
 0.3.0 / 2014-06-08
 ==================
 
