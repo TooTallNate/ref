@@ -1,4 +1,10 @@
 
+0.3.2 / 2014-06-19
+==================
+
+  * src: fix comment typo
+  * src: define our own `kMaxLength` constant
+
 0.3.1 / 2014-06-09
 ==================
 
