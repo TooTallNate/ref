@@ -14,6 +14,13 @@ describe('reinterpretUntilZeros()', function () {
     assert.equal(buf2.length, 'hello'.length)
     assert.equal(buf2.toString(), 'hello')
   })
+  
+  it('should return a new Buffer instance up until the first 0 starting from offset', function () {
+    var buf = new Buffer('hello\0world')
+    var buf2 = buf.reinterpretUntilZeros(1, 3)
+    assert.equal(buf2.length, 'lo'.length)
+    assert.equal(buf2.toString(), 'lo')
+  })  
 
   it('should return a new Buffer instance up until the first 2-byte sequence of 0s', function () {
     var str = 'hello world'
