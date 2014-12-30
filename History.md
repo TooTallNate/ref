@@ -1,4 +1,10 @@
 
+0.3.3 / 2014-12-29
+==================
+
+  * package: allow any "debug" v2
+  * add support for `Buffer#reinterpret()` with `offset` (#18, @deepak1556)
+
 0.3.2 / 2014-06-19
 ==================
 
