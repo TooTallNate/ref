@@ -17,6 +17,18 @@ describe('reinterpret()', function () {
     assert.strictEqual(buf.length, reinterpreted.length)
     assert.strictEqual(buf.toString(), reinterpreted.toString())
   })
+  
+  it('should return a new Buffer instance starting at the offset address', function () {
+    var buf = new Buffer('hello world')
+    var offset = 3
+    var small = buf.slice(offset, buf.length)
+    assert.strictEqual(buf.length - offset, small.length)
+    assert.strictEqual(buf.address() + offset, small.address())
+    var reinterpreted = buf.reinterpret(small.length, offset)
+    assert.strictEqual(small.address(), reinterpreted.address())
+    assert.strictEqual(small.length, reinterpreted.length)
+    assert.strictEqual(small.toString(), reinterpreted.toString())
+  })  
 
   it('should retain a reference to the original Buffer when reinterpreted', function () {
     var origGCd = false
