@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>"ref" documentation v0.2.0</title><meta name="description" content="Turn Buffer instances into &quot;pointers&quot;"><meta name="keywords" content="node.js, ref, native, buffer, extensions, c++, pointer, reference, dereference, type, int, long, float, double, byte, 64"><meta name="author" content="Nathan Rajlich"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><link rel="stylesheet" href="stylesheets/hightlight.css"><link rel="stylesheet" href="stylesheets/base.css"><link rel="stylesheet" href="stylesheets/skeleton.css"><link rel="stylesheet" href="stylesheets/layout.css"><link rel="shortcut icon" href="images/favicon.ico"><link rel="apple-touch-icon" href="images/apple-touch-icon.png"><link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png"><link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png"></head><body><div class="container"><div class="columns three logo"><a href=""><h1>ref <span class="pointer">*</span><span class="version">v0.2.0</span></h1></a></div><div class="columns thirteen subtitle"><h3>Turn Buffer instances into &quot;pointers&quot;</h3></div><div class="columns sixteen intro"><h4>What is <code>ref</code>?</h4><p><code>ref</code> is a native addon for <a href="http://nodejs.org">Node.js</a> that aids in doing C programming in JavaScript, by extending 
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>"ref" documentation v0.3.3</title><meta name="description" content="Turn Buffer instances into &quot;pointers&quot;"><meta name="keywords" content="node.js, ref, native, buffer, extensions, c++, pointer, reference, dereference, type, int, long, float, double, byte, 64"><meta name="author" content="Nathan Rajlich"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><link rel="stylesheet" href="stylesheets/hightlight.css"><link rel="stylesheet" href="stylesheets/base.css"><link rel="stylesheet" href="stylesheets/skeleton.css"><link rel="stylesheet" href="stylesheets/layout.css"><link rel="shortcut icon" href="images/favicon.ico"><link rel="apple-touch-icon" href="images/apple-touch-icon.png"><link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png"><link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png"></head><body><div class="container"><div class="columns three logo"><a href=""><h1>ref <span class="pointer">*</span><span class="version">v0.3.3</span></h1></a></div><div class="columns thirteen subtitle"><h3>Turn Buffer instances into &quot;pointers&quot;</h3></div><div class="columns sixteen intro"><h4>What is <code>ref</code>?</h4><p><code>ref</code> is a native addon for <a href="http://nodejs.org">Node.js</a> that aids in doing C programming in JavaScript, by extending 
 the built-in <a href="http://nodejs.org/api/buffer.html"><code>Buffer</code> class</a> with some fancy additions like:<ul><li>Getting the memory address of a Buffer</li><li>Checking the endianness of the processor</li><li>Checking if a Buffer represents the NULL pointer</li><li>Reading and writing "pointers" with Buffers</li><li>Reading and writing C Strings (NULL-terminated)</li><li>Reading and writing JavaScript Object references</li><li>Reading and writing <strong>int64_t</strong> and <strong>uint64_t</strong> values</li><li>A "type" convention to define the contents of a Buffer</li></ul></p><p>There is indeed a lot of <em>meat </em> to <code>ref</code>, but it all fits together in one way or another in the end.<br>For simplicity, <code>ref</code>'s API can be broken down into 3 sections:</p></div><a href="#exports" class="nav columns five"><h4>ref <code>exports</code></h4><p>All the static versions of <code>ref</code>'s functions and default "types" available on the exports returned from <code>require('ref')</code>.</p></a><a href="#types" class="nav columns five"><h4><em>"type"</em> system</h4><p>The <em>"type"</em> system allows you to define a "type" on any Buffer instance, and then
  use generic <code>ref()</code> and <code>deref()</code> functions to reference and dereference values.</p></a><a href="#extensions" class="nav columns five"><h4><code>Buffer</code> extensions</h4><p><code>Buffer.prototype</code> gets extended with some convenience functions. These all just mirror
  their static counterpart, using the Buffer's <code>this</code> variable as the <code>buffer</code> variable.</p></a><hr><div class="columns eight section exports"><a name="exports"></a><a href="#exports"><h2>ref exports</h2></a></div><div class="columns sixteen intro"><p>This section documents all the functions exported from <code>require('ref')</code>.</p></div><div class="columns sixteen section"><a name="exports-NULL"></a><a href="#exports-NULL"><h3>ref.NULL <span class="rtn"> &rArr; Buffer</span></h3></a><p>A <code>Buffer</code> that references the C NULL pointer. That is, its memory address
@@ -45,8 +45,8 @@ expected, a String may be passed as well, including simply setting the
 
 console.log(type.indirection);
 <span class="number">3</span>
-</code></pre></div><div class="columns sixteen section"><a name="exports-deref"></a><a href="#exports-deref"><h3>ref.deref(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; ?</span></h3></a><ul><li>buffer - A Buffer instance to dereference.</li><li><strong>Return: </strong>The returned value after dereferencing <em>buffer</em>.</li></ul><p>Acceps a Buffer instance and attempts to &quot;dereference&quot; it.
-That is, first it checks the &quot;indirection&quot; count of <em>buffer</em>&#39;s &quot;type&quot;, and if
+</code></pre></div><div class="columns sixteen section"><a name="exports-deref"></a><a href="#exports-deref"><h3>ref.deref(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; ?</span></h3></a><ul><li>buffer - A Buffer instance to dereference.</li><li><strong>Return: </strong>The returned value after dereferencing <em>buffer</em>.</li></ul><p>Accepts a Buffer instance and attempts to &quot;dereference&quot; it.
+That is, first it checks the <code>indirection</code> count of <em>buffer</em>&#39;s &quot;type&quot;, and if
 it&#39;s greater than <strong>1</strong> then it merely returns another Buffer, but with one
 level less <code>indirection</code>.</p>
 <p>When <em>buffer</em>&#39;s indirection is at <strong>1</strong>, then it checks for <code>buffer.type</code>
@@ -141,8 +141,8 @@ ref.writeUInt64LE(buf, <span class="number">0</span>, <span class="string">'1844
 <span class="keyword">var</span> val = ref.readUInt64LE(buf, <span class="number">0</span>)
 console.log(val)
 <span class="string">'18446744073709551615'</span>
-</code></pre></div><div class="columns sixteen section"><a name="exports-ref"></a><a href="#exports-ref"><h3>ref.ref(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>buffer - A Buffer instance to create a reference to.</li><li><strong>Return: </strong>A new Buffer instance pointing to <em>buffer</em>.</li></ul><p><code>ref()</code> acceps a Buffer instance and returns a new Buffer
-instance that is &quot;pointer&quot; sized and has it&#39;s data pointing to the given
+</code></pre></div><div class="columns sixteen section"><a name="exports-ref"></a><a href="#exports-ref"><h3>ref.ref(<span class="param">Buffer buffer</span>) <span class="rtn">&rarr; Buffer</span></h3></a><ul><li>buffer - A Buffer instance to create a reference to.</li><li><strong>Return: </strong>A new Buffer instance pointing to <em>buffer</em>.</li></ul><p><code>ref()</code> accepts a Buffer instance and returns a new Buffer
+instance that is &quot;pointer&quot; sized and has its data pointing to the given
 Buffer instance. Essentially the created Buffer is a &quot;reference&quot; to the
 original pointer, equivalent to the following C code:</p>
 <pre><code class="lang-c">char *buf = buffer;
@@ -266,8 +266,8 @@ instance.</p>
 
 console.log(ref.address(ref.NULL)));
 <span class="number">0</span>
-</code></pre></div><div class="columns sixteen section"><a name="extensions-deref"></a><a href="#extensions-deref"><h3>Buffer#deref()</h3></a><p>Shorthand for <a href="#exports-deref"><code>ref.deref(this, …)</code></a>.</p><p>Acceps a Buffer instance and attempts to &quot;dereference&quot; it.
-That is, first it checks the &quot;indirection&quot; count of <em>buffer</em>&#39;s &quot;type&quot;, and if
+</code></pre></div><div class="columns sixteen section"><a name="extensions-deref"></a><a href="#extensions-deref"><h3>Buffer#deref()</h3></a><p>Shorthand for <a href="#exports-deref"><code>ref.deref(this, …)</code></a>.</p><p>Accepts a Buffer instance and attempts to &quot;dereference&quot; it.
+That is, first it checks the <code>indirection</code> count of <em>buffer</em>&#39;s &quot;type&quot;, and if
 it&#39;s greater than <strong>1</strong> then it merely returns another Buffer, but with one
 level less <code>indirection</code>.</p>
 <p>When <em>buffer</em>&#39;s indirection is at <strong>1</strong>, then it checks for <code>buffer.type</code>
@@ -277,7 +277,7 @@ which should be an Object with its own <code>get()</code> function.</p>
 <span class="keyword">var</span> val = ref.deref(buf);
 console.log(val);
 <span class="number">6</span>
-</code></pre></div><div class="columns sixteen section"><a name="extensions-inspect"></a><a href="#extensions-inspect"><h3>Buffer#inspect()</h3></a><p><code>ref</code> overwrites the default <code>Buffer#inspect()</code> function to include the
+</code></pre></div><div class="columns sixteen section"><a name="extensions-hexAddress"></a><a href="#extensions-hexAddress"><h3>Buffer#hexAddress()</h3></a><p>Shorthand for <a href="#exports-hexAddress"><code>ref.hexAddress(this, …)</code></a>.</p></div><div class="columns sixteen section"><a name="extensions-inspect"></a><a href="#extensions-inspect"><h3>Buffer#inspect()</h3></a><p><code>ref</code> overwrites the default <code>Buffer#inspect()</code> function to include the
 hex-encoded memory address of the Buffer instance when invoked.</p>
 <p>This is simply a nice-to-have.</p>
 <p><strong>Before</strong>:</p>
@@ -361,8 +361,8 @@ ref.writeUInt64LE(buf, <span class="number">0</span>, <span class="string">'1844
 <span class="keyword">var</span> val = ref.readUInt64LE(buf, <span class="number">0</span>)
 console.log(val)
 <span class="string">'18446744073709551615'</span>
-</code></pre></div><div class="columns sixteen section"><a name="extensions-ref"></a><a href="#extensions-ref"><h3>Buffer#ref()</h3></a><p>Shorthand for <a href="#exports-ref"><code>ref.ref(this, …)</code></a>.</p><p><code>ref()</code> acceps a Buffer instance and returns a new Buffer
-instance that is &quot;pointer&quot; sized and has it&#39;s data pointing to the given
+</code></pre></div><div class="columns sixteen section"><a name="extensions-ref"></a><a href="#extensions-ref"><h3>Buffer#ref()</h3></a><p>Shorthand for <a href="#exports-ref"><code>ref.ref(this, …)</code></a>.</p><p><code>ref()</code> accepts a Buffer instance and returns a new Buffer
+instance that is &quot;pointer&quot; sized and has its data pointing to the given
 Buffer instance. Essentially the created Buffer is a &quot;reference&quot; to the
 original pointer, equivalent to the following C code:</p>
 <pre><code class="lang-c">char *buf = buffer;
