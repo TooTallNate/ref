@@ -658,8 +658,8 @@ void init (Handle<Object> target) {
   // exports
   target->Set(NanNew<v8::String>("sizeof"), smap);
   target->Set(NanNew<v8::String>("alignof"), amap);
-  target->Set(NanNew<v8::String>("endianness"), NanNew<v8::String>(CheckEndianness()), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
-  target->Set(NanNew<v8::String>("NULL"), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+  target->ForceSet(NanNew<v8::String>("endianness"), NanNew<v8::String>(CheckEndianness()), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+  target->ForceSet(NanNew<v8::String>("NULL"), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
   NODE_SET_METHOD(target, "address", Address);
   NODE_SET_METHOD(target, "hexAddress", HexAddress);
   NODE_SET_METHOD(target, "isNull", IsNull);
