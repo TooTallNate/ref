@@ -1,4 +1,11 @@
 
+0.3.4 / 2015-01-18
+==================
+
+  * package: update "nan" to v1.5.1
+  * travis: don't test node v0.6.x
+  * use `v8::Object::ForceSet` instead of `v8::Object:Set` (#20, @sarangsapre)
+
 0.3.3 / 2014-12-29
 ==================
 
