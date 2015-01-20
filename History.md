@@ -1,4 +1,10 @@
 
+1.0.0 / 2015-01-20
+==================
+
+  * bumping to v1.0.0 for better semver semantics
+  * travis: don't test node v0.8.x
+
 0.3.5 / 2015-01-18
 ==================
 
