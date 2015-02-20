@@ -82,6 +82,10 @@ properties:
 | `name`        | String                           | _(optional)_ The name to use during debugging for this type.
 | `alignment`   | Number                           | _(optional)_ The alignment of this type when placed in a struct. Defaults to the type's `size`.
 
+Be sure to check out the Wiki page of ["Known
+Types"](https://github.com/TooTallNate/ref/wiki/Known-%22types%22), for the list
+of built-in ref types, as well as known external type implementations.
+
 For example, you could define a "bigint" type that dereferences into a
 [`bigint`](https://github.com/substack/node-bigint) instance:
 
