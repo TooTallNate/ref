@@ -1,4 +1,12 @@
 
+1.0.1 / 2015-03-22
+==================
+
+  * package: update "nan" to v1.7.0
+  * appveyor: test node v0.12, don't test v0.11
+  * travis: test node v0.12, don't test v0.11
+  * README: add link to Known Types page
+
 1.0.0 / 2015-01-20
 ==================
 
