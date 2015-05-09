@@ -1,4 +1,10 @@
 
+1.0.2 / 2015-05-09
+==================
+
+  * package: update "nan" to v1.8.4 (#30, @mafintosh)
+  * README: use SVG for appveyor badge
+
 1.0.1 / 2015-03-22
 ==================
 
