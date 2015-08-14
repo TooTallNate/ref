@@ -29,16 +29,16 @@
     "test": "mocha -gc --reporter spec"
   },
   "dependencies": {
-    "bindings": "~1.2.0",
+    "bindings": "1",
     "debug": "2",
-    "nan": "~1.8.4"
+    "nan": "2"
   },
   "devDependencies": {
     "dox": "0.4.4",
     "highlight.js": "1",
-    "jade": "0.35.0",
-    "marked": "0.3.2",
+    "jade": "^0.35.0",
+    "marked": "^0.3.2",
     "mocha": "*",
-    "weak": "0.3.2"
+    "weak": "0"
   }
 }

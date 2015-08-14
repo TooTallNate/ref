@@ -43,24 +43,23 @@ static const unsigned int kMaxLength = 0x3fffffff;
  * address, so there's a possibility of an inaccurate value being returned
  * on 64-bit systems.
  *
- * args[0] - Buffer - the Buffer instance get the memory address of
- * args[1] - Number - optional (0) - the offset of the Buffer start at
+ * info[0] - Buffer - the Buffer instance get the memory address of
+ * info[1] - Number - optional (0) - the offset of the Buffer start at
  */
 
 NAN_METHOD(Address) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("address: Buffer instance expected");
+    return Nan::ThrowTypeError("address: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   uintptr_t intptr = (uintptr_t)ptr;
-  Local<Number> rtn = NanNew(static_cast<double>(intptr));
+  Local<Number> rtn = Nan::New(static_cast<double>(intptr));
 
-  NanReturnValue(rtn);
+  info.GetReturnValue().Set(rtn);
 }
 
 /**
@@ -68,19 +67,18 @@ NAN_METHOD(Address) {
  * is safe to use for displaying memory addresses, as compared to the
  * `address()` function which could overflow since it returns a Number.
  *
- * args[0] - Buffer - the Buffer instance get the memory address of
- * args[1] - Number - optional (0) - the offset of the Buffer start at
+ * info[0] - Buffer - the Buffer instance get the memory address of
+ * info[1] - Number - optional (0) - the offset of the Buffer start at
  */
 
 NAN_METHOD(HexAddress) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("hexAddress: Buffer instance expected");
+    return Nan::ThrowTypeError("hexAddress: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   char strbuf[30]; /* should be plenty... */
   snprintf(strbuf, 30, "%p", ptr);
@@ -88,34 +86,33 @@ NAN_METHOD(HexAddress) {
   Local<String> val;
   if (strbuf[0] == '0' && strbuf[1] == 'x') {
     /* strip the leading "0x" from the address */
-    val = NanNew(strbuf + 2);
+    val = Nan::New(strbuf + 2).ToLocalChecked();
   } else {
-    val = NanNew(strbuf);
+    val = Nan::New(strbuf).ToLocalChecked();
   }
 
-  NanReturnValue(val);
+  info.GetReturnValue().Set(val);
 }
 
 /*
  * Returns "true" if the given Buffer points to NULL, "false" otherwise.
  *
- * args[0] - Buffer - the Buffer instance to check for NULL
- * args[1] - Number - optional (0) - the offset of the Buffer start at
+ * info[0] - Buffer - the Buffer instance to check for NULL
+ * info[1] - Number - optional (0) - the offset of the Buffer start at
  */
 
 NAN_METHOD(IsNull) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("isNull: Buffer instance expected");
+    return Nan::ThrowTypeError("isNull: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
-  Local<Value> rtn = NanNew(ptr == NULL);
+  Local<Value> rtn = Nan::New(ptr == NULL);
 
-  NanReturnValue(rtn);
+  info.GetReturnValue().Set(rtn);
 }
 
 /**
@@ -148,39 +145,39 @@ void unref_null_cb(char *data, void *hint) {
  */
 
 Local<Object> WrapNullPointer() {
+  Nan::EscapableHandleScope scope;
   size_t buf_size = 0;
   char *ptr = reinterpret_cast<char *>(NULL);
   void *user_data = NULL;
-  Local<Object> buf = NanNewBufferHandle(ptr, buf_size, unref_null_cb, user_data);
-  return buf;
+  Local<Object> buf = Nan::NewBuffer(ptr, buf_size, unref_null_cb, user_data).ToLocalChecked();
+  return scope.Escape<Object>(buf);
 }
 
 /*
  * Retreives a JS Object instance that was previously stored in
  * the given Buffer instance at the given offset.
  *
- * args[0] - Buffer - the "buf" Buffer instance to read from
- * args[1] - Number - the offset from the "buf" buffer's address to read from
+ * info[0] - Buffer - the "buf" Buffer instance to read from
+ * info[1] - Number - the offset from the "buf" buffer's address to read from
  */
 
 NAN_METHOD(ReadObject) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("readObject: Buffer instance expected");
+    return Nan::ThrowTypeError("readObject: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
-    return NanThrowError("readObject: Cannot read from NULL pointer");
+    return Nan::ThrowError("readObject: Cannot read from NULL pointer");
   }
 
   Persistent<Object>* prtn = reinterpret_cast<Persistent<Object>*>(ptr);
-  Local<Value> rtn = NanNew(*prtn);
-  NanReturnValue(rtn);
+  Local<Value> rtn = Nan::New(*prtn);
+  info.GetReturnValue().Set(rtn);
 }
 
 /*
@@ -188,7 +185,7 @@ NAN_METHOD(ReadObject) {
  * gets garbage collected. We just have to dispose of our weak reference now.
  */
 
-NAN_WEAK_CALLBACK(write_object_cb) {
+void write_object_cb(const Nan::WeakCallbackInfo<void>& data) {
   //fprintf(stderr, "write_object_cb\n");
   //NanDisposePersistent(data.GetValue());
 }
@@ -197,39 +194,39 @@ NAN_WEAK_CALLBACK(write_object_cb) {
  * Writes a Persistent reference to given Object to the given Buffer
  * instance and offset.
  *
- * args[0] - Buffer - the "buf" Buffer instance to write to
- * args[1] - Number - the offset from the "buf" buffer's address to write to
- * args[2] - Object - the "obj" Object which will have a new Persistent reference
+ * info[0] - Buffer - the "buf" Buffer instance to write to
+ * info[1] - Number - the offset from the "buf" buffer's address to write to
+ * info[2] - Object - the "obj" Object which will have a new Persistent reference
  *                    created for the obj, who'se memory address will be written
- * args[3] - Boolean - `false` by default. if `true` is passed in then a
+ * info[3] - Boolean - `false` by default. if `true` is passed in then a
  *                    persistent reference will be written to the Buffer instance.
  *                    A weak reference gets written by default.
  */
 
 NAN_METHOD(WriteObject) {
-  NanScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("writeObject: Buffer instance expected");
+    return Nan::ThrowTypeError("writeObject: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  Persistent<Object>* pptr = reinterpret_cast<Persistent<Object>*>(ptr);
-  Local<Object> val = args[2].As<Object>();
+  Nan::Persistent<Object>* pptr = reinterpret_cast<Nan::Persistent<Object>*>(ptr);
+  Local<Object> val = info[2].As<Object>();
 
-  bool persistent = args[3]->BooleanValue();
+  bool persistent = info[3]->BooleanValue();
   if (persistent) {
-    NanAssignPersistent(*pptr, val);
+    (*pptr).Reset(val);
   } else {
     void *user_data = NULL;
-    _NanWeakCallbackInfo<Object, void>* info = NanMakeWeakPersistent(val, user_data, &write_object_cb);
-    memcpy(pptr, &info->persistent, sizeof(Persistent<Object>));
+    Nan::Persistent<Object> p2(val);
+    p2.SetWeak(user_data, write_object_cb, Nan::WeakCallbackType::kParameter);
+    memcpy(pptr, &p2, sizeof(Nan::Persistent<Object>));
   }
 
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 /*
@@ -245,31 +242,30 @@ void read_pointer_cb(char *data, void *hint) {
  * Reads the memory address of the given "buf" pointer Buffer at the specified
  * offset, and returns a new SlowBuffer instance from the memory address stored.
  *
- * args[0] - Buffer - the "buf" Buffer instance to read from
- * args[1] - Number - the offset from the "buf" buffer's address to read from
- * args[2] - Number - the length in bytes of the returned SlowBuffer instance
+ * info[0] - Buffer - the "buf" Buffer instance to read from
+ * info[1] - Number - the offset from the "buf" buffer's address to read from
+ * info[2] - Number - the length in bytes of the returned SlowBuffer instance
  */
 
 NAN_METHOD(ReadPointer) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("readPointer: Buffer instance expected as first argument");
+    return Nan::ThrowTypeError("readPointer: Buffer instance expected as first argument");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
-  size_t size = args[2]->Uint32Value();
+  size_t size = info[2]->Uint32Value();
 
   if (ptr == NULL) {
-    return NanThrowError("readPointer: Cannot read from NULL pointer");
+    return Nan::ThrowError("readPointer: Cannot read from NULL pointer");
   }
 
   char *val = *reinterpret_cast<char **>(ptr);
   void *user_data = NULL;
-  Local<Object> rtn_buf = NanNewBufferHandle(val, size, read_pointer_cb, user_data);
-  NanReturnValue(rtn_buf);
+  Local<Object> rtn_buf = Nan::NewBuffer(val, size, read_pointer_cb, user_data).ToLocalChecked();
+  info.GetReturnValue().Set(rtn_buf);
 }
 
 /*
@@ -277,24 +273,23 @@ NAN_METHOD(ReadPointer) {
  * specified "buf" buffer and offset. Essentially making "buf" hold a reference
  * to the "input" Buffer.
  *
- * args[0] - Buffer - the "buf" Buffer instance to write to
- * args[1] - Number - the offset from the "buf" buffer's address to write to
- * args[2] - Buffer - the "input" Buffer whose memory address will be written
+ * info[0] - Buffer - the "buf" Buffer instance to write to
+ * info[1] - Number - the offset from the "buf" buffer's address to write to
+ * info[2] - Buffer - the "input" Buffer whose memory address will be written
  */
 
 NAN_METHOD(WritePointer) {
-  NanScope();
 
-  Local<Value> buf = args[0];
-  Local<Value> input = args[2];
+  Local<Value> buf = info[0];
+  Local<Value> input = info[2];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("writePointer: Buffer instance expected as first argument");
+    return Nan::ThrowTypeError("writePointer: Buffer instance expected as first argument");
   }
   if (!(input->IsNull() || Buffer::HasInstance(input))) {
-    return NanThrowTypeError("writePointer: Buffer instance expected as third argument");
+    return Nan::ThrowTypeError("writePointer: Buffer instance expected as third argument");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (input->IsNull()) {
@@ -304,29 +299,28 @@ NAN_METHOD(WritePointer) {
     *reinterpret_cast<char **>(ptr) = input_ptr;
   }
 
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 /*
  * Reads a machine-endian int64_t from the given Buffer at the given offset.
  *
- * args[0] - Buffer - the "buf" Buffer instance to read from
- * args[1] - Number - the offset from the "buf" buffer's address to read from
+ * info[0] - Buffer - the "buf" Buffer instance to read from
+ * info[1] - Number - the offset from the "buf" buffer's address to read from
  */
 
 NAN_METHOD(ReadInt64) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("readInt64: Buffer instance expected");
+    return Nan::ThrowTypeError("readInt64: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
-    return NanThrowTypeError("readInt64: Cannot read from NULL pointer");
+    return Nan::ThrowTypeError("readInt64: Cannot read from NULL pointer");
   }
 
   int64_t val = *reinterpret_cast<int64_t *>(ptr);
@@ -336,36 +330,35 @@ NAN_METHOD(ReadInt64) {
     // return a String
     char strbuf[128];
     snprintf(strbuf, 128, "%" PRId64, val);
-    rtn = NanNew<v8::String>(strbuf);
+    rtn = Nan::New<v8::String>(strbuf).ToLocalChecked();
   } else {
     // return a Number
-    rtn = NanNew<v8::Number>(static_cast<double>(val));
+    rtn = Nan::New<v8::Number>(static_cast<double>(val));
   }
 
-  NanReturnValue(rtn);
+  info.GetReturnValue().Set(rtn);
 }
 
 /*
  * Writes the input Number/String int64 value as a machine-endian int64_t to
  * the given Buffer at the given offset.
  *
- * args[0] - Buffer - the "buf" Buffer instance to write to
- * args[1] - Number - the offset from the "buf" buffer's address to write to
- * args[2] - String/Number - the "input" String or Number which will be written
+ * info[0] - Buffer - the "buf" Buffer instance to write to
+ * info[1] - Number - the offset from the "buf" buffer's address to write to
+ * info[2] - String/Number - the "input" String or Number which will be written
  */
 
 NAN_METHOD(WriteInt64) {
-  NanScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("writeInt64: Buffer instance expected");
+    return Nan::ThrowTypeError("writeInt64: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  Local<Value> in = args[2];
+  Local<Value> in = info[2];
   int64_t val;
   if (in->IsNumber()) {
     val = in->IntegerValue();
@@ -376,34 +369,33 @@ NAN_METHOD(WriteInt64) {
     val = strtoll(*str, NULL, 10);
     // TODO: better error handling; check errno
   } else {
-    return NanThrowTypeError("writeInt64: Number/String 64-bit value required");
+    return Nan::ThrowTypeError("writeInt64: Number/String 64-bit value required");
   }
 
   *reinterpret_cast<int64_t *>(ptr) = val;
 
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 /*
  * Reads a machine-endian uint64_t from the given Buffer at the given offset.
  *
- * args[0] - Buffer - the "buf" Buffer instance to read from
- * args[1] - Number - the offset from the "buf" buffer's address to read from
+ * info[0] - Buffer - the "buf" Buffer instance to read from
+ * info[1] - Number - the offset from the "buf" buffer's address to read from
  */
 
 NAN_METHOD(ReadUInt64) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("readUInt64: Buffer instance expected");
+    return Nan::ThrowTypeError("readUInt64: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
-    return NanThrowTypeError("readUInt64: Cannot read from NULL pointer");
+    return Nan::ThrowTypeError("readUInt64: Cannot read from NULL pointer");
   }
 
   uint64_t val = *reinterpret_cast<uint64_t *>(ptr);
@@ -413,36 +405,35 @@ NAN_METHOD(ReadUInt64) {
     // return a String
     char strbuf[128];
     snprintf(strbuf, 128, "%" PRIu64, val);
-    rtn = NanNew<v8::String>(strbuf);
+    rtn = Nan::New<v8::String>(strbuf).ToLocalChecked();
   } else {
     // return a Number
-    rtn = NanNew<v8::Number>(static_cast<double>(val));
+    rtn = Nan::New<v8::Number>(static_cast<double>(val));
   }
 
-  NanReturnValue(rtn);
+  info.GetReturnValue().Set(rtn);
 }
 
 /*
  * Writes the input Number/String uint64 value as a machine-endian uint64_t to
  * the given Buffer at the given offset.
  *
- * args[0] - Buffer - the "buf" Buffer instance to write to
- * args[1] - Number - the offset from the "buf" buffer's address to write to
- * args[2] - String/Number - the "input" String or Number which will be written
+ * info[0] - Buffer - the "buf" Buffer instance to write to
+ * info[1] - Number - the offset from the "buf" buffer's address to write to
+ * info[2] - String/Number - the "input" String or Number which will be written
  */
 
 NAN_METHOD(WriteUInt64) {
-  NanScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("writeUInt64: Buffer instance expected");
+    return Nan::ThrowTypeError("writeUInt64: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
-  Local<Value> in = args[2];
+  Local<Value> in = info[2];
   uint64_t val;
   if (in->IsNumber()) {
     val = in->IntegerValue();
@@ -453,12 +444,12 @@ NAN_METHOD(WriteUInt64) {
     val = strtoull(*str, NULL, 10);
     // TODO: better error handling; check errno
   } else {
-    return NanThrowTypeError("writeUInt64: Number/String 64-bit value required");
+    return Nan::ThrowTypeError("writeUInt64: Number/String 64-bit value required");
   }
 
   *reinterpret_cast<uint64_t *>(ptr) = val;
 
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 /*
@@ -466,57 +457,55 @@ NAN_METHOD(WriteUInt64) {
  * I didn't want to add this function but it ends up being necessary for reading
  * past a 0 or 1 length Buffer's boundary in node-ffi :\
  *
- * args[0] - Buffer - the "buf" Buffer instance to read from
- * args[1] - Number - the offset from the "buf" buffer's address to read from
+ * info[0] - Buffer - the "buf" Buffer instance to read from
+ * info[1] - Number - the offset from the "buf" buffer's address to read from
  */
 
 NAN_METHOD(ReadCString) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("readCString: Buffer instance expected");
+    return Nan::ThrowTypeError("readCString: Buffer instance expected");
   }
 
-  int64_t offset = args[1]->IntegerValue();
+  int64_t offset = info[1]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
-    return NanThrowError("readCString: Cannot read from NULL pointer");
+    return Nan::ThrowError("readCString: Cannot read from NULL pointer");
   }
 
-  Local<Value> rtn = NanNew<v8::String>(ptr);
-  NanReturnValue(rtn);
+  Local<Value> rtn = Nan::New<v8::String>(ptr).ToLocalChecked();
+  info.GetReturnValue().Set(rtn);
 }
 
 /*
  * Returns a new Buffer instance that has the same memory address
  * as the given buffer, but with the specified size.
  *
- * args[0] - Buffer - the "buf" Buffer instance to read the address from
- * args[1] - Number - the size in bytes that the returned Buffer should be
- * args[2] - Number - the offset from the "buf" buffer's address to read from
+ * info[0] - Buffer - the "buf" Buffer instance to read the address from
+ * info[1] - Number - the size in bytes that the returned Buffer should be
+ * info[2] - Number - the offset from the "buf" buffer's address to read from
  */
 
 NAN_METHOD(ReinterpretBuffer) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("reinterpret: Buffer instance expected");
+    return Nan::ThrowTypeError("reinterpret: Buffer instance expected");
   }
 
-  int64_t offset = args[2]->IntegerValue();
+  int64_t offset = info[2]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
-    return NanThrowError("reinterpret: Cannot reinterpret from NULL pointer");
+    return Nan::ThrowError("reinterpret: Cannot reinterpret from NULL pointer");
   }
 
-  size_t size = args[1]->Uint32Value();
+  size_t size = info[1]->Uint32Value();
 
-  Local<Object> rtn = NanNewBufferHandle(ptr, size, read_pointer_cb, NULL);
-  NanReturnValue(rtn);
+  Local<Object> rtn = Nan::NewBuffer(ptr, size, read_pointer_cb, NULL).ToLocalChecked();
+  info.GetReturnValue().Set(rtn);
 }
 
 /*
@@ -524,27 +513,26 @@ NAN_METHOD(ReinterpretBuffer) {
  * as the given buffer, but with a length up to the first aligned set of values of
  * 0 in a row for the given length.
  *
- * args[0] - Buffer - the "buf" Buffer instance to read the address from
- * args[1] - Number - the number of sequential 0-byte values that need to be read
- * args[2] - Number - the offset from the "buf" buffer's address to read from
+ * info[0] - Buffer - the "buf" Buffer instance to read the address from
+ * info[1] - Number - the number of sequential 0-byte values that need to be read
+ * info[2] - Number - the offset from the "buf" buffer's address to read from
  */
 
 NAN_METHOD(ReinterpretBufferUntilZeros) {
-  NanEscapableScope();
 
-  Local<Value> buf = args[0];
+  Local<Value> buf = info[0];
   if (!Buffer::HasInstance(buf)) {
-    return NanThrowTypeError("reinterpretUntilZeros: Buffer instance expected");
+    return Nan::ThrowTypeError("reinterpretUntilZeros: Buffer instance expected");
   }
 
-  int64_t offset = args[2]->IntegerValue();
+  int64_t offset = info[2]->IntegerValue();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
-    return NanThrowError("reinterpretUntilZeros: Cannot reinterpret from NULL pointer");
+    return Nan::ThrowError("reinterpretUntilZeros: Cannot reinterpret from NULL pointer");
   }
 
-  uint32_t numZeros = args[1]->Uint32Value();
+  uint32_t numZeros = info[1]->Uint32Value();
   uint32_t i = 0;
   size_t size = 0;
   bool end = false;
@@ -562,22 +550,22 @@ NAN_METHOD(ReinterpretBufferUntilZeros) {
     }
   }
 
-  Local<Object> rtn = NanNewBufferHandle(ptr, size, read_pointer_cb, NULL);
+  Local<Object> rtn = Nan::NewBuffer(ptr, size, read_pointer_cb, NULL).ToLocalChecked();
 
-  NanReturnValue(rtn);
+  info.GetReturnValue().Set(rtn);
 }
 
 
 } // anonymous namespace
 
-void init (Handle<Object> target) {
-  NanScope();
+NAN_MODULE_INIT(init) {
+  Nan::HandleScope scope;
 
   // "sizeof" map
-  Local<Object> smap = NanNew<v8::Object>();
+  Local<Object> smap = Nan::New<v8::Object>();
   // fixed sizes
 #define SET_SIZEOF(name, type) \
-  smap->Set(NanNew<v8::String>( #name ), NanNew<v8::Uint32>(static_cast<uint32_t>(sizeof(type))));
+  smap->Set(Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(sizeof(type))));
   SET_SIZEOF(int8, int8_t);
   SET_SIZEOF(uint8, uint8_t);
   SET_SIZEOF(int16, int16_t);
@@ -607,10 +595,10 @@ void init (Handle<Object> target) {
   SET_SIZEOF(Object, Persistent<Object>);
 
   // "alignof" map
-  Local<Object> amap = NanNew<v8::Object>();
+  Local<Object> amap = Nan::New<v8::Object>();
 #define SET_ALIGNOF(name, type) \
   struct s_##name { type a; }; \
-  amap->Set(NanNew<v8::String>( #name ), NanNew<v8::Uint32>(static_cast<uint32_t>(__alignof__(struct s_##name))));
+  amap->Set(Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(__alignof__(struct s_##name))));
   SET_ALIGNOF(int8, int8_t);
   SET_ALIGNOF(uint8, uint8_t);
   SET_ALIGNOF(int16, int16_t);
@@ -637,23 +625,23 @@ void init (Handle<Object> target) {
   SET_ALIGNOF(Object, Persistent<Object>);
 
   // exports
-  target->Set(NanNew<v8::String>("sizeof"), smap);
-  target->Set(NanNew<v8::String>("alignof"), amap);
-  target->ForceSet(NanNew<v8::String>("endianness"), NanNew<v8::String>(CheckEndianness()), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
-  target->ForceSet(NanNew<v8::String>("NULL"), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
-  NODE_SET_METHOD(target, "address", Address);
-  NODE_SET_METHOD(target, "hexAddress", HexAddress);
-  NODE_SET_METHOD(target, "isNull", IsNull);
-  NODE_SET_METHOD(target, "readObject", ReadObject);
-  NODE_SET_METHOD(target, "writeObject", WriteObject);
-  NODE_SET_METHOD(target, "readPointer", ReadPointer);
-  NODE_SET_METHOD(target, "writePointer", WritePointer);
-  NODE_SET_METHOD(target, "readInt64", ReadInt64);
-  NODE_SET_METHOD(target, "writeInt64", WriteInt64);
-  NODE_SET_METHOD(target, "readUInt64", ReadUInt64);
-  NODE_SET_METHOD(target, "writeUInt64", WriteUInt64);
-  NODE_SET_METHOD(target, "readCString", ReadCString);
-  NODE_SET_METHOD(target, "reinterpret", ReinterpretBuffer);
-  NODE_SET_METHOD(target, "reinterpretUntilZeros", ReinterpretBufferUntilZeros);
+  target->Set(Nan::New<v8::String>("sizeof").ToLocalChecked(), smap);
+  target->Set(Nan::New<v8::String>("alignof").ToLocalChecked(), amap);
+  target->ForceSet(Nan::New<v8::String>("endianness").ToLocalChecked(), Nan::New<v8::String>(CheckEndianness()).ToLocalChecked(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+  target->ForceSet(Nan::New<v8::String>("NULL").ToLocalChecked(), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+  Nan::SetMethod(target, "address", Address);
+  Nan::SetMethod(target, "hexAddress", HexAddress);
+  Nan::SetMethod(target, "isNull", IsNull);
+  Nan::SetMethod(target, "readObject", ReadObject);
+  Nan::SetMethod(target, "writeObject", WriteObject);
+  Nan::SetMethod(target, "readPointer", ReadPointer);
+  Nan::SetMethod(target, "writePointer", WritePointer);
+  Nan::SetMethod(target, "readInt64", ReadInt64);
+  Nan::SetMethod(target, "writeInt64", WriteInt64);
+  Nan::SetMethod(target, "readUInt64", ReadUInt64);
+  Nan::SetMethod(target, "writeUInt64", WriteUInt64);
+  Nan::SetMethod(target, "readCString", ReadCString);
+  Nan::SetMethod(target, "reinterpret", ReinterpretBuffer);
+  Nan::SetMethod(target, "reinterpretUntilZeros", ReinterpretBufferUntilZeros);
 }
 NODE_MODULE(binding, init);
