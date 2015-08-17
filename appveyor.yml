@@ -7,9 +7,16 @@ environment:
     - nodejs_version: "0.10"
     - nodejs_version: "0.12"
 
+platform:
+  - x86
+  - x64
+
 # Install scripts. (runs after repo cloning)
 install:
-  - ps: Install-Product node $env:nodejs_version
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  # Node 0.8 comes with a too obsolete npm
+  - set PATH=%APPVEYOR_BUILD_FOLDER%\node_modules\.bin;%APPDATA%\npm;%PATH%
+  - IF "%nodejs_version%" == "0.8" npm -g install npm@1.4.28
   # Typical npm stuff.
   - npm install
 
@@ -18,10 +25,8 @@ test_script:
   # Output useful info for debugging.
   - node --version
   - npm --version
-  # We test multiple Windows shells because of Node.js stdout buffering issues:
-  # https://github.com/joyent/node/issues/3584
-  - ps: "npm test # PowerShell" # Pass comment to PS for easier debugging
-  - cmd: npm test
+  # run tests
+  - npm test
 
 # Don't actually build.
 build: off
