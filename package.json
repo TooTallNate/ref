@@ -18,6 +18,7 @@
     "64"
   ],
   "version": "1.0.2",
+  "license": "MIT",
   "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
   "repository": {
     "type": "git",
