@@ -6,3 +6,7 @@ npm-debug.log
 
 # ignore root-level single-letter file dev files
 ?.js
+
+#IDE
+/.idea
+.kdev*
