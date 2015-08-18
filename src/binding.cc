@@ -54,7 +54,7 @@ NAN_METHOD(Address) {
     return Nan::ThrowTypeError("address: Buffer instance expected");
   }
 
-  int64_t offset = info[1]->IntegerValue();
+  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   uintptr_t intptr = (uintptr_t)ptr;
   Local<Number> rtn = Nan::New(static_cast<double>(intptr));
@@ -220,10 +220,8 @@ NAN_METHOD(WriteObject) {
   if (persistent) {
     (*pptr).Reset(val);
   } else {
-    void *user_data = NULL;
-    Nan::Persistent<Object> p2(val);
-    p2.SetWeak(user_data, write_object_cb, Nan::WeakCallbackType::kParameter);
-    memcpy(pptr, &p2, sizeof(Nan::Persistent<Object>));
+    pptr->Reset(val);
+    pptr->SetWeak((void*)NULL, write_object_cb, Nan::WeakCallbackType::kParameter);
   }
 
   info.GetReturnValue().SetUndefined();
