@@ -3,7 +3,7 @@ var assert = require('assert')
 var weak = require('weak')
 var ref = require('../')
 
-describe.skip('pointer', function () {
+describe('pointer', function () {
 
   var test = new Buffer('hello world')
 

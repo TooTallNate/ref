@@ -2,7 +2,7 @@
 var assert = require('assert')
 var ref = require('../')
 
-describe.skip('ref(), deref()', function () {
+describe('ref(), deref()', function () {
 
   beforeEach(gc)
 

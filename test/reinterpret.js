@@ -3,7 +3,7 @@ var assert = require('assert')
 var weak = require('weak')
 var ref = require('../')
 
-describe.skip('reinterpret()', function () {
+describe('reinterpret()', function () {
 
   beforeEach(gc)
 
