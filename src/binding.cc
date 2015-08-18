@@ -220,9 +220,13 @@ NAN_METHOD(WriteObject) {
   Local<Object> val = info[2].As<Object>();
 
   bool persistent = info[3]->BooleanValue();
-  (*pptr).Reset(val);
-  if (!persistent) {
-    pptr->SetWeak((void*)NULL, write_object_cb, Nan::WeakCallbackType::kParameter);
+  if (persistent) {
+      (*pptr).Reset(val);
+  } else {
+    void *user_data = NULL;
+    Nan::Persistent<Object> p2(val);
+    p2.SetWeak(user_data, write_object_cb, Nan::WeakCallbackType::kParameter);
+    memcpy(pptr, &p2, sizeof(Nan::Persistent<Object>));
   }
 
   info.GetReturnValue().SetUndefined();
