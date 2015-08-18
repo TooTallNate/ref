@@ -581,7 +581,7 @@ NAN_MODULE_INIT(init) {
   SET_SIZEOF(pointer, char *);
   SET_SIZEOF(size_t, size_t);
   // size of a Persistent handle to a JS object
-  SET_SIZEOF(Object, Persistent<Object>);
+	SET_SIZEOF(Object, Nan::Persistent<Object>);
 
   // "alignof" map
   Local<Object> amap = Nan::New<v8::Object>();
@@ -611,7 +611,7 @@ NAN_MODULE_INIT(init) {
   SET_ALIGNOF(ulonglong, unsigned long long);
   SET_ALIGNOF(pointer, char *);
   SET_ALIGNOF(size_t, size_t);
-  SET_ALIGNOF(Object, Persistent<Object>);
+	SET_ALIGNOF(Object, Nan::Persistent<Object>);
 
   // exports
   target->Set(Nan::New<v8::String>("sizeof").ToLocalChecked(), smap);
