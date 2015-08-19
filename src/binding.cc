@@ -35,6 +35,11 @@ namespace {
 // we could use `node::Buffer::kMaxLength`, but it's not defined on node v0.6.x
 static const unsigned int kMaxLength = 0x3fffffff;
 
+// get int64 from a value
+inline int64_t GetInt64(Local<Value> value) {
+  return value->IsNumber() ? Nan::To<int64_t>(value).FromJust() : 0;
+}
+
 /*
  * Returns the pointer address as a Number of the given Buffer instance.
  * It's recommended to use `hexAddress()` in most cases instead of this function.
@@ -54,7 +59,7 @@ NAN_METHOD(Address) {
     return Nan::ThrowTypeError("address: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   uintptr_t intptr = (uintptr_t)ptr;
   Local<Number> rtn = Nan::New(static_cast<double>(intptr));
@@ -78,7 +83,7 @@ NAN_METHOD(HexAddress) {
     return Nan::ThrowTypeError("hexAddress: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   char strbuf[30]; /* should be plenty... */
   snprintf(strbuf, 30, "%p", ptr);
@@ -108,7 +113,7 @@ NAN_METHOD(IsNull) {
     return Nan::ThrowTypeError("isNull: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   Local<Value> rtn = Nan::New(ptr == NULL);
 
@@ -171,7 +176,7 @@ NAN_METHOD(ReadObject) {
     return Nan::ThrowTypeError("readObject: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
@@ -213,7 +218,7 @@ NAN_METHOD(WriteObject) {
     return Nan::ThrowTypeError("writeObject: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   Nan::Persistent<Object>* pptr = reinterpret_cast<Nan::Persistent<Object>*>(ptr);
@@ -248,7 +253,7 @@ NAN_METHOD(ReadPointer) {
     return Nan::ThrowTypeError("readPointer: Buffer instance expected as first argument");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
   size_t size = info[2]->Uint32Value();
 
@@ -281,7 +286,7 @@ NAN_METHOD(WritePointer) {
     return Nan::ThrowTypeError("writePointer: Buffer instance expected as third argument");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (input->IsNull()) {
@@ -308,7 +313,7 @@ NAN_METHOD(ReadInt64) {
     return Nan::ThrowTypeError("readInt64: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
@@ -347,13 +352,13 @@ NAN_METHOD(WriteInt64) {
     return Nan::ThrowTypeError("writeInt64: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   Local<Value> in = info[2];
   int64_t val;
   if (in->IsNumber()) {
-    val = Nan::To<int64_t>(in).FromJust();
+    val = GetInt64(in);
   } else if (in->IsString()) {
     // Have to do this because strtoll doesn't set errno to 0 on success :(
     errno = 0;
@@ -383,7 +388,7 @@ NAN_METHOD(ReadUInt64) {
     return Nan::ThrowTypeError("readUInt64: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);;
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
@@ -422,13 +427,13 @@ NAN_METHOD(WriteUInt64) {
     return Nan::ThrowTypeError("writeUInt64: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);;
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   Local<Value> in = info[2];
   uint64_t val;
   if (in->IsNumber()) {
-    val = Nan::To<int64_t>(in).FromJust();
+    val = GetInt64(in);;
   } else if (in->IsString()) {
     // Have to do this because strtoull doesn't set errno to 0 on success :(
     errno = 0;
@@ -460,7 +465,7 @@ NAN_METHOD(ReadCString) {
     return Nan::ThrowTypeError("readCString: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[1]).FromJust();
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
@@ -487,7 +492,7 @@ NAN_METHOD(ReinterpretBuffer) {
     return Nan::ThrowTypeError("reinterpret: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[2]).FromJust();
+  int64_t offset = GetInt64(info[2]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
@@ -516,7 +521,7 @@ NAN_METHOD(ReinterpretBufferUntilZeros) {
     return Nan::ThrowTypeError("reinterpretUntilZeros: Buffer instance expected");
   }
 
-  int64_t offset = Nan::To<int64_t>(info[2]).FromJust();
+  int64_t offset = GetInt64(info[2]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
