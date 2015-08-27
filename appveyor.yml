@@ -2,10 +2,15 @@
 
 # Test against these versions of Node.js.
 environment:
+  # Visual Studio Version
+  MSVS_VERSION: 2013
+  # Test against these versions of Node.js and io.js
   matrix:
+    # node.js
     - nodejs_version: "0.8"
     - nodejs_version: "0.10"
     - nodejs_version: "0.12"
+    # io.js
     - nodejs_version: "2.5"
     - nodejs_version: "3.2"
 
@@ -20,7 +25,7 @@ install:
   - set PATH=%APPVEYOR_BUILD_FOLDER%\node_modules\.bin;%APPDATA%\npm;%PATH%
   - IF "%nodejs_version%" == "0.8" npm -g install npm@1.4.28
   # Typical npm stuff.
-  - npm install
+  - npm install --msvs_version=$env:MSVS_VERSION
 
 # Post-install test scripts.
 test_script:
