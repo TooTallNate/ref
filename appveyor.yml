@@ -25,7 +25,7 @@ install:
   - set PATH=%APPVEYOR_BUILD_FOLDER%\node_modules\.bin;%APPDATA%\npm;%PATH%
   - IF "%nodejs_version%" == "0.8" npm -g install npm@1.4.28
   # Typical npm stuff.
-  - npm install --msvs_version=$env:MSVS_VERSION
+  - npm install --msvs_version=%MSVS_VERSION%
 
 # Post-install test scripts.
 test_script:
