@@ -138,17 +138,12 @@ const char *CheckEndianness() {
  * Converts an arbitrary pointer to a node Buffer with specified length
  */
 
-void wrap_pointer_cb(char *data, void *hint)
-{
+void wrap_pointer_cb(char *data, void *hint) {
 }
 
 inline Local<Value> WrapPointer(char *ptr, size_t length) {
   Nan::EscapableHandleScope scope;
   return scope.Escape(Nan::NewBuffer(ptr, length, wrap_pointer_cb, NULL).ToLocalChecked());
-}
-
-inline Local<Value> WrapPointer(char *ptr) {
-  return WrapPointer(ptr, 0);
 }
 
 /*
