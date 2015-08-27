@@ -1,4 +1,16 @@
 
+1.1.0 / 2015-08-26
+==================
+
+  * appveyor: 2.5 + 3 added
+  * appveyor: attempt to fix v0.8 and v0.10
+  * int64 conversion works with debug mode iojs runtime
+  * persistent size fixed
+  * better automated testing
+  * package: update "weak" to v1
+  * package: add "MIT" license field
+  * NAN 2.0 support (#33, @unbornchikken)
+
 1.0.2 / 2015-05-09
 ==================
 
