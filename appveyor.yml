@@ -21,12 +21,15 @@ platform:
 # Install scripts. (runs after repo cloning)
 install:
   - ps: Install-Product node $env:nodejs_version $env:platform
+  - npm -v
   - set PATH=%APPVEYOR_BUILD_FOLDER%\node_modules\.bin;%APPDATA%\npm;%PATH%
   # Node 0.8 comes with a too obsolete npm
   - IF "%nodejs_version%" == "0.8" npm -g install npm@1.4.28
+  - npm -v
   # Install latest NPM only for node.js versions until built in node-gyp adds io.js support
   # Update is required for node.js 0.8 because built in npm(node-gyp) does not know VS2013
   - IF "%nodejs_version%" LSS 1 npm -g install npm@2
+  - npm -v
   # Typical npm stuff.
   - npm install --msvs_version=%MSVS_VERSION%
 
