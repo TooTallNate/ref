@@ -23,19 +23,16 @@ install:
   # Get the latest stable version of Node 0.STABLE.latest
   - ps: if($env:nodejs_version -eq "0.8") {Install-Product node $env:nodejs_version}
   - ps: if($env:nodejs_version -ne "0.8") {Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)}
-  - npm -v
-  - npm prefix
-  - set PATH=%APPVEYOR_BUILD_FOLDER%\node_modules\.bin;%APPDATA%\npm;%PATH%
-  - echo "%PATH%"
   # Node 0.8 comes with a too obsolete npm
-  - IF "%nodejs_version%" == "0.8" (npm install npm@1.4.28)
+  - IF %nodejs_version% == 0.8 (npm install -g npm@1.4.28)
   - npm -v
-  - npm prefix
+  - npm prefix -g
   # Install latest NPM only for node.js versions until built in node-gyp adds io.js support
   # Update is required for node.js 0.8 because built in npm(node-gyp) does not know VS2013
-  - IF "%nodejs_version%" LSS "1" (npm install npm@2)
+  - IF %nodejs_version% LSS 1 (npm install -g npm@2)
+  - IF %nodejs_version% LSS 1 set PATH=%APPDATA%\npm;%PATH%
   - npm -v
-  - npm prefix
+  - npm prefix -g
   # Typical npm stuff.
   - npm install --msvs_version=%MSVS_VERSION%
 
