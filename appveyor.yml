@@ -25,14 +25,10 @@ install:
   - ps: if($env:nodejs_version -ne "0.8") {Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)}
   # Node 0.8 comes with a too obsolete npm
   - IF %nodejs_version% == 0.8 (npm install -g npm@1.4.28)
-  - npm -v
-  - npm prefix -g
   # Install latest NPM only for node.js versions until built in node-gyp adds io.js support
   # Update is required for node.js 0.8 because built in npm(node-gyp) does not know VS2013
   - IF %nodejs_version% LSS 1 (npm install -g npm@2)
   - IF %nodejs_version% LSS 1 set PATH=%APPDATA%\npm;%PATH%
-  - npm -v
-  - npm prefix -g
   # Typical npm stuff.
   - npm install --msvs_version=%MSVS_VERSION%
 
