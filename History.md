@@ -1,4 +1,10 @@
 
+1.1.1 / 2015-09-14
+==================
+
+  * remove unused WrapPointer overload (fix compile warning)
+  * appveyor: better Windows testing
+
 1.1.0 / 2015-08-26
 ==================
 
