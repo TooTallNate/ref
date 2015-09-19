@@ -72,13 +72,14 @@ describe('C string', function () {
       buf.writePointer(ref.NULL)
       assert.strictEqual(null, buf.deref())
 
+      // another version of the same test
       assert.strictEqual(null, ref.get(ref.NULL_POINTER, 0, ref.types.CString))
     })
 
     it('should read a utf8 string from a Buffer', function () {
       var str = 'hello world'
       var buf = ref.alloc(ref.types.CString)
-      buf.writePointer(Buffer(str + '\0'))
+      buf.writePointer(new Buffer(str + '\0'))
       assert.strictEqual(str, buf.deref())
     })
 
