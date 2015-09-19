@@ -1,4 +1,10 @@
 
+1.1.2 / 2015-09-19
+==================
+
+  * CString: allow a Buffer to be used as backing store in `set()` (https://github.com/node-ffi/node-ffi/issues/169)
+  * travis, appveyor: test Node.js v4
+
 1.1.1 / 2015-09-14
 ==================
 
