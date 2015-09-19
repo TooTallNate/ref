@@ -83,6 +83,16 @@ describe('C string', function () {
       assert.strictEqual(str, buf.deref())
     })
 
+    // https://github.com/node-ffi/node-ffi/issues/169
+    it('should set a Buffer as backing store', function () {
+      var str = 'hey!'
+      var store = new Buffer(str + '\0')
+      var buf = ref.alloc(ref.types.CString)
+      ref.set(buf, 0, store)
+
+      assert.equal(str, ref.get(buf, 0))
+    })
+
   })
 
 })
