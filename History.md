@@ -1,4 +1,10 @@
 
+1.1.3 / 2015-09-23
+==================
+
+  * appveyor: remove v1
+  * speed increase by avoiding `JSON.stringify()` constant call (#39, @dan-tull)
+
 1.1.2 / 2015-09-19
 ==================
 
