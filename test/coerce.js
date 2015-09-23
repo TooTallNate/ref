@@ -39,4 +39,10 @@ describe('coerce', function () {
     assert.strictEqual(5, b[0])
   })
 
+  it('should throw a TypeError if a "type" can not be inferred', function () {
+    assert.throws(function () {
+      ref.coerceType({ })
+    }, /could not determine a proper \"type\"/)
+  })
+
 })
