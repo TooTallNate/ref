@@ -51,6 +51,13 @@ describe('pointer', function () {
     })
   })
 
+  it('should return a 0-length Buffer when reading a NULL pointer', function () {
+    var buf = new Buffer(ref.sizeof.pointer)
+    ref.writePointer(buf, 0, ref.NULL)
+    var out = ref.readPointer(buf, 0, 100)
+    assert.strictEqual(out.length, 0)
+  })
+
   describe('offset', function () {
 
     it('should read two pointers next to each other in memory', function () {

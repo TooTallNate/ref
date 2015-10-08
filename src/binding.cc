@@ -143,6 +143,7 @@ void wrap_pointer_cb(char *data, void *hint) {
 
 inline Local<Value> WrapPointer(char *ptr, size_t length) {
   Nan::EscapableHandleScope scope;
+  if (ptr == NULL) length = 0;
   return scope.Escape(Nan::NewBuffer(ptr, length, wrap_pointer_cb, NULL).ToLocalChecked());
 }
 
