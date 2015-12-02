@@ -23,6 +23,24 @@ describe('int64', function () {
     assert.equal(val, rtn)
   })
 
+  it('should allow a hex String to be input', function () {
+    var buf = new Buffer(ref.sizeof.int64)
+    var val = '0x1234567890'
+    ref.writeInt64(buf, 0, val)
+    var rtn = ref.readInt64(buf, 0)
+    console.log(rtn);
+    assert.equal(parseInt(val, 16), rtn)
+  })
+
+  it('should allow an octal String to be input', function () {
+    var buf = new Buffer(ref.sizeof.int64)
+    var val = '0777'
+    ref.writeInt64(buf, 0, val)
+    var rtn = ref.readInt64(buf, 0)
+    console.log(rtn);
+    assert.equal(parseInt(val, 8), rtn)
+  })
+
   it('should return a Number when reading JS_MIN_INT', function () {
     var buf = new Buffer(ref.sizeof.int64)
     ref.writeInt64(buf, 0, JS_MIN_INT)
