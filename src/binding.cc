@@ -384,7 +384,7 @@ NAN_METHOD(ReadUInt64) {
     return Nan::ThrowTypeError("readUInt64: Buffer instance expected");
   }
 
-  int64_t offset = GetInt64(info[1]);;
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   if (ptr == NULL) {
@@ -423,13 +423,13 @@ NAN_METHOD(WriteUInt64) {
     return Nan::ThrowTypeError("writeUInt64: Buffer instance expected");
   }
 
-  int64_t offset = GetInt64(info[1]);;
+  int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
 
   Local<Value> in = info[2];
   uint64_t val;
   if (in->IsNumber()) {
-    val = GetInt64(in);;
+    val = GetInt64(in);
   } else if (in->IsString()) {
     // Have to do this because strtoull doesn't set errno to 0 on success :(
     errno = 0;
