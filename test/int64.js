@@ -23,19 +23,35 @@ describe('int64', function () {
     assert.equal(val, rtn)
   })
 
-  it('should allow a hex String to be input', function () {
+  it('should allow a hex String to be input (signed)', function () {
     var buf = new Buffer(ref.sizeof.int64)
-    var val = '0x1234567890'
+    var val = '-0x1234567890'
     ref.writeInt64(buf, 0, val)
     var rtn = ref.readInt64(buf, 0)
     assert.equal(parseInt(val, 16), rtn)
   })
 
-  it('should allow an octal String to be input', function () {
+  it('should allow an octal String to be input (signed)', function () {
     var buf = new Buffer(ref.sizeof.int64)
-    var val = '0777'
+    var val = '-0777'
     ref.writeInt64(buf, 0, val)
     var rtn = ref.readInt64(buf, 0)
+    assert.equal(parseInt(val, 8), rtn)
+  })
+
+  it('should allow a hex String to be input (unsigned)', function () {
+    var buf = new Buffer(ref.sizeof.uint64)
+    var val = '0x1234567890'
+    ref.writeUInt64(buf, 0, val)
+    var rtn = ref.readUInt64(buf, 0)
+    assert.equal(parseInt(val, 16), rtn)
+  })
+
+  it('should allow an octal String to be input (unsigned)', function () {
+    var buf = new Buffer(ref.sizeof.uint64)
+    var val = '0777'
+    ref.writeUInt64(buf, 0, val)
+    var rtn = ref.readUInt64(buf, 0)
     assert.equal(parseInt(val, 8), rtn)
   })
 

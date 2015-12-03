@@ -436,7 +436,7 @@ NAN_METHOD(WriteUInt64) {
     // Have to do this because strtoull doesn't set errno to 0 on success :(
     errno = 0;
     String::Utf8Value str(in);
-    val = strtoull(*str, NULL, 10);
+    val = strtoull(*str, NULL, 0);
     // TODO: better error handling; check errno
   } else {
     return Nan::ThrowTypeError("writeUInt64: Number/String 64-bit value required");
