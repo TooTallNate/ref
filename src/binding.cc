@@ -437,7 +437,9 @@ NAN_METHOD(WriteUInt64) {
     errno = 0;
     String::Utf8Value str(in);
     val = strtoull(*str, NULL, 0);
-    // TODO: better error handling; check errno
+    if (errno) {
+      return Nan::ThrowTypeError("writeUInt64: invalid input String");
+    }
   } else {
     return Nan::ThrowTypeError("writeUInt64: Number/String 64-bit value required");
   }

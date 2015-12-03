@@ -98,10 +98,17 @@ describe('int64', function () {
     assert.equal(0, rtn)
   })
 
-  it('should throw an Error when writing an invalid String', function () {
+  it('should throw an Error when writing an invalid String (signed)', function () {
     assert.throws(function () {
       var buf = new Buffer(ref.sizeof.int64)
       ref.writeInt64(buf, 0, 'foo')
+    }, /invalid input String/)
+  })
+
+  it('should throw an Error when writing an invalid String (unsigned)', function () {
+    assert.throws(function () {
+      var buf = new Buffer(ref.sizeof.uint64)
+      ref.writeUInt64(buf, 0, 'foo')
     }, /invalid input String/)
   })
 
