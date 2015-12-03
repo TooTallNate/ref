@@ -28,7 +28,6 @@ describe('int64', function () {
     var val = '0x1234567890'
     ref.writeInt64(buf, 0, val)
     var rtn = ref.readInt64(buf, 0)
-    console.log(rtn);
     assert.equal(parseInt(val, 16), rtn)
   })
 
@@ -37,7 +36,6 @@ describe('int64', function () {
     var val = '0777'
     ref.writeInt64(buf, 0, val)
     var rtn = ref.readInt64(buf, 0)
-    console.log(rtn);
     assert.equal(parseInt(val, 8), rtn)
   })
 
