@@ -1,4 +1,12 @@
 
+1.3.0 / 2015-12-02
+==================
+
+  * writeInt64: better error checking for `WriteInt64()`
+  * writeInt64: allow hex or octal input string values
+  * appveyor: test node v5
+  * travis: test node v5
+
 1.2.0 / 2015-10-08
 ==================
 
