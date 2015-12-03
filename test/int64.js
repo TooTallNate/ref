@@ -82,15 +82,22 @@ describe('int64', function () {
     assert.equal(0, rtn)
   })
 
+  it('should throw an Error when writing an invalid String', function () {
+    assert.throws(function () {
+      var buf = new Buffer(ref.sizeof.int64)
+      ref.writeInt64(buf, 0, 'foo')
+    }, /invalid input String/)
+  })
+
   it('should throw an Error when reading an int64_t from the NULL pointer', function () {
     assert.throws(function () {
       ref.readInt64(ref.NULL)
     })
   })
 
-  it('should throw an Error when reading a uint64_t from the NULL pointer', function () {
+  it('should throw an Error when reading an int64_t from the NULL pointer', function () {
     assert.throws(function () {
-      ref.readUInt64(ref.NULL)
+      ref.readInt64(ref.NULL)
     })
   })
 
