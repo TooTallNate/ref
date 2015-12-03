@@ -1,4 +1,10 @@
 
+1.3.1 / 2015-12-02
+==================
+
+  * writeUInt64: better error checking for `WriteUInt64()`
+  * writeUInt64: allow hex or octal input string values
+
 1.3.0 / 2015-12-02
 ==================
 
