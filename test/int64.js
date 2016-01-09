@@ -102,14 +102,14 @@ describe('int64', function () {
     assert.throws(function () {
       var buf = new Buffer(ref.sizeof.int64)
       ref.writeInt64(buf, 0, 'foo')
-    }, /invalid input String/)
+    }, /no digits we found in input String/)
   })
 
   it('should throw an Error when writing an invalid String (unsigned)', function () {
     assert.throws(function () {
       var buf = new Buffer(ref.sizeof.uint64)
       ref.writeUInt64(buf, 0, 'foo')
-    }, /invalid input String/)
+    }, /no digits we found in input String/)
   })
 
   it('should throw an Error when reading an int64_t from the NULL pointer', function () {

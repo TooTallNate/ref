@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -356,13 +355,25 @@ NAN_METHOD(WriteInt64) {
   if (in->IsNumber()) {
     val = GetInt64(in);
   } else if (in->IsString()) {
-    // Have to do this because strtoll doesn't set errno to 0 on success :(
-    errno = 0;
-    String::Utf8Value str(in);
-    val = strtoll(*str, NULL, 0);
-    if (errno) {
-      return Nan::ThrowTypeError("writeInt64: invalid input String");
+    char *endptr, *str;
+    int base = 0;
+    String::Utf8Value _str(in);
+    str = *_str;
+
+    errno = 0;     /* To distinguish success/failure after call */
+    val = strtoll(str, &endptr, base);
+
+    if ((errno == ERANGE && (val == LLONG_MAX || val == LLONG_MIN))
+            || (errno != 0 && val == 0)) {
+      char errmsg[200];
+      snprintf(errmsg, sizeof(errmsg), "writeInt64: %s", strerror(errno));
+      return Nan::ThrowTypeError(errmsg);
     }
+
+    if (endptr == str) {
+      return Nan::ThrowTypeError("writeInt64: no digits we found in input String");
+    }
+
   } else {
     return Nan::ThrowTypeError("writeInt64: Number/String 64-bit value required");
   }
@@ -433,13 +444,25 @@ NAN_METHOD(WriteUInt64) {
   if (in->IsNumber()) {
     val = GetInt64(in);
   } else if (in->IsString()) {
-    // Have to do this because strtoull doesn't set errno to 0 on success :(
-    errno = 0;
-    String::Utf8Value str(in);
-    val = strtoull(*str, NULL, 0);
-    if (errno) {
-      return Nan::ThrowTypeError("writeUInt64: invalid input String");
+    char *endptr, *str;
+    int base = 0;
+    String::Utf8Value _str(in);
+    str = *_str;
+
+    errno = 0;     /* To distinguish success/failure after call */
+    val = strtoull(str, &endptr, base);
+
+    if ((errno == ERANGE && val == ULLONG_MAX)
+            || (errno != 0 && val == 0)) {
+      char errmsg[200];
+      snprintf(errmsg, sizeof(errmsg), "writeUInt64: %s", strerror(errno));
+      return Nan::ThrowTypeError(errmsg);
     }
+
+    if (endptr == str) {
+      return Nan::ThrowTypeError("writeUInt64: no digits we found in input String");
+    }
+
   } else {
     return Nan::ThrowTypeError("writeUInt64: Number/String 64-bit value required");
   }
