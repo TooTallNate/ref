@@ -363,17 +363,15 @@ NAN_METHOD(WriteInt64) {
     errno = 0;     /* To distinguish success/failure after call */
     val = strtoll(str, &endptr, base);
 
-    if ((errno == ERANGE && (val == LLONG_MAX || val == LLONG_MIN))
-            || (errno != 0 && val == 0)) {
+    if (endptr == str) {
+      return Nan::ThrowTypeError("writeInt64: no digits we found in input String");
+    } else  if (errno == ERANGE && (val == LLONG_MAX || val == LLONG_MIN)) {
+      return Nan::ThrowTypeError("writeInt64: input String numerical value out of range");
+    } else if (errno != 0 && val == 0) {
       char errmsg[200];
       snprintf(errmsg, sizeof(errmsg), "writeInt64: %s", strerror(errno));
       return Nan::ThrowTypeError(errmsg);
     }
-
-    if (endptr == str) {
-      return Nan::ThrowTypeError("writeInt64: no digits we found in input String");
-    }
-
   } else {
     return Nan::ThrowTypeError("writeInt64: Number/String 64-bit value required");
   }
@@ -452,17 +450,15 @@ NAN_METHOD(WriteUInt64) {
     errno = 0;     /* To distinguish success/failure after call */
     val = strtoull(str, &endptr, base);
 
-    if ((errno == ERANGE && val == ULLONG_MAX)
-            || (errno != 0 && val == 0)) {
+    if (endptr == str) {
+      return Nan::ThrowTypeError("writeUInt64: no digits we found in input String");
+    } else if (errno == ERANGE && val == ULLONG_MAX) {
+      return Nan::ThrowTypeError("writeUInt64: input String numerical value out of range");
+    } else if (errno != 0 && val == 0) {
       char errmsg[200];
       snprintf(errmsg, sizeof(errmsg), "writeUInt64: %s", strerror(errno));
       return Nan::ThrowTypeError(errmsg);
     }
-
-    if (endptr == str) {
-      return Nan::ThrowTypeError("writeUInt64: no digits we found in input String");
-    }
-
   } else {
     return Nan::ThrowTypeError("writeUInt64: Number/String 64-bit value required");
   }

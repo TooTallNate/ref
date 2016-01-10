@@ -1,4 +1,3 @@
-
 var assert = require('assert')
 var ref = require('../')
 
@@ -98,18 +97,40 @@ describe('int64', function () {
     assert.equal(0, rtn)
   })
 
-  it('should throw an Error when writing an invalid String (signed)', function () {
+  it('should throw a "no digits" Error when writing an invalid String (signed)', function () {
     assert.throws(function () {
       var buf = new Buffer(ref.sizeof.int64)
       ref.writeInt64(buf, 0, 'foo')
     }, /no digits we found in input String/)
   })
 
-  it('should throw an Error when writing an invalid String (unsigned)', function () {
+  it('should throw a "no digits" Error when writing an invalid String (unsigned)', function () {
     assert.throws(function () {
       var buf = new Buffer(ref.sizeof.uint64)
       ref.writeUInt64(buf, 0, 'foo')
     }, /no digits we found in input String/)
+  })
+
+  it('should throw an "out of range" Error when writing an invalid String (signed)', function () {
+    var e;
+    try {
+      var buf = new Buffer(ref.sizeof.int64)
+      ref.writeInt64(buf, 0, '10000000000000000000000000')
+    } catch (_e) {
+      e = _e;
+    }
+    assert(/input String numerical value out of range/.test(e.message));
+  })
+
+  it('should throw an "out of range" Error when writing an invalid String (unsigned)', function () {
+    var e;
+    try {
+      var buf = new Buffer(ref.sizeof.uint64)
+      ref.writeUInt64(buf, 0, '10000000000000000000000000')
+    } catch (_e) {
+      e = _e;
+    }
+    assert(/input String numerical value out of range/.test(e.message));
   })
 
   it('should throw an Error when reading an int64_t from the NULL pointer', function () {
@@ -118,9 +139,9 @@ describe('int64', function () {
     })
   })
 
-  it('should throw an Error when reading an int64_t from the NULL pointer', function () {
+  it('should throw an Error when reading an uint64_t from the NULL pointer', function () {
     assert.throws(function () {
-      ref.readInt64(ref.NULL)
+      ref.readUInt64(ref.NULL)
     })
   })
 
