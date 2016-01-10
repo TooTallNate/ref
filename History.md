@@ -1,4 +1,10 @@
 
+1.3.2 / 2016-01-10
+==================
+
+  * int64: fix failing OS X tests now
+  * int64: better error handling for Linux
+
 1.3.1 / 2015-12-02
 ==================
 
