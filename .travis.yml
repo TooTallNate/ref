@@ -1,5 +1,4 @@
-sudo: required
-dist: trusty
+sudo: false
 
 env:
   - CXX=g++-4.8
