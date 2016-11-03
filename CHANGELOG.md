@@ -1,3 +1,10 @@
+1.3.3 / 2016-11-03
+==================
+
+* [[`3f0a2d4775`](https://github.com/TooTallNate/ref/commit/3f0a2d4775)] - rename History.md to CHANGELOG.md (Nathan Rajlich)
+* [[`30fe405ae5`](https://github.com/TooTallNate/ref/commit/30fe405ae5)] - Merge pull request #62 from mhertsch/master (Nathan Rajlich)
+* [[`6fdb4b7b23`](https://github.com/TooTallNate/ref/commit/6fdb4b7b23)] - Replaced ForceSet with Nan::ForceSet to remove deprecation warnings when using node 6.9.1 (Michael Hertsch)
+* [[`000b2a7889`](https://github.com/TooTallNate/ref/commit/000b2a7889)] - **travis**: test node v6 (Nathan Rajlich)
 
 1.3.2 / 2016-01-10
 ==================
