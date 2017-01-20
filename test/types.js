@@ -19,6 +19,23 @@ describe('types', function () {
       assert.equal(intPtr.size, ref.types.int.size)
     })
 
+    it('should override and update a read-only name property', function () {
+      // a type similar to ref-struct's StructType
+      // used for types refType name property test
+      function StructType() {}
+      StructType.size = 0
+      StructType.indirection = 0
+
+      // read-only name property
+      var oldProp = Object.getOwnPropertyDescriptor(StructType, "name")
+      assert.equal(oldProp.writable, false)
+
+      // name property should be writable and updated
+      var newObj = ref.refType(StructType)
+      var newProp = Object.getOwnPropertyDescriptor(newObj, "name")
+      assert.equal(newProp.writable, true)
+      assert.equal(newObj.name, "StructType*")
+    })
   })
 
   describe('derefType()', function () {
