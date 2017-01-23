@@ -27,14 +27,21 @@ describe('types', function () {
       StructType.indirection = 0
 
       // read-only name property
-      var oldProp = Object.getOwnPropertyDescriptor(StructType, "name")
-      assert.equal(oldProp.writable, false)
+      // node 0.12 incorrectly returns true for writable property
+      if (!process.version.match(/v0.1/)) {
+        var oldProp = Object.getOwnPropertyDescriptor(StructType, "name")
+        assert.equal(oldProp.writable, false)
+      }
 
       // name property should be writable and updated
       var newObj = ref.refType(StructType)
-      var newProp = Object.getOwnPropertyDescriptor(newObj, "name")
-      assert.equal(newProp.writable, true)
-      assert.equal(newObj.name, "StructType*")
+      // node v0.10 returns undefined for the property and on Windows
+      // does not have an updated name
+      if (!process.version.match(/v0.10/)) {
+        var newProp = Object.getOwnPropertyDescriptor(newObj, "name")
+        assert.equal(newProp.writable, true)
+        assert.equal(newObj.name, "StructType*")
+      }
     })
   })
 
