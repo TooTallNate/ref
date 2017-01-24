@@ -12,7 +12,6 @@ addons:
 language: node_js
 
 node_js:
-  - "0.8"
   - "0.10"
   - "0.12"
   - "1"
@@ -24,8 +23,6 @@ node_js:
 
 install:
   - PATH="`npm bin`:`npm bin -g`:$PATH"
-  # Node 0.8 comes with a too obsolete npm
-  - if [[ "`node --version`" =~ ^v0\.8\. ]]; then npm install -g npm@1.4.28 ; fi
   # Install dependencies and build
   - npm install
 

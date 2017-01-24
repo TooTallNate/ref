@@ -27,7 +27,7 @@
   "main": "./lib/ref.js",
   "scripts": {
     "docs": "node docs/compile",
-    "test": "mocha -gc --reporter spec"
+    "test": "mocha -gc --reporter spec --use_strict"
   },
   "dependencies": {
     "bindings": "1",

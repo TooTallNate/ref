@@ -19,6 +19,30 @@ describe('types', function () {
       assert.equal(intPtr.size, ref.types.int.size)
     })
 
+    it('should override and update a read-only name property', function () {
+      // a type similar to ref-struct's StructType
+      // used for types refType name property test
+      function StructType() {}
+      StructType.size = 0
+      StructType.indirection = 0
+
+      // read-only name property
+      // node 0.12 incorrectly returns true for writable property
+      if (!process.version.match(/v0.1/)) {
+        var oldProp = Object.getOwnPropertyDescriptor(StructType, "name")
+        assert.equal(oldProp.writable, false)
+      }
+
+      // name property should be writable and updated
+      var newObj = ref.refType(StructType)
+      // node v0.10 returns undefined for the property and on Windows
+      // does not have an updated name
+      if (!process.version.match(/v0.10/)) {
+        var newProp = Object.getOwnPropertyDescriptor(newObj, "name")
+        assert.equal(newProp.writable, true)
+        assert.equal(newObj.name, "StructType*")
+      }
+    })
   })
 
   describe('derefType()', function () {
