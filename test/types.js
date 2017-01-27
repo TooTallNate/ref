@@ -27,14 +27,19 @@ describe('types', function () {
       StructType.indirection = 0
 
       // read-only name property
-      var oldProp = Object.getOwnPropertyDescriptor(StructType, "name")
-      assert.equal(oldProp.writable, false)
+      assert.equal(StructType.name, 'StructType')
+      try {
+        StructType.name = 'foo'
+      } catch (err) {
+        // ignore
+      }
+      assert.equal(StructType.name, 'StructType')
 
       // name property should be writable and updated
       var newObj = ref.refType(StructType)
-      var newProp = Object.getOwnPropertyDescriptor(newObj, "name")
+      var newProp = Object.getOwnPropertyDescriptor(newObj, 'name')
       assert.equal(newProp.writable, true)
-      assert.equal(newObj.name, "StructType*")
+      assert.equal(newObj.name, 'StructType*')
     })
   })
 
