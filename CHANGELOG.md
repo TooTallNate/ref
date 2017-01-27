@@ -1,3 +1,10 @@
+1.3.4 / 2017-01-27
+==================
+
+* [[`32637be7e4`](https://github.com/TooTallNate/ref/commit/32637be7e4)] - CI stuffs (Nathan Rajlich)
+* [[`55716fd9e3`](https://github.com/TooTallNate/ref/commit/55716fd9e3)] - always use `defineProperty()` for `name` (Nathan Rajlich)
+* [[`786b73941e`](https://github.com/TooTallNate/ref/commit/786b73941e)] - **refType**: force name to writable before updating it (Joel Martin) (#67)
+
 1.3.3 / 2016-11-03
 ==================
 
