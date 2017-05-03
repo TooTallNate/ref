@@ -32,7 +32,7 @@
   "dependencies": {
     "bindings": "1",
     "debug": "2",
-    "nan": "2"
+    "nan": "^2.3.2"
   },
   "devDependencies": {
     "dox": "0.4.4",
