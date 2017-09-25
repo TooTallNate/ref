@@ -46,7 +46,7 @@ var buf = new Buffer(4)
 buf.writeInt32LE(12345, 0)
 
 // first, what is the memory address of the buffer?
-console.log(buf.address())  // ← 140362165284824
+console.log(buf.hexAddress())  // ← '7FA89D006FD8'
 
 // using `ref`, you can set the "type", and gain magic abilities!
 buf.type = ref.types.int
