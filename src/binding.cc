@@ -646,15 +646,15 @@ NAN_MODULE_INIT(init) {
   Nan::SetMethod(target, "hexAddress", HexAddress);
   Nan::SetMethod(target, "isNull", IsNull);
   Nan::SetMethod(target, "readObject", ReadObject);
-  Nan::SetMethod(target, "writeObject", WriteObject);
+  Nan::SetMethod(target, "_writeObject", WriteObject);
   Nan::SetMethod(target, "readPointer", ReadPointer);
-  Nan::SetMethod(target, "writePointer", WritePointer);
+  Nan::SetMethod(target, "_writePointer", WritePointer);
   Nan::SetMethod(target, "readInt64", ReadInt64);
   Nan::SetMethod(target, "writeInt64", WriteInt64);
   Nan::SetMethod(target, "readUInt64", ReadUInt64);
   Nan::SetMethod(target, "writeUInt64", WriteUInt64);
   Nan::SetMethod(target, "readCString", ReadCString);
-  Nan::SetMethod(target, "reinterpret", ReinterpretBuffer);
-  Nan::SetMethod(target, "reinterpretUntilZeros", ReinterpretBufferUntilZeros);
+  Nan::SetMethod(target, "_reinterpret", ReinterpretBuffer);
+  Nan::SetMethod(target, "_reinterpretUntilZeros", ReinterpretBufferUntilZeros);
 }
 NODE_MODULE(binding, init);
