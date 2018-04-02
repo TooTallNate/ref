@@ -32,14 +32,14 @@
   "dependencies": {
     "bindings": "1",
     "debug": "2",
-    "nan": "2"
+    "nan": "2 <2.8.0 || 2 >2.8.0"
   },
   "devDependencies": {
     "dox": "0.4.4",
     "highlight.js": "1",
     "jade": "^0.35.0",
     "marked": "^0.3.2",
-    "mocha": "*",
+    "mocha": "<4",
     "weak": "1"
   }
 }
