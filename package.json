@@ -31,14 +31,14 @@
   },
   "dependencies": {
     "bindings": "1",
-    "debug": "2",
+    "debug": "4",
     "nan": "2"
   },
   "devDependencies": {
-    "dox": "0.4.4",
+    "dox": "0.9.0",
     "highlight.js": "1",
-    "jade": "^0.35.0",
-    "marked": "^0.3.2",
+    "jade": "1",
+    "marked": "0.5.2",
     "mocha": "*",
     "weak": "1"
   }
