@@ -27,7 +27,7 @@
   "main": "./lib/ref.js",
   "scripts": {
     "docs": "node docs/compile",
-    "test": "mocha -gc --reporter spec --use_strict"
+    "test": "mocha --expose-gc --reporter spec"
   },
   "dependencies": {
     "bindings": "1",
@@ -39,7 +39,7 @@
     "highlight.js": "1",
     "jade": "1",
     "marked": "0.5.2",
-    "mocha": "*",
+    "mocha": "6",
     "weak": "1"
   }
 }
