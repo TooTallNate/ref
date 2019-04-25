@@ -219,7 +219,7 @@ NAN_METHOD(WriteObject) {
   Nan::Persistent<Object>* pptr = reinterpret_cast<Nan::Persistent<Object>*>(ptr);
   Local<Object> val = info[2].As<Object>();
 
-  bool persistent = info[3]->BooleanValue();
+  bool persistent = info[3]->BooleanValue(v8::Isolate::GetCurrent()->GetCurrentContext()).ToChecked();
   if (persistent) {
       (*pptr).Reset(val);
   } else {
@@ -250,7 +250,7 @@ NAN_METHOD(ReadPointer) {
 
   int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
-  size_t size = info[2]->Uint32Value();
+  size_t size = info[2]->Uint32Value(v8::Isolate::GetCurrent()->GetCurrentContext()).ToChecked();
 
   if (ptr == NULL) {
     return Nan::ThrowError("readPointer: Cannot read from NULL pointer");
@@ -357,7 +357,7 @@ NAN_METHOD(WriteInt64) {
   } else if (in->IsString()) {
     char *endptr, *str;
     int base = 0;
-    String::Utf8Value _str(in);
+    String::Utf8Value _str(v8::Isolate::GetCurrent(), in);
     str = *_str;
 
     errno = 0;     /* To distinguish success/failure after call */
@@ -444,7 +444,7 @@ NAN_METHOD(WriteUInt64) {
   } else if (in->IsString()) {
     char *endptr, *str;
     int base = 0;
-    String::Utf8Value _str(in);
+    String::Utf8Value _str(v8::Isolate::GetCurrent(), in);
     str = *_str;
 
     errno = 0;     /* To distinguish success/failure after call */
@@ -518,7 +518,7 @@ NAN_METHOD(ReinterpretBuffer) {
     return Nan::ThrowError("reinterpret: Cannot reinterpret from NULL pointer");
   }
 
-  size_t size = info[1]->Uint32Value();
+  size_t size = info[1]->Uint32Value(v8::Isolate::GetCurrent()->GetCurrentContext()).ToChecked();
 
   info.GetReturnValue().Set(WrapPointer(ptr, size));
 }
@@ -547,7 +547,7 @@ NAN_METHOD(ReinterpretBufferUntilZeros) {
     return Nan::ThrowError("reinterpretUntilZeros: Cannot reinterpret from NULL pointer");
   }
 
-  uint32_t numZeros = info[1]->Uint32Value();
+  uint32_t numZeros = info[1]->Uint32Value(v8::Isolate::GetCurrent()->GetCurrentContext()).ToChecked();
   uint32_t i = 0;
   size_t size = 0;
   bool end = false;
