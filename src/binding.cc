@@ -577,8 +577,8 @@ NAN_MODULE_INIT(init) {
   // "sizeof" map
   Local<Object> smap = Nan::New<v8::Object>();
   // fixed sizes
-#define SET_SIZEOF(name, type) \
-  smap->Set(Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(sizeof(type))));
+#define SET_SIZEOF(name, type) \  
+  Nan::Set(smap, Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(sizeof(type))));
   SET_SIZEOF(int8, int8_t);
   SET_SIZEOF(uint8, uint8_t);
   SET_SIZEOF(int16, int16_t);
@@ -612,7 +612,7 @@ NAN_MODULE_INIT(init) {
   Local<Object> amap = Nan::New<v8::Object>();
 #define SET_ALIGNOF(name, type) \
   struct s_##name { type a; }; \
-  amap->Set(Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(__alignof__(struct s_##name))));
+  Nan::Set(amap, Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(__alignof__(struct s_##name))));
   SET_ALIGNOF(int8, int8_t);
   SET_ALIGNOF(uint8, uint8_t);
   SET_ALIGNOF(int16, int16_t);
@@ -640,8 +640,8 @@ NAN_MODULE_INIT(init) {
   SET_ALIGNOF(Object, Nan::Persistent<Object>);
 
   // exports
-  target->Set(Nan::New<v8::String>("sizeof").ToLocalChecked(), smap);
-  target->Set(Nan::New<v8::String>("alignof").ToLocalChecked(), amap);
+  Nan::Set(target, Nan::New<v8::String>("sizeof").ToLocalChecked(), smap);
+  Nan::Set(target, Nan::New<v8::String>("alignof").ToLocalChecked(), amap);
   Nan::ForceSet(target, Nan::New<v8::String>("endianness").ToLocalChecked(), Nan::New<v8::String>(CheckEndianness()).ToLocalChecked(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
   Nan::ForceSet(target, Nan::New<v8::String>("NULL").ToLocalChecked(), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
   Nan::SetMethod(target, "address", Address);
