@@ -38,7 +38,7 @@
     "dox": "0.9.0",
     "highlight.js": "1",
     "jade": "1",
-    "marked": "0.5.2",
+    "marked": "1.1.1",
     "mocha": "*",
     "weak": "1"
   }
