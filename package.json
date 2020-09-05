@@ -39,7 +39,7 @@
     "highlight.js": "1",
     "jade": "1",
     "marked": "0.5.2",
-    "mocha": "*",
+    "mocha": "5.0.0",
     "weak": "1"
   }
 }
