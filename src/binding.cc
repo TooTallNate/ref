@@ -219,7 +219,7 @@ NAN_METHOD(WriteObject) {
   Nan::Persistent<Object>* pptr = reinterpret_cast<Nan::Persistent<Object>*>(ptr);
   Local<Object> val = info[2].As<Object>();
 
-  bool persistent = info[3]->BooleanValue();
+  bool persistent = Nan::To<bool>(info[3]).FromJust();
   if (persistent) {
       (*pptr).Reset(val);
   } else {
@@ -250,7 +250,8 @@ NAN_METHOD(ReadPointer) {
 
   int64_t offset = GetInt64(info[1]);
   char *ptr = Buffer::Data(buf.As<Object>()) + offset;
-  size_t size = info[2]->Uint32Value();
+
+  size_t size = Nan::To<uint32_t>(info[2]).FromJust();;
 
   if (ptr == NULL) {
     return Nan::ThrowError("readPointer: Cannot read from NULL pointer");
@@ -357,8 +358,7 @@ NAN_METHOD(WriteInt64) {
   } else if (in->IsString()) {
     char *endptr, *str;
     int base = 0;
-    String::Utf8Value _str(in);
-    str = *_str;
+    str = *Nan::Utf8String(in);
 
     errno = 0;     /* To distinguish success/failure after call */
     val = strtoll(str, &endptr, base);
@@ -444,8 +444,7 @@ NAN_METHOD(WriteUInt64) {
   } else if (in->IsString()) {
     char *endptr, *str;
     int base = 0;
-    String::Utf8Value _str(in);
-    str = *_str;
+    str = *Nan::Utf8String(in);
 
     errno = 0;     /* To distinguish success/failure after call */
     val = strtoull(str, &endptr, base);
@@ -518,7 +517,7 @@ NAN_METHOD(ReinterpretBuffer) {
     return Nan::ThrowError("reinterpret: Cannot reinterpret from NULL pointer");
   }
 
-  size_t size = info[1]->Uint32Value();
+  size_t size = Nan::To<uint32_t>(info[1]).FromJust();;
 
   info.GetReturnValue().Set(WrapPointer(ptr, size));
 }
@@ -547,7 +546,7 @@ NAN_METHOD(ReinterpretBufferUntilZeros) {
     return Nan::ThrowError("reinterpretUntilZeros: Cannot reinterpret from NULL pointer");
   }
 
-  uint32_t numZeros = info[1]->Uint32Value();
+  uint32_t numZeros = Nan::To<uint32_t>(info[1]).FromJust();
   uint32_t i = 0;
   size_t size = 0;
   bool end = false;
@@ -578,7 +577,7 @@ NAN_MODULE_INIT(init) {
   Local<Object> smap = Nan::New<v8::Object>();
   // fixed sizes
 #define SET_SIZEOF(name, type) \
-  smap->Set(Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(sizeof(type))));
+  Nan::Set(smap, Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(sizeof(type))));
   SET_SIZEOF(int8, int8_t);
   SET_SIZEOF(uint8, uint8_t);
   SET_SIZEOF(int16, int16_t);
@@ -612,7 +611,7 @@ NAN_MODULE_INIT(init) {
   Local<Object> amap = Nan::New<v8::Object>();
 #define SET_ALIGNOF(name, type) \
   struct s_##name { type a; }; \
-  amap->Set(Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(__alignof__(struct s_##name))));
+  Nan::Set(amap, Nan::New<v8::String>( #name ).ToLocalChecked(), Nan::New<v8::Uint32>(static_cast<uint32_t>(__alignof__(struct s_##name))));
   SET_ALIGNOF(int8, int8_t);
   SET_ALIGNOF(uint8, uint8_t);
   SET_ALIGNOF(int16, int16_t);
@@ -640,10 +639,10 @@ NAN_MODULE_INIT(init) {
   SET_ALIGNOF(Object, Nan::Persistent<Object>);
 
   // exports
-  target->Set(Nan::New<v8::String>("sizeof").ToLocalChecked(), smap);
-  target->Set(Nan::New<v8::String>("alignof").ToLocalChecked(), amap);
-  Nan::ForceSet(target, Nan::New<v8::String>("endianness").ToLocalChecked(), Nan::New<v8::String>(CheckEndianness()).ToLocalChecked(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
-  Nan::ForceSet(target, Nan::New<v8::String>("NULL").ToLocalChecked(), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+  Nan::Set(target, Nan::New<v8::String>("sizeof").ToLocalChecked(), smap);
+  Nan::Set(target, Nan::New<v8::String>("alignof").ToLocalChecked(), amap);
+  Nan::DefineOwnProperty(target, Nan::New<v8::String>("endianness").ToLocalChecked(), Nan::New<v8::String>(CheckEndianness()).ToLocalChecked(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+  Nan::DefineOwnProperty(target, Nan::New<v8::String>("NULL").ToLocalChecked(), WrapNullPointer(), static_cast<PropertyAttribute>(ReadOnly|DontDelete));
   Nan::SetMethod(target, "address", Address);
   Nan::SetMethod(target, "hexAddress", HexAddress);
   Nan::SetMethod(target, "isNull", IsNull);
